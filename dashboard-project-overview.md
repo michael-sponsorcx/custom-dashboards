@@ -31,3 +31,40 @@ This is a component being developed for a larger project. We're building it as a
 - Dashboard calls Cube semantic layer directly
 - Metadata discovery (models, dimensions, measures) via REST
 - Data fetching via GraphQL
+
+## Current Implementation Status
+
+### Chart Visualization System (In Progress)
+**Location:** `src/components/CreateGraph.tsx` and `src/components/charts/`
+
+**What Works:**
+- Model selection, field selection (measures/dimensions/dates), GraphQL query generation
+- 6 chart types: Number tile, line, bar (grouped/stacked, vertical/horizontal)
+- Data analysis system (`chartDataAnalyzer.ts`) determines compatible charts from Cube responses
+- Auto-filtering to top 15 dimension values to prevent performance issues
+- Multi-series support with 15-color palette (`chartColors.ts`)
+- Stacked bars with proper data pivoting (converts dimensions to columns)
+- Custom tooltips showing totals for stacked charts
+- Chart settings panel (title, format, precision, color)
+
+**Key Technical Details:**
+- Mantine Charts requires both `@mantine/core/styles.css` AND `@mantine/charts/styles.css`
+- Chart sizing: Wrap in `<div style={{ width: '100%', height: 500 }}>`, set `h={500}` on chart
+- `withBarValueLabel` requires `valueFormatter` prop to display
+- Custom tooltips via `tooltipProps={{ content: CustomComponent }}`
+- Stacked charts need data pivoting: primary dimension → x-axis, secondary dimension values → series columns
+- Top-15 filtering applies to each dimension independently before pivoting
+
+**Component Structure:**
+- `CreateGraph.tsx` - Main orchestrator, query builder (3-column Grid layout)
+- `GraphBuilder.tsx` - Chart display container (center column)
+- `ChartRenderer.tsx` - Switches between chart types
+- `MantineBarChart.tsx` / `MantineLineChart.tsx` - Chart implementations
+- `ChartSettingsPanel.tsx` - Right sidebar for configuration
+- `FieldSelectionAccordion.tsx` - Left sidebar for field selection
+- Helper components: `ModelSelectionSearchBar`, `QueryValidationResults`, `NumberTile`, `SeriesLimitWrapper`
+
+**Known Limitations:**
+- No way to show only totals as labels on stacked bars (Mantine Charts API limitation)
+- Legend overflow with 15+ series (mitigated with 100px height allocation)
+- Grouped bars show individual labels, stacked bars rely on tooltip for totals
