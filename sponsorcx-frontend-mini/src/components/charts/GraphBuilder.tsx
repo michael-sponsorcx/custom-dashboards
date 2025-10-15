@@ -2,6 +2,7 @@ import { Paper, Stack, Title, Text, Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { ChartRenderer } from './ChartRenderer';
+import { SortOrder } from './OrderByControl';
 
 interface GraphBuilderProps {
   queryResult: any | null;
@@ -12,6 +13,9 @@ interface GraphBuilderProps {
   numberFormat?: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision?: number;
   primaryColor?: string;
+
+  // Sort order for charts with dimensions
+  sortOrder?: SortOrder;
 }
 
 /**
@@ -25,6 +29,7 @@ export function GraphBuilder({
   numberFormat = 'number',
   numberPrecision = 2,
   primaryColor = '#3b82f6',
+  sortOrder = 'desc',
 }: GraphBuilderProps) {
   // No data state
   if (!queryResult) {
@@ -75,6 +80,7 @@ export function GraphBuilder({
             numberFormat={numberFormat}
             numberPrecision={numberPrecision}
             primaryColor={primaryColor}
+            sortOrder={sortOrder}
           />
         </div>
       </Stack>

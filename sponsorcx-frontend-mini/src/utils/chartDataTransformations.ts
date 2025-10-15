@@ -8,7 +8,7 @@
  * All chart components should pass raw Cube data to these functions.
  */
 
-const MAX_DIMENSION_VALUES = 10;
+const MAX_BAR_DIMENSION_VALUES = 10;
 const MAX_LINE_CHART_DIMENSION_VALUES = 30;
 const MAX_PIE_CHART_DIMENSION_VALUES = 10;
 
@@ -143,11 +143,11 @@ function barChartTransformation(options: ChartSpecificTransformOptions): Transfo
   let finalChartData = chartData;
 
   // Limit to top N dimension values if there are too many
-  if (uniqueDimensionValues.length > MAX_DIMENSION_VALUES) {
+  if (uniqueDimensionValues.length > MAX_BAR_DIMENSION_VALUES) {
     // Sort dimension values by total and take top N
     const topDimensionValues = Object.entries(dimensionValueTotals)
       .sort(([, a], [, b]) => b - a)
-      .slice(0, MAX_DIMENSION_VALUES)
+      .slice(0, MAX_BAR_DIMENSION_VALUES)
       .map(([key]) => key);
 
     const topDimensionValuesSet = new Set(topDimensionValues);
@@ -229,13 +229,13 @@ function barStackedTransformation(options: ChartSpecificTransformOptions): Trans
   // Get top N for primary dimension (x-axis)
   const topPrimaryValues = Object.entries(primaryDimensionTotals)
     .sort(([, a], [, b]) => b - a)
-    .slice(0, MAX_DIMENSION_VALUES)
+    .slice(0, MAX_BAR_DIMENSION_VALUES)
     .map(([key]) => key);
 
   // Get top N for secondary dimension (series)
   const topSecondaryValues = Object.entries(secondaryDimensionTotals)
     .sort(([, a], [, b]) => b - a)
-    .slice(0, MAX_DIMENSION_VALUES)
+    .slice(0, MAX_BAR_DIMENSION_VALUES)
     .map(([key]) => key);
 
   const topPrimarySet = new Set(topPrimaryValues);

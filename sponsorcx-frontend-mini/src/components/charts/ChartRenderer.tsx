@@ -4,6 +4,7 @@ import { NumberTile } from './NumberTile';
 import { MantineLineChart } from './MantineLineChart';
 import { MantineBarChart } from './MantineBarChart';
 import { extractSingleValue } from '../../utils/chartDataAnalyzer';
+import { SortOrder } from './OrderByControl';
 
 interface ChartRendererProps {
   queryResult: any;
@@ -11,6 +12,7 @@ interface ChartRendererProps {
   numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision: number;
   primaryColor: string;
+  sortOrder?: SortOrder;
 }
 
 /**
@@ -22,6 +24,7 @@ export function ChartRenderer({
   numberFormat,
   numberPrecision,
   primaryColor,
+  sortOrder = 'desc',
 }: ChartRendererProps) {
   switch (selectedChartType) {
     case 'number':
@@ -35,7 +38,13 @@ export function ChartRenderer({
       );
 
     case 'line':
-      return <MantineLineChart queryResult={queryResult} primaryColor={primaryColor} />;
+      return (
+        <MantineLineChart
+          queryResult={queryResult}
+          primaryColor={primaryColor}
+          sortOrder={sortOrder}
+        />
+      );
 
     case 'bar':
       return (
@@ -44,6 +53,7 @@ export function ChartRenderer({
           primaryColor={primaryColor}
           orientation="vertical"
           type="default"
+          sortOrder={sortOrder}
         />
       );
 
@@ -54,6 +64,7 @@ export function ChartRenderer({
           primaryColor={primaryColor}
           orientation="vertical"
           type="stacked"
+          sortOrder={sortOrder}
         />
       );
 
@@ -64,6 +75,7 @@ export function ChartRenderer({
           primaryColor={primaryColor}
           orientation="horizontal"
           type="default"
+          sortOrder={sortOrder}
         />
       );
 
@@ -74,6 +86,7 @@ export function ChartRenderer({
           primaryColor={primaryColor}
           orientation="horizontal"
           type="stacked"
+          sortOrder={sortOrder}
         />
       );
 

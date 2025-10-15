@@ -11,6 +11,8 @@ import { FieldSelectionAccordion } from './FieldSelectionAccordion';
 import { GraphBuilder } from './charts/GraphBuilder';
 import { ChartSettingsPanel } from './charts/ChartSettingsPanel';
 import { analyzeChartCompatibility, ChartType } from '../utils/chartDataAnalyzer';
+import { SortOrder } from './charts/OrderByControl';
+import { FilterModal, FilterConfig } from './charts/FilterModal';
 
 export function CreateGraph() {
   const navigate = useNavigate();
@@ -31,6 +33,11 @@ export function CreateGraph() {
   const [numberFormat, setNumberFormat] = useState<'currency' | 'percentage' | 'number' | 'abbreviated'>('number');
   const [numberPrecision, setNumberPrecision] = useState(2);
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+  // Filter state
+  const [filterModalOpened, setFilterModalOpened] = useState(false);
+  const [filterConfig, setFilterConfig] = useState<FilterConfig>({ enabled: false });
 
   useEffect(() => {
     // Fetch metadata on component mount
@@ -299,6 +306,7 @@ export function CreateGraph() {
               numberFormat={numberFormat}
               numberPrecision={numberPrecision}
               primaryColor={primaryColor}
+              sortOrder={sortOrder}
             />
           </Grid.Col>
 
@@ -316,9 +324,19 @@ export function CreateGraph() {
               onNumberPrecisionChange={setNumberPrecision}
               primaryColor={primaryColor}
               onPrimaryColorChange={setPrimaryColor}
+              onSortOrderChange={setSortOrder}
+              onOpenFilterModal={() => setFilterModalOpened(true)}
             />
           </Grid.Col>
         </Grid>
+
+        {/* Filter Modal */}
+        <FilterModal
+          opened={filterModalOpened}
+          onClose={() => setFilterModalOpened(false)}
+          filterConfig={filterConfig}
+          onApplyFilter={setFilterConfig}
+        />
 
         <Button onClick={() => navigate('/')} variant="outline">
           Back to Dashboard

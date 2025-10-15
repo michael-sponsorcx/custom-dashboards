@@ -2,16 +2,22 @@ import { LineChart } from '@mantine/charts';
 import { transformChartData } from '../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../constants/chartColors';
+import { useSortedChartData, SortOrder } from './OrderByControl';
 
 interface MantineLineChartProps {
   queryResult: any;
   primaryColor?: string;
+  sortOrder?: SortOrder;
 }
 
 /**
  * MantineLineChart component - renders a line chart using Mantine charts
  */
-export function MantineLineChart({ queryResult, primaryColor = '#3b82f6' }: MantineLineChartProps) {
+export function MantineLineChart({
+  queryResult,
+  primaryColor = '#3b82f6',
+  sortOrder = 'desc'
+}: MantineLineChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
   const transformationResult = transformChartData({
@@ -21,14 +27,17 @@ export function MantineLineChart({ queryResult, primaryColor = '#3b82f6' }: Mant
     getColorFn: getChartColor,
   });
 
-  const { data: chartData, dimensionField, series } = transformationResult;
-
-  console.log('MantineLineChart - transformed data:', chartData);
+  const { data: transformedData, dimensionField, series } = transformationResult;
 
   // Handle case where transformation failed
-  if (!chartData || chartData.length === 0 || !dimensionField || !series) {
+  if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
     return <div>No data available for chart</div>;
   }
+
+  // Apply sorting using useMemo hook inside useSortedChartData
+  const chartData = useSortedChartData(transformedData, dimensionField, sortOrder);
+
+  console.log('MantineLineChart - sorted data:', chartData);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>

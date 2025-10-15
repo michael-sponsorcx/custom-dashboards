@@ -1,5 +1,8 @@
-import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput } from '@mantine/core';
+import { useState } from 'react';
+import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput, Button } from '@mantine/core';
+import { IconFilter } from '@tabler/icons-react';
 import { ChartType } from '../../utils/chartDataAnalyzer';
+import { OrderByControl, SortOrder } from './OrderByControl';
 
 interface ChartSettingsPanelProps {
   selectedChartType: ChartType | null;
@@ -19,6 +22,12 @@ interface ChartSettingsPanelProps {
   // Color customization
   primaryColor?: string;
   onPrimaryColorChange?: (color: string) => void;
+
+  // Callback to pass sort order to parent (for rendering charts)
+  onSortOrderChange?: (sortOrder: SortOrder) => void;
+
+  // Filter modal control
+  onOpenFilterModal?: () => void;
 }
 
 const CHART_TYPE_LABELS: Record<ChartType, string> = {
@@ -49,7 +58,20 @@ export function ChartSettingsPanel({
   onNumberPrecisionChange,
   primaryColor = '#3b82f6',
   onPrimaryColorChange,
+  onSortOrderChange,
+  onOpenFilterModal,
 }: ChartSettingsPanelProps) {
+  // Internal state for sort order (defaults to descending)
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+  // Handler for sort order changes
+  const handleSortOrderChange = (newSortOrder: SortOrder) => {
+    setSortOrder(newSortOrder);
+    // Notify parent component if callback is provided
+    console.log('ChartSettingsPanel - sort order changed to:', newSortOrder);
+    onSortOrderChange?.(newSortOrder);
+  };
+
   // Show all chart types, but disable incompatible ones
   const allChartTypes: ChartType[] = ['number', 'line', 'bar', 'stackedBar', 'horizontalBar', 'horizontalStackedBar'];
 
@@ -60,6 +82,10 @@ export function ChartSettingsPanel({
   }));
 
   const showNumberSettings = selectedChartType === 'number';
+  // Show order by control for charts that support dimensions
+  // Bar, line, area, and pie charts all have dimension fields
+  const chartsWithDimensions: ChartType[] = ['bar', 'stackedBar', 'horizontalBar', 'horizontalStackedBar', 'line'];
+  const showOrderByControl = selectedChartType ? chartsWithDimensions.includes(selectedChartType) : false;
 
   return (
     <Paper shadow="sm" p="md" radius="md" withBorder style={{ height: '100%' }}>
@@ -114,6 +140,27 @@ export function ChartSettingsPanel({
           onChange={(color) => onPrimaryColorChange?.(color)}
           format="hex"
         />
+
+        {/* Order By Control - for charts with dimensions */}
+        {showOrderByControl && (
+          <OrderByControl
+            sortOrder={sortOrder}
+            onSortOrderChange={handleSortOrderChange}
+            label="Order By Primary Dimension"
+          />
+        )}
+
+        {/* Filter Button - for charts with dimensions */}
+        {showOrderByControl && onOpenFilterModal && (
+          <Button
+            onClick={onOpenFilterModal}
+            leftSection={<IconFilter size={16} />}
+            variant="light"
+            fullWidth
+          >
+            Filter Data
+          </Button>
+        )}
 
         {/* Placeholder for future chart-specific settings */}
         {selectedChartType && selectedChartType !== 'number' && (

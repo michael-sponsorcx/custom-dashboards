@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
-import { Paper, Text, Stack } from '@mantine/core';
 import { transformChartData } from '../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../constants/chartColors';
+import { useSortedChartData, SortOrder } from './OrderByControl';
 
 interface MantineBarChartProps {
   queryResult: any;
   primaryColor?: string;
   orientation?: 'vertical' | 'horizontal';
   type?: BarChartType;
+  sortOrder?: SortOrder;
 }
 
 /**
@@ -19,7 +21,8 @@ export function MantineBarChart({
   queryResult,
   primaryColor = '#3b82f6',
   orientation = 'vertical',
-  type = 'default'
+  type = 'default',
+  sortOrder = 'desc'
 }: MantineBarChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -31,14 +34,20 @@ export function MantineBarChart({
     getColorFn: getChartColor,
   });
 
-  const { data: finalChartData, dimensionField, series } = transformationResult;
-
-  console.log('MantineBarChart - transformed data:', finalChartData);
+  const { data: transformedData, dimensionField, series } = transformationResult;
 
   // Handle case where transformation failed
-  if (!finalChartData || finalChartData.length === 0 || !dimensionField || !series) {
+  if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
     return <div>No data available for chart</div>;
   }
+
+  // Apply sorting using useMemo hook inside useSortedChartData
+  const finalChartData = useSortedChartData(transformedData, dimensionField, sortOrder);
+
+  // Log when sort order changes
+  useEffect(() => {
+    console.log('MantineBarChart - Sort order changed to:', sortOrder);
+  }, [sortOrder]);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
