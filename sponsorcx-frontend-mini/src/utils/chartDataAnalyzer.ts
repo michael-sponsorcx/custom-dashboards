@@ -138,25 +138,3 @@ export function extractSingleValue(data: any): number | null {
 
   return null;
 }
-
-/**
- * Transforms Cube GraphQL response into format suitable for Mantine charts
- * @param data - The GraphQL response data object
- * @returns Array of data points for charting
- */
-export function transformToChartData(data: any): any[] {
-  if (!data?.data?.cube || !Array.isArray(data.data.cube) || data.data.cube.length === 0) {
-    return [];
-  }
-
-  const cubeData = data.data.cube;
-
-  return cubeData.map((row: any) => {
-    const viewName = Object.keys(row)[0];
-    const rowData = row[viewName];
-
-    // Flatten the structure for easier charting
-    // e.g., { revenue: 1327456870.45, dim_fiscal_years_label: "FY 2022" }
-    return { ...rowData };
-  });
-}
