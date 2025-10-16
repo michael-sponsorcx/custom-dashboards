@@ -1,5 +1,7 @@
-import { Accordion, Stack, Group, Checkbox, Text, Title } from '@mantine/core';
+import { Accordion, Stack, Group, Checkbox, Text, Title, ActionIcon } from '@mantine/core';
+import { IconFilter } from '@tabler/icons-react';
 import { CubeMeasure, CubeDimension } from '../types/cube';
+import { FieldType } from '../types/filters';
 
 interface FieldSelectionAccordionProps {
   measures: CubeMeasure[];
@@ -11,6 +13,9 @@ interface FieldSelectionAccordionProps {
   onMeasureToggle: (measureName: string) => void;
   onDimensionToggle: (dimensionName: string) => void;
   onDateToggle: (dateName: string) => void;
+  // Filter button handlers
+  onFilterClick?: (fieldName: string, fieldTitle: string, fieldType: FieldType) => void;
+  activeFilters?: Set<string>; // Set of field names that have active filters
 }
 
 export function FieldSelectionAccordion({
@@ -23,6 +28,8 @@ export function FieldSelectionAccordion({
   onMeasureToggle,
   onDimensionToggle,
   onDateToggle,
+  onFilterClick,
+  activeFilters = new Set(),
 }: FieldSelectionAccordionProps) {
   return (
     <Accordion multiple>
@@ -35,12 +42,24 @@ export function FieldSelectionAccordion({
           <Accordion.Panel>
             <Stack gap="xs">
               {measures.map((measure: any) => (
-                <Group key={measure.name} gap="sm">
-                  <Checkbox
-                    checked={selectedMeasures.has(measure.name)}
-                    onChange={() => onMeasureToggle(measure.name)}
-                  />
-                  <Text size="sm">{measure.title}</Text>
+                <Group key={measure.name} gap="sm" justify="space-between" wrap="nowrap">
+                  <Group gap="sm" style={{ flex: 1 }}>
+                    <Checkbox
+                      checked={selectedMeasures.has(measure.name)}
+                      onChange={() => onMeasureToggle(measure.name)}
+                    />
+                    <Text size="sm">{measure.title}</Text>
+                  </Group>
+                  {onFilterClick && (
+                    <ActionIcon
+                      size="sm"
+                      variant={activeFilters.has(measure.name) ? 'filled' : 'subtle'}
+                      color={activeFilters.has(measure.name) ? 'blue' : 'gray'}
+                      onClick={() => onFilterClick(measure.name, measure.title, 'measure')}
+                    >
+                      <IconFilter size={14} />
+                    </ActionIcon>
+                  )}
                 </Group>
               ))}
             </Stack>
@@ -57,12 +76,24 @@ export function FieldSelectionAccordion({
           <Accordion.Panel>
             <Stack gap="xs">
               {dimensions.map((dimension: any) => (
-                <Group key={dimension.name} gap="sm">
-                  <Checkbox
-                    checked={selectedDimensions.has(dimension.name)}
-                    onChange={() => onDimensionToggle(dimension.name)}
-                  />
-                  <Text size="sm">{dimension.title}</Text>
+                <Group key={dimension.name} gap="sm" justify="space-between" wrap="nowrap">
+                  <Group gap="sm" style={{ flex: 1 }}>
+                    <Checkbox
+                      checked={selectedDimensions.has(dimension.name)}
+                      onChange={() => onDimensionToggle(dimension.name)}
+                    />
+                    <Text size="sm">{dimension.title}</Text>
+                  </Group>
+                  {onFilterClick && (
+                    <ActionIcon
+                      size="sm"
+                      variant={activeFilters.has(dimension.name) ? 'filled' : 'subtle'}
+                      color={activeFilters.has(dimension.name) ? 'green' : 'gray'}
+                      onClick={() => onFilterClick(dimension.name, dimension.title, 'dimension')}
+                    >
+                      <IconFilter size={14} />
+                    </ActionIcon>
+                  )}
                 </Group>
               ))}
             </Stack>
@@ -79,12 +110,24 @@ export function FieldSelectionAccordion({
           <Accordion.Panel>
             <Stack gap="xs">
               {dates.map((date: any) => (
-                <Group key={date.name} gap="sm">
-                  <Checkbox
-                    checked={selectedDates.has(date.name)}
-                    onChange={() => onDateToggle(date.name)}
-                  />
-                  <Text size="sm">{date.title}</Text>
+                <Group key={date.name} gap="sm" justify="space-between" wrap="nowrap">
+                  <Group gap="sm" style={{ flex: 1 }}>
+                    <Checkbox
+                      checked={selectedDates.has(date.name)}
+                      onChange={() => onDateToggle(date.name)}
+                    />
+                    <Text size="sm">{date.title}</Text>
+                  </Group>
+                  {onFilterClick && (
+                    <ActionIcon
+                      size="sm"
+                      variant={activeFilters.has(date.name) ? 'filled' : 'subtle'}
+                      color={activeFilters.has(date.name) ? 'purple' : 'gray'}
+                      onClick={() => onFilterClick(date.name, date.title, 'date')}
+                    >
+                      <IconFilter size={14} />
+                    </ActionIcon>
+                  )}
                 </Group>
               ))}
             </Stack>

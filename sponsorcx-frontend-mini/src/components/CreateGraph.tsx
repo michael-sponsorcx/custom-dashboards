@@ -12,7 +12,8 @@ import { GraphBuilder } from './charts/GraphBuilder';
 import { ChartSettingsPanel } from './charts/ChartSettingsPanel';
 import { analyzeChartCompatibility, ChartType } from '../utils/chartDataAnalyzer';
 import { SortOrder } from './charts/OrderByControl';
-import { FilterModal, FilterConfig } from './charts/FilterModal';
+import { FilterModal } from './charts/filters/FilterModal';
+import { FilterRule, FieldType } from '../types/filters';
 
 export function CreateGraph() {
   const navigate = useNavigate();
@@ -37,7 +38,15 @@ export function CreateGraph() {
 
   // Filter state
   const [filterModalOpened, setFilterModalOpened] = useState(false);
-  const [filterConfig, setFilterConfig] = useState<FilterConfig>({ enabled: false });
+  const [filters, setFilters] = useState<FilterRule[]>([]);
+  const [currentFilterField, setCurrentFilterField] = useState<{
+    fieldName: string;
+    fieldTitle: string;
+    fieldType: FieldType;
+  } | null>(null);
+
+  // Cache for dimension values to avoid refetching
+  const [dimensionValuesCache, setDimensionValuesCache] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     // Fetch metadata on component mount
@@ -168,6 +177,46 @@ export function CreateGraph() {
     });
   };
 
+  // Filter handlers
+  const handleFilterClick = (fieldName: string, fieldTitle: string, fieldType: FieldType) => {
+    setCurrentFilterField({ fieldName, fieldTitle, fieldType });
+    setFilterModalOpened(true);
+  };
+
+  const handleApplyFilter = (filter: FilterRule | null) => {
+    if (!currentFilterField) return;
+
+    setFilters(prev => {
+      // Remove existing filter for this field
+      const filtered = prev.filter(f => f.fieldName !== currentFilterField.fieldName);
+
+      // Add new filter if provided (null means remove filter)
+      if (filter) {
+        return [...filtered, filter];
+      }
+
+      return filtered;
+    });
+  };
+
+  const handleUpdateDimensionCache = (key: string, values: string[]) => {
+    setDimensionValuesCache(prev => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
+
+  // Get active filters as a Set of field names for UI highlighting
+  const activeFilterFields = useMemo(() => {
+    return new Set(filters.map(f => f.fieldName));
+  }, [filters]);
+
+  // Get existing filter for the current field being edited
+  const currentExistingFilter = useMemo(() => {
+    if (!currentFilterField) return null;
+    return filters.find(f => f.fieldName === currentFilterField.fieldName) || null;
+  }, [filters, currentFilterField]);
+
   // Generate GraphQL query based on selections
   const generatedQuery = useMemo(() => {
     if (!selectedView) return '';
@@ -193,14 +242,24 @@ export function CreateGraph() {
       selectedView,
       selectedMeasuresList,
       selectedDimensionsList,
-      selectedDatesList
+      selectedDatesList,
+      filters
     );
-  }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields]);
+  }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields, filters]);
 
   // Validate the generated query automatically
-  const validationResult = useMemo(() => {
-    if (!generatedQuery) return null;
-    return validateCubeGraphQLQuery(generatedQuery);
+  const [validationResult, setValidationResult] = useState<any>(null);
+
+  useEffect(() => {
+    if (!generatedQuery) {
+      setValidationResult(null);
+      return;
+    }
+
+    // Validate asynchronously
+    validateCubeGraphQLQuery(generatedQuery).then(result => {
+      setValidationResult(result);
+    });
   }, [generatedQuery]);
 
   const handleExecuteQuery = async () => {
@@ -276,6 +335,8 @@ export function CreateGraph() {
                   onMeasureToggle={handleMeasureToggle}
                   onDimensionToggle={handleDimensionToggle}
                   onDateToggle={handleDateToggle}
+                  onFilterClick={handleFilterClick}
+                  activeFilters={activeFilterFields}
                 />
               )}
 
@@ -325,7 +386,6 @@ export function CreateGraph() {
               primaryColor={primaryColor}
               onPrimaryColorChange={setPrimaryColor}
               onSortOrderChange={setSortOrder}
-              onOpenFilterModal={() => setFilterModalOpened(true)}
             />
           </Grid.Col>
         </Grid>
@@ -334,8 +394,14 @@ export function CreateGraph() {
         <FilterModal
           opened={filterModalOpened}
           onClose={() => setFilterModalOpened(false)}
-          filterConfig={filterConfig}
-          onApplyFilter={setFilterConfig}
+          fieldName={currentFilterField?.fieldName || null}
+          fieldTitle={currentFilterField?.fieldTitle || null}
+          fieldType={currentFilterField?.fieldType || null}
+          viewName={selectedView}
+          existingFilter={currentExistingFilter}
+          onApplyFilter={handleApplyFilter}
+          dimensionValuesCache={dimensionValuesCache}
+          onUpdateCache={handleUpdateDimensionCache}
         />
 
         <Button onClick={() => navigate('/')} variant="outline">

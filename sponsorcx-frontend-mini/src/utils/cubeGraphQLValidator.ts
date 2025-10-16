@@ -1,4 +1,29 @@
 import { ValidationError, ValidationWarning, ValidationResult } from '../types/cube';
+import { fetchCubeGraphQLSchema, getFilterOperatorsFromSchema } from '../services/schemaIntrospection';
+
+// Cache for valid operators fetched from schema
+let cachedValidOperators: string[] | null = null;
+
+/**
+ * Fetches valid filter operators from Cube.js schema
+ */
+async function getValidOperators(): Promise<string[]> {
+  if (cachedValidOperators) {
+    return cachedValidOperators;
+  }
+
+  try {
+    const schema = await fetchCubeGraphQLSchema();
+    cachedValidOperators = getFilterOperatorsFromSchema(schema);
+    return cachedValidOperators;
+  } catch (error) {
+    console.error('Failed to fetch schema for validation, using fallback operators:', error);
+    // Fallback to known operators if schema fetch fails
+    return ['equals', 'notEquals', 'in', 'notIn', 'contains', 'notContains',
+            'set', 'notSet', 'gt', 'gte', 'lt', 'lte',
+            'inDateRange', 'notInDateRange', 'beforeDate', 'afterDate'];
+  }
+}
 
 // Validate GraphQL syntax
 const validateGraphQLSyntax = (queryString: string): { valid: boolean; errors: ValidationError[] } => {
@@ -33,8 +58,8 @@ const validateGraphQLSyntax = (queryString: string): { valid: boolean; errors: V
   return { valid: errors.length === 0, errors };
 };
 
-// Validate Cube-specific rules
-const validateCubeRules = (queryString: string): { valid: boolean; errors: ValidationError[]; warnings: ValidationWarning[] } => {
+// Validate Cube-specific rules (async version with schema validation)
+const validateCubeRules = async (queryString: string): Promise<{ valid: boolean; errors: ValidationError[]; warnings: ValidationWarning[] }> => {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
@@ -47,7 +72,8 @@ const validateCubeRules = (queryString: string): { valid: boolean; errors: Valid
   }
 
   // Check for cube names (should be after 'cube {')
-  const cubeMatch = queryString.match(/cube\s*(?:\([^)]*\))?\s*{([^}]+)}/s);
+  const cubeMatchRegex = /cube\s*(?:\([^)]*\))?\s*{([^}]+)}/;
+  const cubeMatch = queryString.match(cubeMatchRegex);
   if (cubeMatch) {
     const cubeContent = cubeMatch[1];
 
@@ -73,10 +99,10 @@ const validateCubeRules = (queryString: string): { valid: boolean; errors: Valid
     });
   }
 
-  // Check for valid where clause structure
+  // Check for valid where clause structure using schema-based operators
   if (/where\s*:\s*{/.test(queryString)) {
-    const validFilters = ['equals', 'notEquals', 'in', 'notIn', 'contains', 'notContains',
-                         'set', 'inDateRange', 'notInDateRange', 'beforeDate', 'afterDate'];
+    // Fetch valid operators from schema
+    const validFilters = await getValidOperators();
 
     // This is a simplified check - a full implementation would parse the AST
     const hasValidFilter = validFilters.some(filter =>
@@ -86,7 +112,7 @@ const validateCubeRules = (queryString: string): { valid: boolean; errors: Valid
     if (!hasValidFilter && /where\s*:\s*{[^}]+}/.test(queryString)) {
       warnings.push({
         type: 'cube',
-        message: 'where clause may contain invalid filter operators. Valid: equals, notEquals, in, notIn, contains, notContains, set, inDateRange, notInDateRange, beforeDate, afterDate'
+        message: `where clause may contain invalid filter operators. Valid operators from schema: ${validFilters.join(', ')}`
       });
     }
   }
@@ -119,14 +145,14 @@ const validateCubeRules = (queryString: string): { valid: boolean; errors: Valid
   return { valid: errors.length === 0, errors, warnings };
 };
 
-export const validateCubeGraphQLQuery = (query: string): ValidationResult => {
+export const validateCubeGraphQLQuery = async (query: string): Promise<ValidationResult> => {
   // Step 1: Validate GraphQL syntax
   const syntaxResult = validateGraphQLSyntax(query);
 
   // Step 2: Validate Cube-specific rules (only if syntax is valid)
   let cubeResult = { valid: true, errors: [] as ValidationError[], warnings: [] as ValidationWarning[] };
   if (syntaxResult.valid) {
-    cubeResult = validateCubeRules(query);
+    cubeResult = await validateCubeRules(query);
   }
 
   // Combine results

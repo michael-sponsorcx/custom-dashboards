@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput, Button } from '@mantine/core';
-import { IconFilter } from '@tabler/icons-react';
+import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput } from '@mantine/core';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { OrderByControl, SortOrder } from './OrderByControl';
 
@@ -25,9 +24,6 @@ interface ChartSettingsPanelProps {
 
   // Callback to pass sort order to parent (for rendering charts)
   onSortOrderChange?: (sortOrder: SortOrder) => void;
-
-  // Filter modal control
-  onOpenFilterModal?: () => void;
 }
 
 const CHART_TYPE_LABELS: Record<ChartType, string> = {
@@ -59,7 +55,6 @@ export function ChartSettingsPanel({
   primaryColor = '#3b82f6',
   onPrimaryColorChange,
   onSortOrderChange,
-  onOpenFilterModal,
 }: ChartSettingsPanelProps) {
   // Internal state for sort order (defaults to descending)
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -146,20 +141,8 @@ export function ChartSettingsPanel({
           <OrderByControl
             sortOrder={sortOrder}
             onSortOrderChange={handleSortOrderChange}
-            label="Order By Primary Dimension"
+            label="Sort"
           />
-        )}
-
-        {/* Filter Button - for charts with dimensions */}
-        {showOrderByControl && onOpenFilterModal && (
-          <Button
-            onClick={onOpenFilterModal}
-            leftSection={<IconFilter size={16} />}
-            variant="light"
-            fullWidth
-          >
-            Filter Data
-          </Button>
         )}
 
         {/* Placeholder for future chart-specific settings */}
