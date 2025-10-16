@@ -8,6 +8,9 @@ interface MantineLineChartProps {
   queryResult: any;
   primaryColor?: string;
   sortOrder?: SortOrder;
+  // User-selected dimensions and measure
+  primaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 /**
@@ -16,7 +19,9 @@ interface MantineLineChartProps {
 export function MantineLineChart({
   queryResult,
   primaryColor = '#3b82f6',
-  sortOrder = 'desc'
+  sortOrder = 'desc',
+  primaryDimension,
+  selectedMeasure
 }: MantineLineChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -25,6 +30,8 @@ export function MantineLineChart({
     cubeData: queryResult,
     primaryColor,
     getColorFn: getChartColor,
+    primaryDimension,
+    selectedMeasure,
   });
 
   const { data: transformedData, dimensionField, series } = transformationResult;

@@ -36,6 +36,11 @@ export function CreateGraph() {
   const [primaryColor, setPrimaryColor] = useState('#3b82f6');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
+  // Data field selection state (for charts with multiple dimensions/measures)
+  const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(undefined);
+  const [secondaryDimension, setSecondaryDimension] = useState<string | undefined>(undefined);
+  const [selectedMeasureField, setSelectedMeasureField] = useState<string | undefined>(undefined);
+
   // Filter state
   const [filterModalOpened, setFilterModalOpened] = useState(false);
   const [filters, setFilters] = useState<FilterRule[]>([]);
@@ -298,6 +303,28 @@ export function CreateGraph() {
     return analyzeChartCompatibility(queryResult);
   }, [queryResult]);
 
+  // Auto-set default primary/secondary dimensions and measure when query result changes
+  useEffect(() => {
+    if (!queryResult || !chartCompatibility.dataStructure) return;
+
+    const { dimensions, measures } = chartCompatibility.dataStructure;
+
+    // Set primary dimension (first dimension by default)
+    if (dimensions.length > 0 && !primaryDimension) {
+      setPrimaryDimension(dimensions[0]);
+    }
+
+    // Set secondary dimension (second dimension if available)
+    if (dimensions.length > 1 && !secondaryDimension) {
+      setSecondaryDimension(dimensions[1]);
+    }
+
+    // Set selected measure (first measure by default)
+    if (measures.length > 0 && !selectedMeasureField) {
+      setSelectedMeasureField(measures[0]);
+    }
+  }, [queryResult, chartCompatibility, primaryDimension, secondaryDimension, selectedMeasureField]);
+
   return (
     <Container size="100%" p="md" style={{ maxWidth: '100%' }}>
       <Stack gap="md">
@@ -368,6 +395,9 @@ export function CreateGraph() {
               numberPrecision={numberPrecision}
               primaryColor={primaryColor}
               sortOrder={sortOrder}
+              primaryDimension={primaryDimension}
+              secondaryDimension={secondaryDimension}
+              selectedMeasure={selectedMeasureField}
             />
           </Grid.Col>
 
@@ -386,6 +416,14 @@ export function CreateGraph() {
               primaryColor={primaryColor}
               onPrimaryColorChange={setPrimaryColor}
               onSortOrderChange={setSortOrder}
+              dimensions={chartCompatibility.dataStructure.dimensions}
+              measures={chartCompatibility.dataStructure.measures}
+              primaryDimension={primaryDimension}
+              secondaryDimension={secondaryDimension}
+              selectedMeasure={selectedMeasureField}
+              onPrimaryDimensionChange={setPrimaryDimension}
+              onSecondaryDimensionChange={(dim) => setSecondaryDimension(dim || undefined)}
+              onMeasureChange={setSelectedMeasureField}
             />
           </Grid.Col>
         </Grid>

@@ -13,6 +13,10 @@ interface ChartRendererProps {
   numberPrecision: number;
   primaryColor: string;
   sortOrder?: SortOrder;
+  // User-selected dimensions and measure
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 /**
@@ -25,6 +29,9 @@ export function ChartRenderer({
   numberPrecision,
   primaryColor,
   sortOrder = 'desc',
+  primaryDimension,
+  secondaryDimension,
+  selectedMeasure,
 }: ChartRendererProps) {
   switch (selectedChartType) {
     case 'number':
@@ -43,6 +50,8 @@ export function ChartRenderer({
           queryResult={queryResult}
           primaryColor={primaryColor}
           sortOrder={sortOrder}
+          primaryDimension={primaryDimension}
+          selectedMeasure={selectedMeasure}
         />
       );
 
@@ -54,6 +63,9 @@ export function ChartRenderer({
           orientation="vertical"
           type="default"
           sortOrder={sortOrder}
+          primaryDimension={primaryDimension}
+          secondaryDimension={secondaryDimension}
+          selectedMeasure={selectedMeasure}
         />
       );
 
@@ -65,6 +77,9 @@ export function ChartRenderer({
           orientation="vertical"
           type="stacked"
           sortOrder={sortOrder}
+          primaryDimension={primaryDimension}
+          secondaryDimension={secondaryDimension}
+          selectedMeasure={selectedMeasure}
         />
       );
 
@@ -76,6 +91,9 @@ export function ChartRenderer({
           orientation="horizontal"
           type="default"
           sortOrder={sortOrder}
+          primaryDimension={primaryDimension}
+          secondaryDimension={secondaryDimension}
+          selectedMeasure={selectedMeasure}
         />
       );
 
@@ -87,6 +105,9 @@ export function ChartRenderer({
           orientation="horizontal"
           type="stacked"
           sortOrder={sortOrder}
+          primaryDimension={primaryDimension}
+          secondaryDimension={secondaryDimension}
+          selectedMeasure={selectedMeasure}
         />
       );
 

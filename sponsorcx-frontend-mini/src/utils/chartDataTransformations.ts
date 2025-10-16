@@ -25,6 +25,10 @@ interface TransformChartDataOptions {
   cubeData: any; // Raw Cube GraphQL response
   primaryColor?: string;
   getColorFn?: (index: number) => string;
+  // User-selected fields (optional - will auto-detect if not provided)
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 // Internal interface for chart-specific transformations that work with flat data
@@ -32,6 +36,10 @@ interface ChartSpecificTransformOptions {
   chartData: any[];
   primaryColor?: string;
   getColorFn?: (index: number) => string;
+  // User-selected fields (optional - will auto-detect if not provided)
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 /**
@@ -70,20 +78,30 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
     return { data: [] };
   }
 
+  // Prepare common options for all transformations
+  const transformOptions: ChartSpecificTransformOptions = {
+    chartData,
+    primaryColor: options.primaryColor,
+    getColorFn: options.getColorFn,
+    primaryDimension: options.primaryDimension,
+    secondaryDimension: options.secondaryDimension,
+    selectedMeasure: options.selectedMeasure,
+  };
+
   // Route to appropriate transformation based on chart type
   switch (chartType) {
     case 'bar':
-      return barChartTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return barChartTransformation(transformOptions);
     case 'bar_stacked':
-      return barStackedTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return barStackedTransformation(transformOptions);
     case 'line':
-      return lineChartTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return lineChartTransformation(transformOptions);
     case 'area':
-      return areaChartTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return areaChartTransformation(transformOptions);
     case 'pie':
-      return pieChartTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return pieChartTransformation(transformOptions);
     case 'number':
-      return numberChartTransformation({ chartData, primaryColor: options.primaryColor, getColorFn: options.getColorFn });
+      return numberChartTransformation(transformOptions);
     default:
       console.warn(`Unknown chart type: ${chartType}. Returning raw data.`);
       return { data: chartData };
@@ -102,7 +120,7 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
  * Output: Filtered data with top dimension values and series configuration
  */
 function barChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
-  const { chartData, primaryColor = '#3b82f6', getColorFn } = options;
+  const { chartData, primaryColor = '#3b82f6', getColorFn, primaryDimension, selectedMeasure } = options;
 
   // Extract field names from first data point
   const firstPoint = chartData[0];
@@ -126,13 +144,20 @@ function barChartTransformation(options: ChartSpecificTransformOptions): Transfo
     return { data: [] };
   }
 
-  const dimensionField = dimensionFields[0]; // Use first dimension as x-axis
-  const measure = measureFields[0]; // Should only be 1 measure
+  // Use user-selected dimension/measure if provided, otherwise auto-detect
+  const dimensionField = primaryDimension && dimensionFields.includes(primaryDimension)
+    ? primaryDimension
+    : dimensionFields[0];
+
+  const measure = selectedMeasure && measureFields.includes(selectedMeasure)
+    ? selectedMeasure
+    : measureFields[0];
 
   // Calculate total measure value for each dimension value
+  // This aggregates across all other dimensions if multiple dimensions exist
   const dimensionValueTotals: { [key: string]: number } = {};
   chartData.forEach(row => {
-    const dimensionValue = row[dimensionField];
+    const dimensionValue = String(row[dimensionField]); // Convert to string for consistent key handling
     const measureValue = row[measure];
     dimensionValueTotals[dimensionValue] = (dimensionValueTotals[dimensionValue] || 0) + measureValue;
   });
@@ -140,7 +165,14 @@ function barChartTransformation(options: ChartSpecificTransformOptions): Transfo
   // Get unique dimension values count
   const uniqueDimensionValues = Object.keys(dimensionValueTotals);
 
-  let finalChartData = chartData;
+  // Create aggregated chart data - one row per unique dimension value
+  // This ensures we don't have duplicate bars when multiple dimensions exist
+  let aggregatedData = uniqueDimensionValues.map(dimensionValue => ({
+    [dimensionField]: dimensionValue,
+    [measure]: dimensionValueTotals[dimensionValue]
+  }));
+
+  let finalChartData = aggregatedData;
 
   // Limit to top N dimension values if there are too many
   if (uniqueDimensionValues.length > MAX_BAR_DIMENSION_VALUES) {
@@ -152,8 +184,8 @@ function barChartTransformation(options: ChartSpecificTransformOptions): Transfo
 
     const topDimensionValuesSet = new Set(topDimensionValues);
 
-    // Filter chartData to only include top dimension values
-    finalChartData = chartData.filter(row => topDimensionValuesSet.has(row[dimensionField]));
+    // Filter aggregated data to only include top dimension values
+    finalChartData = aggregatedData.filter(row => topDimensionValuesSet.has(String(row[dimensionField])));
 
     console.log('Bar chart - Filtered to top dimension values:', topDimensionValues);
   }
@@ -184,7 +216,7 @@ function barChartTransformation(options: ChartSpecificTransformOptions): Transfo
  * Output: Pivoted data structure with dimension as x-axis and series for stacking
  */
 function barStackedTransformation(options: ChartSpecificTransformOptions): TransformationResult {
-  const { chartData, primaryColor = '#3b82f6', getColorFn } = options;
+  const { chartData, primaryColor = '#3b82f6', getColorFn, primaryDimension: userPrimaryDimension, secondaryDimension: userSecondaryDimension, selectedMeasure } = options;
 
   // Extract field names from first data point
   const firstPoint = chartData[0];
@@ -209,9 +241,19 @@ function barStackedTransformation(options: ChartSpecificTransformOptions): Trans
     return { data: [] };
   }
 
-  const primaryDimension = dimensionFields[1]; // x-axis
-  const secondaryDimension = dimensionFields[0]; // becomes series (stacked segments)
-  const measure = measureFields[0];
+  // Use user-selected dimensions/measure if provided, otherwise auto-detect
+  // Primary dimension is the x-axis, secondary becomes the series (stacked segments)
+  const primaryDimension = userPrimaryDimension && dimensionFields.includes(userPrimaryDimension)
+    ? userPrimaryDimension
+    : dimensionFields[0]; // Default to first dimension for x-axis
+
+  const secondaryDimension = userSecondaryDimension && dimensionFields.includes(userSecondaryDimension)
+    ? userSecondaryDimension
+    : dimensionFields[1]; // Default to second dimension for series
+
+  const measure = selectedMeasure && measureFields.includes(selectedMeasure)
+    ? selectedMeasure
+    : measureFields[0];
 
   // Calculate total measure value for BOTH dimensions independently
   const primaryDimensionTotals: { [key: string]: number } = {};
@@ -290,7 +332,7 @@ function barStackedTransformation(options: ChartSpecificTransformOptions): Trans
  * Output: Ordered data with series configuration for lines (max 30 data points)
  */
 function lineChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
-  const { chartData, primaryColor = '#3b82f6', getColorFn } = options;
+  const { chartData, primaryColor = '#3b82f6', getColorFn, primaryDimension, selectedMeasure } = options;
 
   // Extract field names from first data point
   const firstPoint = chartData[0];
@@ -314,13 +356,20 @@ function lineChartTransformation(options: ChartSpecificTransformOptions): Transf
     return { data: [] };
   }
 
-  const dimensionField = dimensionFields[0];
-  const measure = measureFields[0];
+  // Use user-selected dimension/measure if provided, otherwise auto-detect
+  const dimensionField = primaryDimension && dimensionFields.includes(primaryDimension)
+    ? primaryDimension
+    : dimensionFields[0];
+
+  const measure = selectedMeasure && measureFields.includes(selectedMeasure)
+    ? selectedMeasure
+    : measureFields[0];
 
   // Calculate total measure value for each dimension value
+  // This aggregates across all other dimensions if multiple dimensions exist
   const dimensionValueTotals: { [key: string]: number } = {};
   chartData.forEach(row => {
-    const dimensionValue = row[dimensionField];
+    const dimensionValue = String(row[dimensionField]); // Convert to string for consistent key handling
     const measureValue = row[measure];
     dimensionValueTotals[dimensionValue] = (dimensionValueTotals[dimensionValue] || 0) + measureValue;
   });
@@ -328,7 +377,14 @@ function lineChartTransformation(options: ChartSpecificTransformOptions): Transf
   // Get unique dimension values count
   const uniqueDimensionValues = Object.keys(dimensionValueTotals);
 
-  let finalChartData = chartData;
+  // Create aggregated chart data - one row per unique dimension value
+  // This ensures we don't have duplicate points when multiple dimensions exist
+  let aggregatedData = uniqueDimensionValues.map(dimensionValue => ({
+    [dimensionField]: dimensionValue,
+    [measure]: dimensionValueTotals[dimensionValue]
+  }));
+
+  let finalChartData = aggregatedData;
 
   // Limit to top 30 dimension values if there are too many
   if (uniqueDimensionValues.length > MAX_LINE_CHART_DIMENSION_VALUES) {
@@ -340,8 +396,8 @@ function lineChartTransformation(options: ChartSpecificTransformOptions): Transf
 
     const topDimensionValuesSet = new Set(topDimensionValues);
 
-    // Filter chartData to only include top dimension values
-    finalChartData = chartData.filter(row => topDimensionValuesSet.has(row[dimensionField]));
+    // Filter aggregated data to only include top dimension values
+    finalChartData = aggregatedData.filter(row => topDimensionValuesSet.has(String(row[dimensionField])));
 
     console.log('Line chart - Filtered to top 30 dimension values:', topDimensionValues);
   }

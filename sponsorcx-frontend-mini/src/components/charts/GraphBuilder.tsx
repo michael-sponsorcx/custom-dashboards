@@ -16,6 +16,11 @@ interface GraphBuilderProps {
 
   // Sort order for charts with dimensions
   sortOrder?: SortOrder;
+
+  // User-selected dimensions and measure
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 /**
@@ -30,6 +35,9 @@ export function GraphBuilder({
   numberPrecision = 2,
   primaryColor = '#3b82f6',
   sortOrder = 'desc',
+  primaryDimension,
+  secondaryDimension,
+  selectedMeasure,
 }: GraphBuilderProps) {
   // No data state
   if (!queryResult) {
@@ -81,6 +89,9 @@ export function GraphBuilder({
             numberPrecision={numberPrecision}
             primaryColor={primaryColor}
             sortOrder={sortOrder}
+            primaryDimension={primaryDimension}
+            secondaryDimension={secondaryDimension}
+            selectedMeasure={selectedMeasure}
           />
         </div>
       </Stack>

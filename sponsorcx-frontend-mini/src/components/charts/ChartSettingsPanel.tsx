@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput } from '@mantine/core';
+import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput, Divider } from '@mantine/core';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { OrderByControl, SortOrder } from './OrderByControl';
+import { DataFieldSelector } from './DataFieldSelector';
 
 interface ChartSettingsPanelProps {
   selectedChartType: ChartType | null;
@@ -24,6 +25,16 @@ interface ChartSettingsPanelProps {
 
   // Callback to pass sort order to parent (for rendering charts)
   onSortOrderChange?: (sortOrder: SortOrder) => void;
+
+  // Data field configuration (dimensions and measures from query)
+  dimensions?: string[];
+  measures?: string[];
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
+  onPrimaryDimensionChange?: (dimension: string) => void;
+  onSecondaryDimensionChange?: (dimension: string | null) => void;
+  onMeasureChange?: (measure: string) => void;
 }
 
 const CHART_TYPE_LABELS: Record<ChartType, string> = {
@@ -55,6 +66,14 @@ export function ChartSettingsPanel({
   primaryColor = '#3b82f6',
   onPrimaryColorChange,
   onSortOrderChange,
+  dimensions = [],
+  measures = [],
+  primaryDimension,
+  secondaryDimension,
+  selectedMeasure,
+  onPrimaryDimensionChange,
+  onSecondaryDimensionChange,
+  onMeasureChange,
 }: ChartSettingsPanelProps) {
   // Internal state for sort order (defaults to descending)
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -82,6 +101,10 @@ export function ChartSettingsPanel({
   const chartsWithDimensions: ChartType[] = ['bar', 'stackedBar', 'horizontalBar', 'horizontalStackedBar', 'line'];
   const showOrderByControl = selectedChartType ? chartsWithDimensions.includes(selectedChartType) : false;
 
+  // Only show secondary dimension for stacked chart types
+  const stackedChartTypes: ChartType[] = ['stackedBar', 'horizontalStackedBar'];
+  const supportsSecondaryDimension = selectedChartType ? stackedChartTypes.includes(selectedChartType) : false;
+
   return (
     <Paper shadow="sm" p="md" radius="md" withBorder style={{ height: '100%' }}>
       <Stack gap="md">
@@ -104,6 +127,24 @@ export function ChartSettingsPanel({
           value={chartTitle}
           onChange={(event) => onChartTitleChange(event.currentTarget.value)}
         />
+
+        {/* Data Field Configuration */}
+        {(dimensions.length > 0 || measures.length > 0) && (
+          <>
+            <Divider />
+            <DataFieldSelector
+              dimensions={dimensions}
+              measures={measures}
+              primaryDimension={primaryDimension}
+              secondaryDimension={secondaryDimension}
+              selectedMeasure={selectedMeasure}
+              supportsSecondaryDimension={supportsSecondaryDimension}
+              onPrimaryDimensionChange={onPrimaryDimensionChange}
+              onSecondaryDimensionChange={onSecondaryDimensionChange}
+              onMeasureChange={onMeasureChange}
+            />
+          </>
+        )}
 
         {/* Number Tile Specific Settings */}
         {showNumberSettings && (

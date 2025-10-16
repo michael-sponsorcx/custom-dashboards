@@ -11,6 +11,10 @@ interface MantineBarChartProps {
   orientation?: 'vertical' | 'horizontal';
   type?: BarChartType;
   sortOrder?: SortOrder;
+  // User-selected dimensions and measure
+  primaryDimension?: string;
+  secondaryDimension?: string;
+  selectedMeasure?: string;
 }
 
 /**
@@ -22,7 +26,10 @@ export function MantineBarChart({
   primaryColor = '#3b82f6',
   orientation = 'vertical',
   type = 'default',
-  sortOrder = 'desc'
+  sortOrder = 'desc',
+  primaryDimension,
+  secondaryDimension,
+  selectedMeasure
 }: MantineBarChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -32,6 +39,9 @@ export function MantineBarChart({
     cubeData: queryResult,
     primaryColor,
     getColorFn: getChartColor,
+    primaryDimension,
+    secondaryDimension,
+    selectedMeasure,
   });
 
   const { data: transformedData, dimensionField, series } = transformationResult;
