@@ -1,7 +1,7 @@
 import { Modal, Button, Stack, Title } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { FilterRule, FieldType, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../../types/filters';
-import { fetchDistinctDimensionValues } from '../../../services/cubeApi';
+import { FilterRule, FieldType, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../../../types/filters';
+import { fetchDistinctDimensionValues } from '../../../../services/cubeApi';
 import { DimensionFilterContent } from './DimensionFilterContent';
 import { MeasureFilterContent } from './MeasureFilterContent';
 import { DateFilterContent } from './DateFilterContent';

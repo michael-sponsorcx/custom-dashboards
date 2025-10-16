@@ -1,7 +1,7 @@
 import { TextInput, Paper, Stack, Text, ActionIcon } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { useRef, useEffect } from 'react';
-import { CubeView } from '../types/cube';
+import { CubeView } from '../../types/cube';
 
 interface ModelSelectionSearchBarProps {
   searchQuery: string;

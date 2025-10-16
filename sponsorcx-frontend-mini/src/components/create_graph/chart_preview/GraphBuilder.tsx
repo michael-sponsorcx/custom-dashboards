@@ -1,6 +1,6 @@
 import { Paper, Stack, Title, Text, Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { ChartType } from '../../utils/chartDataAnalyzer';
+import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { ChartRenderer } from './ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
 

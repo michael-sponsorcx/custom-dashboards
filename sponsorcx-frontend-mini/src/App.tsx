@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
-import { CreateGraph } from './components/CreateGraph';
+import { CreateGraph } from './components/create_graph/CreateGraph';
 
 function App() {
   return (

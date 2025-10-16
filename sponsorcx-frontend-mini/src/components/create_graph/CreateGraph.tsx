@@ -1,19 +1,19 @@
 import { Container, Paper, Title, Button, Stack, Code, Grid } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { fetchCubeMetadata, executeCubeGraphQL } from '../services/cubeApi';
-import { CubeView, CubeMeasure, CubeDimension } from '../types/cube';
-import { buildSimpleCubeQuery } from '../utils/graphqlQueryBuilder';
-import { validateCubeGraphQLQuery } from '../utils/cubeGraphQLValidator';
+import { fetchCubeMetadata, executeCubeGraphQL } from '../../services/cubeApi';
+import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
+import { buildSimpleCubeQuery } from '../../utils/graphqlQueryBuilder';
+import { validateCubeGraphQLQuery } from '../../utils/cubeGraphQLValidator';
 import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
 import { QueryValidationResults } from './QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
 import { GraphBuilder } from './chart_preview/GraphBuilder';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
-import { analyzeChartCompatibility, ChartType } from '../utils/chartDataAnalyzer';
+import { analyzeChartCompatibility, ChartType } from '../../utils/chartDataAnalyzer';
 import { SortOrder } from './settings/OrderByControl';
 import { FilterModal } from './field_selection/filters/FilterModal';
-import { FilterRule, FieldType } from '../types/filters';
+import { FilterRule, FieldType } from '../../types/filters';
 
 export function CreateGraph() {
   const navigate = useNavigate();
