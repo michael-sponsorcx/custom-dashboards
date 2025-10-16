@@ -1,10 +1,10 @@
 import { Text, Alert } from '@mantine/core';
 import { ChartType } from '../../utils/chartDataAnalyzer';
-import { NumberTile } from './NumberTile';
-import { MantineLineChart } from './MantineLineChart';
-import { MantineBarChart } from './MantineBarChart';
+import { NumberTile } from './charts/NumberTile';
+import { MantineLineChart } from './charts/MantineLineChart';
+import { MantineBarChart } from './charts/MantineBarChart';
 import { extractSingleValue } from '../../utils/chartDataAnalyzer';
-import { SortOrder } from './OrderByControl';
+import { SortOrder } from '../settings/OrderByControl';
 
 interface ChartRendererProps {
   queryResult: any;

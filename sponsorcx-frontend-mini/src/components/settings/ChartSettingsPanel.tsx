@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Paper, Stack, Title, Select, TextInput, NumberInput, ColorInput, Divider } from '@mantine/core';
 import { ChartType } from '../../utils/chartDataAnalyzer';
-import { OrderByControl, SortOrder } from './OrderByControl';
+import { OrderByControl, SortOrder } from '../settings/OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
 
 interface ChartSettingsPanelProps {

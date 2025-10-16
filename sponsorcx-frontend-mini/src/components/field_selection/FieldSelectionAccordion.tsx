@@ -1,7 +1,7 @@
 import { Accordion, Stack, Group, Checkbox, Text, Title, ActionIcon } from '@mantine/core';
 import { IconFilter } from '@tabler/icons-react';
-import { CubeMeasure, CubeDimension } from '../types/cube';
-import { FieldType } from '../types/filters';
+import { CubeMeasure, CubeDimension } from '../../types/cube';
+import { FieldType } from '../../types/filters';
 
 interface FieldSelectionAccordionProps {
   measures: CubeMeasure[];

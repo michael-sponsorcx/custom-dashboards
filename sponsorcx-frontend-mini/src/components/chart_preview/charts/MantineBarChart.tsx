@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
-import { transformChartData } from '../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
-import { getChartColor } from '../../constants/chartColors';
-import { useSortedChartData, SortOrder } from './OrderByControl';
+import { getChartColor } from '../../../constants/chartColors';
+import { useSortedChartData, SortOrder } from '../../settings/OrderByControl';
 
 interface MantineBarChartProps {
   queryResult: any;
