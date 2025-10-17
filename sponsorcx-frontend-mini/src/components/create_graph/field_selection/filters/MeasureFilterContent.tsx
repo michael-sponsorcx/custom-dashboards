@@ -1,5 +1,5 @@
 import { Stack, Select, NumberInput } from '@mantine/core';
-import { ComparisonOperator } from '../../../types/filters';
+import { ComparisonOperator } from '../../../../types/filters';
 
 interface MeasureFilterContentProps {
   measureOperator: ComparisonOperator;

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Dashboard } from './components/Dashboard';
+import { Dashboard } from './components/dashboard/Dashboard';
 import { CreateGraph } from './components/create_graph/CreateGraph';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/create-graph" element={<CreateGraph />} />
+        <Route path="/configure-graph" element={<CreateGraph />} />
       </Routes>
     </BrowserRouter>
   );

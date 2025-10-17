@@ -1,5 +1,5 @@
 import { Stack, Select, TextInput } from '@mantine/core';
-import { ComparisonOperator } from '../../../types/filters';
+import { ComparisonOperator } from '../../../../types/filters';
 
 interface DateFilterContentProps {
   dateOperator: ComparisonOperator;

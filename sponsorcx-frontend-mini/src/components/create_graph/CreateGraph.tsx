@@ -1,11 +1,11 @@
-import { Container, Paper, Title, Button, Stack, Code, Grid } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { Container, Paper, Title, Button, Stack, Code, Grid, Group, TextInput, Modal } from '@mantine/core';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { fetchCubeMetadata, executeCubeGraphQL } from '../../services/cubeApi';
-import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
+import { executeCubeGraphQL } from '../../services/cubeApi';
+import { CubeMeasure, CubeDimension } from '../../types/cube';
 import { buildSimpleCubeQuery } from '../../utils/graphqlQueryBuilder';
 import { validateCubeGraphQLQuery } from '../../utils/cubeGraphQLValidator';
-import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
+import { ModelSelector } from './search/ModelSelector';
 import { QueryValidationResults } from './QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
 import { GraphBuilder } from './chart_preview/GraphBuilder';
@@ -14,36 +14,45 @@ import { analyzeChartCompatibility, ChartType } from '../../utils/chartDataAnaly
 import { SortOrder } from './settings/OrderByControl';
 import { FilterModal } from './field_selection/filters/FilterModal';
 import { FilterRule, FieldType } from '../../types/filters';
+import { saveGraphTemplate, addGraphToDashboard, generateGraphId } from '../../utils/graphTemplateStorage';
+import { GraphTemplate } from '../../types/graphTemplate';
+import { notifications } from '@mantine/notifications';
 
 export function CreateGraph() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [metadata, setMetadata] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedView, setSelectedView] = useState<string | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedMeasures, setSelectedMeasures] = useState<Set<string>>(new Set());
-  const [selectedDimensions, setSelectedDimensions] = useState<Set<string>>(new Set());
-  const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
+  const location = useLocation();
+
+  // Get template from location state (for editing)
+  const editingTemplate = location.state?.template as GraphTemplate | undefined;
+  const isEditing = !!editingTemplate;
+
+  const [selectedView, setSelectedView] = useState<string | null>(editingTemplate?.viewName || null);
+  const [viewFields, setViewFields] = useState<{
+    measures: CubeMeasure[];
+    dimensions: CubeDimension[];
+    dates: CubeDimension[];
+  }>({ measures: [], dimensions: [], dates: [] });
+  const [selectedMeasures, setSelectedMeasures] = useState<Set<string>>(new Set(editingTemplate?.measures || []));
+  const [selectedDimensions, setSelectedDimensions] = useState<Set<string>>(new Set(editingTemplate?.dimensions || []));
+  const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set(editingTemplate?.dates || []));
 
   // Chart visualization state
   const [queryResult, setQueryResult] = useState<any>(null);
-  const [selectedChartType, setSelectedChartType] = useState<ChartType | null>(null);
-  const [chartTitle, setChartTitle] = useState('');
-  const [numberFormat, setNumberFormat] = useState<'currency' | 'percentage' | 'number' | 'abbreviated'>('number');
-  const [numberPrecision, setNumberPrecision] = useState(2);
-  const [primaryColor, setPrimaryColor] = useState('#3b82f6');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [selectedChartType, setSelectedChartType] = useState<ChartType | null>(editingTemplate?.chartType || null);
+  const [chartTitle, setChartTitle] = useState(editingTemplate?.chartTitle || '');
+  const [numberFormat, setNumberFormat] = useState<'currency' | 'percentage' | 'number' | 'abbreviated'>(editingTemplate?.numberFormat || 'number');
+  const [numberPrecision, setNumberPrecision] = useState(editingTemplate?.numberPrecision || 2);
+  const [primaryColor, setPrimaryColor] = useState(editingTemplate?.primaryColor || '#3b82f6');
+  const [sortOrder, setSortOrder] = useState<SortOrder>(editingTemplate?.sortOrder || 'desc');
 
   // Data field selection state (for charts with multiple dimensions/measures)
-  const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(undefined);
-  const [secondaryDimension, setSecondaryDimension] = useState<string | undefined>(undefined);
-  const [selectedMeasureField, setSelectedMeasureField] = useState<string | undefined>(undefined);
+  const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(editingTemplate?.primaryDimension);
+  const [secondaryDimension, setSecondaryDimension] = useState<string | undefined>(editingTemplate?.secondaryDimension);
+  const [selectedMeasureField, setSelectedMeasureField] = useState<string | undefined>(editingTemplate?.selectedMeasure);
 
   // Filter state
   const [filterModalOpened, setFilterModalOpened] = useState(false);
-  const [filters, setFilters] = useState<FilterRule[]>([]);
+  const [filters, setFilters] = useState<FilterRule[]>(editingTemplate?.filters || []);
   const [currentFilterField, setCurrentFilterField] = useState<{
     fieldName: string;
     fieldTitle: string;
@@ -53,94 +62,20 @@ export function CreateGraph() {
   // Cache for dimension values to avoid refetching
   const [dimensionValuesCache, setDimensionValuesCache] = useState<Record<string, string[]>>({});
 
-  useEffect(() => {
-    // Fetch metadata on component mount
-    const loadMetadata = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchCubeMetadata();
-        setMetadata(data);
-        console.log('Cube metadata:', data);
-      } catch (err) {
-        setError('Failed to load metadata');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadMetadata();
-  }, []);
-
-  // Extract views from metadata
-  const views = useMemo(() => {
-    if (!metadata?.cubes) return [];
-
-    return metadata.cubes
-      .filter((cube: any) => cube.type === 'view')
-      .map((cube: any) => ({
-        name: cube.name,
-        title: cube.title || cube.name,
-      }));
-  }, [metadata]);
-
-  // Filter views based on search query (case-insensitive substring match on name only)
-  const filteredViews = useMemo(() => {
-    if (!searchQuery.trim()) return views;
-
-    const query = searchQuery.toLowerCase();
-    return views.filter((view: CubeView) =>
-      view.name.toLowerCase().includes(query)
-    );
-  }, [views, searchQuery]);
-
-  // Limit to top 5 results
-  const displayedViews = filteredViews.slice(0, 5);
-
-  // Extract measures, dimensions, and dates from the selected view
-  const viewFields = useMemo(() => {
-    if (!selectedView || !metadata?.cubes) {
-      return { measures: [], dimensions: [], dates: [] };
-    }
-
-    const view = metadata.cubes.find((cube: any) => cube.name === selectedView);
-    if (!view) {
-      return { measures: [], dimensions: [], dates: [] };
-    }
-
-    const measures = view.measures?.map((m: any) => ({
-      name: m.name,
-      title: m.shortTitle || m.title || m.name,
-      type: m.type,
-    })) || [];
-
-    const allDimensions = view.dimensions?.map((d: any) => ({
-      name: d.name,
-      title: d.shortTitle || d.title || d.name,
-      type: d.type,
-    })) || [];
-
-    // Separate date dimensions from regular dimensions
-    const dates = allDimensions.filter((d: any) => d.type === 'time');
-    const dimensions = allDimensions.filter((d: any) => d.type !== 'time');
-
-    return { measures, dimensions, dates };
-  }, [selectedView, metadata]);
-
-  const handleViewSelect = (viewName: string) => {
+  // Handlers for ViewSearchBar
+  const handleViewSelect = (viewName: string | null) => {
     setSelectedView(viewName);
-    setSearchQuery(viewName);
-    setDropdownOpen(false);
-    // Clear all selections when changing view
-    setSelectedMeasures(new Set());
-    setSelectedDimensions(new Set());
-    setSelectedDates(new Set());
-    console.log('Selected view:', viewName);
   };
 
-  const handleClearSelection = () => {
-    setSelectedView(null);
-    setSearchQuery('');
+  const handleViewFieldsChange = (fields: {
+    measures: CubeMeasure[];
+    dimensions: CubeDimension[];
+    dates: CubeDimension[];
+  }) => {
+    setViewFields(fields);
+  };
+
+  const handleClearSelections = () => {
     setSelectedMeasures(new Set());
     setSelectedDimensions(new Set());
     setSelectedDates(new Set());
@@ -267,6 +202,13 @@ export function CreateGraph() {
     });
   }, [generatedQuery]);
 
+  // Auto-execute query when editing (once view fields and query are ready)
+  useEffect(() => {
+    if (isEditing && generatedQuery && viewFields.measures.length > 0 && !queryResult) {
+      handleExecuteQuery();
+    }
+  }, [isEditing, generatedQuery, viewFields]);
+
   const handleExecuteQuery = async () => {
     if (!generatedQuery) {
       console.log('No query to execute');
@@ -286,8 +228,8 @@ export function CreateGraph() {
       const compatibility = analyzeChartCompatibility(result);
       console.log('Chart Compatibility:', compatibility);
 
-      // Auto-select recommended chart type
-      if (compatibility.compatibleCharts.length > 0) {
+      // Auto-select recommended chart type ONLY if not editing or no chart type is set
+      if (compatibility.compatibleCharts.length > 0 && !selectedChartType) {
         setSelectedChartType(compatibility.recommendation);
       }
     } catch (err) {
@@ -295,6 +237,59 @@ export function CreateGraph() {
       setQueryResult(null);
       setSelectedChartType(null);
     }
+  };
+
+  const handleSaveGraph = () => {
+    if (!selectedView || !queryResult || !selectedChartType || !generatedQuery) {
+      notifications.show({
+        title: 'Cannot Save',
+        message: 'Please select a view, execute a query, and configure a chart before saving.',
+        color: 'red',
+      });
+      return;
+    }
+
+    // Use existing ID when editing, generate new one when creating
+    const graphId = isEditing ? editingTemplate.id : generateGraphId();
+
+    const template: GraphTemplate = {
+      id: graphId,
+      name: chartTitle || 'Untitled Graph',
+      createdAt: isEditing ? editingTemplate.createdAt : new Date().toISOString(),
+      viewName: selectedView,
+      measures: Array.from(selectedMeasures),
+      dimensions: Array.from(selectedDimensions),
+      dates: Array.from(selectedDates),
+      filters: filters,
+      query: generatedQuery,
+      chartType: selectedChartType,
+      chartTitle: chartTitle,
+      numberFormat,
+      numberPrecision,
+      primaryColor,
+      sortOrder,
+      primaryDimension,
+      secondaryDimension,
+      selectedMeasure: selectedMeasureField,
+    };
+
+    saveGraphTemplate(template);
+
+    // Only add to dashboard if creating new graph (not editing)
+    if (!isEditing) {
+      addGraphToDashboard(graphId);
+    }
+
+    notifications.show({
+      title: isEditing ? 'Graph Updated!' : 'Graph Saved!',
+      message: isEditing
+        ? `"${template.name}" has been updated.`
+        : `"${template.name}" has been added to your dashboard.`,
+      color: 'green',
+    });
+
+    // Navigate to dashboard
+    setTimeout(() => navigate('/'), 500);
   };
 
   // Analyze chart compatibility when query result changes
@@ -330,21 +325,13 @@ export function CreateGraph() {
       <Stack gap="md">
         <Title order={2}>Create Graph</Title>
 
-        {/* Model Selection Search Bar */}
-        <ModelSelectionSearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedView={selectedView}
+        {/* Model Selector */}
+        <ModelSelector
+          initialViewName={editingTemplate?.viewName}
           onViewSelect={handleViewSelect}
-          onClearSelection={handleClearSelection}
-          displayedViews={displayedViews}
-          loading={loading}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
+          onViewFieldsChange={handleViewFieldsChange}
+          onClearSelections={handleClearSelections}
         />
-
-        {loading && <div>Loading metadata...</div>}
-        {error && <div style={{ color: 'red' }}>{error}</div>}
 
         {/* Three Column Layout: Left (Fields) | Center (Graph) | Right (Settings) */}
         <Grid gutter="md">
@@ -442,9 +429,19 @@ export function CreateGraph() {
           onUpdateCache={handleUpdateDimensionCache}
         />
 
-        <Button onClick={() => navigate('/')} variant="outline">
-          Back to Dashboard
-        </Button>
+        <Group justify="space-between">
+          <Button onClick={() => navigate('/')} variant="outline">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveGraph}
+            disabled={!queryResult || !selectedChartType}
+            color="green"
+            size="lg"
+          >
+            Save to Dashboard
+          </Button>
+        </Group>
       </Stack>
     </Container>
   );
