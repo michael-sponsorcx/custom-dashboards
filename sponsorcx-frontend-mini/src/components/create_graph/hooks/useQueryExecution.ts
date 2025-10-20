@@ -11,8 +11,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { executeCubeGraphQL } from '../../../services/cube';
-import { buildSimpleCubeQuery } from '../../../utils/graphqlQueryBuilder';
-import { validateCubeGraphQLQuery } from '../../../utils/cubeGraphQLValidator';
+import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
 import { analyzeChartCompatibility, ChartType } from '../../../utils/chartDataAnalyzer';
 import { ViewFields } from '../types';
 import { FilterRule } from '../../../types/filters';
@@ -81,13 +80,13 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
       return '';
     }
 
-    return buildSimpleCubeQuery(
-      selectedView,
-      selectedMeasuresList,
-      selectedDimensionsList,
-      selectedDatesList,
-      filters
-    );
+    return buildSimpleCubeQuery({
+      cubeName: selectedView,
+      measures: selectedMeasuresList,
+      dimensions: selectedDimensionsList,
+      timeDimensions: selectedDatesList,
+      filters,
+    });
   }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields, filters]);
 
   // Validate query automatically

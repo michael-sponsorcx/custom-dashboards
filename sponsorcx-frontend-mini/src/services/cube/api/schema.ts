@@ -115,14 +115,12 @@ const INTROSPECTION_QUERY = `
 export async function fetchCubeGraphQLSchema(): Promise<any> {
   const cacheKey = 'cube:schema';
   const ttl = 30 * 60 * 1000; // 30 minutes
-
   try {
     return await getCached(
       cacheKey,
       async () => {
         console.log('Fetching GraphQL schema via introspection...');
         const result = await executeCubeGraphQL(INTROSPECTION_QUERY);
-
         if (result?.data?.__schema) {
           console.log('GraphQL schema fetched successfully');
           return result.data.__schema;
