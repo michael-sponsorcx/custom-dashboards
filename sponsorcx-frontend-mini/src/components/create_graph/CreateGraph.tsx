@@ -1,7 +1,7 @@
 import { Container, Paper, Title, Button, Stack, Code, Grid, Group, TextInput, Modal } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { executeCubeGraphQL } from '../../services/cubeApi';
+import { executeCubeGraphQL } from '../../services/cube';
 import { CubeMeasure, CubeDimension } from '../../types/cube';
 import { buildSimpleCubeQuery } from '../../utils/graphqlQueryBuilder';
 import { validateCubeGraphQLQuery } from '../../utils/cubeGraphQLValidator';

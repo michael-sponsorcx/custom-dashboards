@@ -1,5 +1,5 @@
 import { ValidationError, ValidationWarning, ValidationResult } from '../types/cube';
-import { fetchCubeGraphQLSchema, getFilterOperatorsFromSchema } from '../services/schemaIntrospection';
+import { fetchCubeGraphQLSchema, getFilterOperatorsFromSchema } from '../services/cube';
 
 // Cache for valid operators fetched from schema
 let cachedValidOperators: string[] | null = null;

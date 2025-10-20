@@ -3,7 +3,7 @@ import { IconTrash, IconEdit, IconDownload } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { GraphTemplate } from '../../types/graphTemplate';
 import { ChartRenderer } from '../create_graph/chart_preview/ChartRenderer';
-import { executeCubeGraphQL } from '../../services/cubeApi';
+import { executeCubeGraphQL } from '../../services/cube';
 import { useDownloadCSV } from '../../hooks/useDownloadCSV';
 
 interface GraphCardProps {
