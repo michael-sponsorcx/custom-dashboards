@@ -64,7 +64,6 @@ export function ChartRenderer({
   kpiTrendPercentage,
 }: ChartRendererProps) {
   switch (selectedChartType) {
-    case 'number':
     case 'kpi':
       return (
         <KPI

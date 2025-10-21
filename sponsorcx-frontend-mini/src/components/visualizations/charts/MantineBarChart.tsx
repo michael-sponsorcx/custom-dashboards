@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
@@ -34,8 +34,9 @@ interface MantineBarChartProps {
 /**
  * MantineBarChart component - renders a bar chart using Mantine charts
  * Supports vertical/horizontal orientation and grouped/stacked types
+ * Wrapped with React.memo to prevent unnecessary re-renders
  */
-export function MantineBarChart({
+export const MantineBarChart = memo(function MantineBarChart({
   queryResult,
   primaryColor = '#3b82f6',
   colorPalette = 'hubspot-orange',
@@ -119,4 +120,4 @@ export function MantineBarChart({
       />
     </SeriesLimitWrapper>
   );
-}
+});

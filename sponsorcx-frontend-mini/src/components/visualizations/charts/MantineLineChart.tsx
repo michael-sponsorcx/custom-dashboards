@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { LineChart } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
@@ -30,8 +30,9 @@ interface MantineLineChartProps {
 
 /**
  * MantineLineChart component - renders a line chart using Mantine charts
+ * Wrapped with React.memo to prevent unnecessary re-renders
  */
-export function MantineLineChart({
+export const MantineLineChart = memo(function MantineLineChart({
   queryResult,
   primaryColor = '#3b82f6',
   colorPalette = 'hubspot-orange',
@@ -108,4 +109,4 @@ export function MantineLineChart({
       />
     </SeriesLimitWrapper>
   );
-}
+});
