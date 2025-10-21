@@ -3,7 +3,6 @@
  */
 
 import { CubeMeasure, CubeDimension } from '../../types/cube';
-import { FilterRule } from '../../types/filters';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { SortOrder } from './settings/OrderByControl';
 

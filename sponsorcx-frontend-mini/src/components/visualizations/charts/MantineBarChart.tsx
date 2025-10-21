@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
-import { transformChartData } from '../../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
-import { getChartColor } from '../../../../constants/chartColors';
-import { useSortedChartData, SortOrder } from '../../settings/OrderByControl';
-import { createChartValueFormatter, NumberFormatType } from '../../../../utils/numberFormatter';
+import { getChartColor } from '../../../constants/chartColors';
+import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
+import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 
 interface MantineBarChartProps {
   queryResult: any;
@@ -70,22 +70,23 @@ export function MantineBarChart({
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
-      <div style={{ width: '100%', height: 500, overflow: 'visible' }}>
-        <BarChart
-          h={500}
-          data={finalChartData}
-          dataKey={dimensionField}
-          valueFormatter={valueFormatter}
-          withBarValueLabel={type !== 'stacked'}
-          series={series}
-          type={type}
-          orientation={orientation}
-          withLegend
-          legendProps={{ verticalAlign: 'bottom', height: 100 }}
-          gridAxis={orientation === 'vertical' ? 'y' : 'x'}
-          tickLine={orientation === 'vertical' ? 'y' : 'x'}
-        />
-      </div>
+      <BarChart
+        h="100%"
+        data={finalChartData}
+        dataKey={dimensionField}
+        valueFormatter={valueFormatter}
+        withBarValueLabel={type !== 'stacked'}
+        series={series}
+        type={type}
+        orientation={orientation}
+        withLegend
+        legendProps={{ verticalAlign: 'bottom', height: 100 }}
+        gridAxis={orientation === 'vertical' ? 'y' : 'x'}
+        tickLine={orientation === 'vertical' ? 'y' : 'x'}
+        barChartProps={{
+          margin: { top: 20, right: 20, bottom: 20, left: 60 }
+        }}
+      />
     </SeriesLimitWrapper>
   );
 }

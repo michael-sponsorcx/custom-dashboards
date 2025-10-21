@@ -1,14 +1,14 @@
 import { Container, Paper, Title, Button, Stack, Code, Grid, Group, Tabs, Tooltip } from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GraphTemplate } from '../../types/graphTemplate';
+import { GraphTemplate } from '../../types/graph';
 import { ModelSelector } from './search/ModelSelector';
 import { QueryValidationResults } from './field_selection/QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
-import { GraphBuilder } from './chart_preview/GraphBuilder';
+import { ChartPreview } from './preview/ChartPreview';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
 import { FilterModal } from './field_selection/filters/FilterModal';
-import { QueryResultsTable } from './QueryResultsTable';
+import { QueryResultsTable } from '../visualizations/tables/QueryResultsTable';
 import { useGraphState, useFilterManagement, useQueryExecution, useGraphTemplate } from './hooks';
 
 /**
@@ -177,9 +177,9 @@ export function CreateGraph() {
                 />
               </Grid.Col>
 
-              {/* RIGHT COLUMN: Graph Builder */}
+              {/* RIGHT COLUMN: Chart Preview */}
               <Grid.Col span={9}>
-                <GraphBuilder
+                <ChartPreview
                   queryResult={queryExecution.queryResult}
                   selectedChartType={graphState.chartConfig.chartType}
                   chartTitle={graphState.chartConfig.chartTitle}

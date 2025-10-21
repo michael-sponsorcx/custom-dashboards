@@ -1,6 +1,6 @@
 import { Paper, Text, Stack, Alert } from '@mantine/core';
-import { formatNumber, NumberFormatType } from '../../../../utils/numberFormatter';
-import { extractSingleValue } from '../../../../utils/chartDataAnalyzer';
+import { formatNumber, NumberFormatType } from '../../../utils/numberFormatter';
+import { extractSingleValue } from '../../../utils/chartDataAnalyzer';
 
 interface NumberTileProps {
   // Either provide a direct value OR query result to extract from

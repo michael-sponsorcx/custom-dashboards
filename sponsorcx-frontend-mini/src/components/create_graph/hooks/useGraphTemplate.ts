@@ -12,8 +12,8 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
-import { GraphTemplate } from '../../../types/graphTemplate';
-import { saveGraphTemplate, addGraphToDashboard, generateGraphId } from '../../../utils/graphTemplateStorage';
+import { GraphTemplate } from '../../../types/graph';
+import { saveGraphTemplate, generateGraphId, addGraphToDashboard } from '../../../utils/storage';
 import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';
 import { ChartType } from '../../../utils/chartDataAnalyzer';

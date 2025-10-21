@@ -11,7 +11,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { FilterRule, FieldType } from '../../../types/filters';
 import { FilterFieldInfo } from '../types';
-import { GraphTemplate } from '../../../types/graphTemplate';
+import { GraphTemplate } from '../../../types/graph';
 
 interface UseFilterManagementOptions {
   initialTemplate?: GraphTemplate;

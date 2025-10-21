@@ -1,9 +1,9 @@
 import { LineChart } from '@mantine/charts';
-import { transformChartData } from '../../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
-import { getChartColor } from '../../../../constants/chartColors';
-import { useSortedChartData, SortOrder } from '../../settings/OrderByControl';
-import { createChartValueFormatter, NumberFormatType } from '../../../../utils/numberFormatter';
+import { getChartColor } from '../../../constants/chartColors';
+import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
+import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -57,26 +57,27 @@ export function MantineLineChart({
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
-      <div style={{ width: '100%', height: 400 }}>
-        <LineChart
-          h={400}
-          data={chartData}
-          dataKey={dimensionField}
-          series={series}
-          curveType="linear"
-          connectNulls
-          withLegend
-          withDots
-          legendProps={{ verticalAlign: 'bottom', height: 50 }}
-          gridAxis="xy"
-          tickLine="xy"
-          valueFormatter={valueFormatter}
-          tooltipProps={{
-            cursor: false,
-            shared: false,
-          }}
-        />
-      </div>
+      <LineChart
+        h="100%"
+        data={chartData}
+        dataKey={dimensionField}
+        series={series}
+        curveType="linear"
+        connectNulls
+        withLegend
+        withDots
+        legendProps={{ verticalAlign: 'bottom', height: 50 }}
+        gridAxis="xy"
+        tickLine="xy"
+        valueFormatter={valueFormatter}
+        tooltipProps={{
+          cursor: false,
+          shared: false,
+        }}
+        lineChartProps={{
+          margin: { top: 20, right: 20, bottom: 20, left: 60 }
+        }}
+      />
     </SeriesLimitWrapper>
   );
 }

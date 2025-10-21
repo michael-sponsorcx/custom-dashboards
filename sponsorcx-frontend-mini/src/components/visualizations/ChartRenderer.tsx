@@ -1,9 +1,9 @@
 import { Text } from '@mantine/core';
-import { ChartType } from '../../../utils/chartDataAnalyzer';
+import { ChartType } from '../../utils/chartDataAnalyzer';
 import { NumberTile } from './charts/NumberTile';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
-import { SortOrder } from '../settings/OrderByControl';
+import { SortOrder } from '../create_graph/settings/OrderByControl';
 
 interface ChartRendererProps {
   queryResult: any;
@@ -20,6 +20,10 @@ interface ChartRendererProps {
 
 /**
  * ChartRenderer - Renders the appropriate chart based on selected type
+ *
+ * This component acts as a router to specific chart implementations.
+ * It does NOT impose any sizing constraints - that's the responsibility of the parent container.
+ * All charts should inherit their size from their parent.
  */
 export function ChartRenderer({
   queryResult,

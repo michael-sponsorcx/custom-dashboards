@@ -171,3 +171,5 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
     </div>
   );
 }
+
+

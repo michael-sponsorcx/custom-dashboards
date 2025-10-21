@@ -8,7 +8,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { GraphTemplate } from '../../../types/graphTemplate';
+import { GraphTemplate } from '../../../types/graph';
 import { ViewFields, ChartConfig } from '../types';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../settings/OrderByControl';

@@ -1,10 +1,10 @@
 import { Paper, Stack, Title, Text, Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
-import { ChartRenderer } from './ChartRenderer';
+import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
 
-interface GraphBuilderProps {
+interface ChartPreviewProps {
   queryResult: any | null;
   selectedChartType: ChartType | null;
   chartTitle: string;
@@ -24,10 +24,10 @@ interface GraphBuilderProps {
 }
 
 /**
- * GraphBuilder - Main component that renders the selected chart type
+ * ChartPreview - Main component that previews the selected chart type
  * Acts as a container that delegates to specific chart components
  */
-export function GraphBuilder({
+export function ChartPreview({
   queryResult,
   selectedChartType,
   chartTitle,
@@ -38,7 +38,7 @@ export function GraphBuilder({
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
-}: GraphBuilderProps) {
+}: ChartPreviewProps) {
   // No data state
   if (!queryResult) {
     return (
