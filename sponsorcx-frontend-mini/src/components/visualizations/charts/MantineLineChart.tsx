@@ -3,7 +3,7 @@ import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
-import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import { getLegendProps } from './utils/legendHelpers';
 import type { LegendPosition } from '../../../types/graph';
 
@@ -61,8 +61,11 @@ export function MantineLineChart({
   // Apply sorting using useMemo hook inside useSortedChartData
   const chartData = useSortedChartData(transformedData, dimensionField, sortOrder);
 
-  // Create value formatter for the chart
+  // Create value formatter for the chart (tooltips)
   const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
+
+  // Create axis tick formatter (abbreviated for large numbers)
+  const axisTickFormatter = createAxisTickFormatter(numberFormat);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
@@ -81,6 +84,7 @@ export function MantineLineChart({
         valueFormatter={valueFormatter}
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
+        yAxisProps={{ width: 80, tickFormatter: axisTickFormatter }}
         tooltipProps={{
           cursor: false,
           shared: false,

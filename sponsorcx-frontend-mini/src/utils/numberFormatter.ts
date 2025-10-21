@@ -57,3 +57,49 @@ export function createChartValueFormatter(
 ): (value: number) => string {
   return (value: number) => formatNumber(value, formatType, precision);
 }
+
+/**
+ * Creates an axis tick formatter that automatically abbreviates large numbers
+ * to keep them at 4 digits maximum
+ * @param formatType - The base format type to use
+ * @returns A function that formats numbers for axis ticks with smart abbreviation
+ */
+export function createAxisTickFormatter(
+  formatType: NumberFormatType = 'number'
+): (value: number) => string {
+  return (value: number) => {
+    const absValue = Math.abs(value);
+
+    // For currency, add $ prefix and abbreviate
+    if (formatType === 'currency') {
+      if (absValue >= 1_000_000_000) {
+        return `$${(value / 1_000_000_000).toFixed(1)}B`;
+      } else if (absValue >= 1_000_000) {
+        return `$${(value / 1_000_000).toFixed(1)}M`;
+      } else if (absValue >= 10_000) {
+        return `$${(value / 1_000).toFixed(1)}K`;
+      } else if (absValue >= 1_000) {
+        return `$${(value / 1_000).toFixed(0)}K`;
+      }
+      return `$${value.toFixed(0)}`;
+    }
+
+    // For percentage, keep it simple
+    if (formatType === 'percentage') {
+      return `${value.toFixed(0)}%`;
+    }
+
+    // For numbers and abbreviated, use smart abbreviation
+    if (absValue >= 1_000_000_000) {
+      return `${(value / 1_000_000_000).toFixed(1)}B`;
+    } else if (absValue >= 1_000_000) {
+      return `${(value / 1_000_000).toFixed(1)}M`;
+    } else if (absValue >= 10_000) {
+      return `${(value / 1_000).toFixed(1)}K`;
+    } else if (absValue >= 1_000) {
+      return `${(value / 1_000).toFixed(0)}K`;
+    }
+
+    return value.toFixed(0);
+  };
+}

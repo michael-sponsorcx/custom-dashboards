@@ -3,7 +3,7 @@ import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
-import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/graph';
 import { getLegendProps } from './utils/legendHelpers';
 
@@ -70,12 +70,11 @@ export function MantineBarChart({
   // Apply sorting using useMemo hook inside useSortedChartData
   const finalChartData = useSortedChartData(transformedData, dimensionField, sortOrder);
 
-  // Create value formatter for the chart
+  // Create value formatter for the chart (tooltips)
   const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
 
-  // Calculate margins based on whether labels are present
-  const bottomMargin = xAxisLabel ? 60 : 20;
-  const leftMargin = yAxisLabel ? 80 : 60;
+  // Create axis tick formatter (abbreviated for large numbers)
+  const axisTickFormatter = createAxisTickFormatter(numberFormat);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
@@ -91,42 +90,10 @@ export function MantineBarChart({
         withLegend
         legendProps={getLegendProps(legendPosition)}
         gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : undefined}
-        tickLine={orientation === 'vertical' ? 'y' : 'x'}
-        yAxisProps={
-          yAxisLabel
-            ? {
-                label: {
-                  value: yAxisLabel,
-                  angle: -90,
-                  position: 'insideLeft',
-                  style: {
-                    textAnchor: 'middle',
-                    fontWeight: 'bold',
-                    fontSize: 14
-                  },
-                },
-              }
-            : undefined
-        }
-        xAxisProps={
-          xAxisLabel
-            ? {
-                label: {
-                  value: xAxisLabel,
-                  position: 'insideBottom',
-                  offset: -10,
-                  style: {
-                    textAnchor: 'middle',
-                    fontWeight: 'bold',
-                    fontSize: 14
-                  },
-                },
-              }
-            : undefined
-        }
-        barChartProps={{
-          margin: { top: 20, right: 20, bottom: bottomMargin, left: leftMargin }
-        }}
+        tickLine={'y'}
+        xAxisLabel={xAxisLabel}
+        yAxisLabel={yAxisLabel}
+        yAxisProps={{ width: 80, tickFormatter: axisTickFormatter }}
       />
     </SeriesLimitWrapper>
   );
