@@ -40,6 +40,7 @@ export function GridItem({
         top: `${top}px`,
         width: `${cardWidth}px`,
         height: `${cardHeight}px`,
+        zIndex: 10, // Above grid overlay
       }}
     >
       <GraphCard template={item} onDelete={onDelete} onEdit={onEdit} />

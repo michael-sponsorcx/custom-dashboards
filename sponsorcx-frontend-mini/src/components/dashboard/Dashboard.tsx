@@ -1,68 +1,47 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import {
-  deleteGraphTemplate,
-  getGraphTemplate,
-  getAllDashboardItems,
-  removeGraphFromDashboard,
-  saveGridLayout,
-  deleteGridLayout,
-} from '../../utils/storage';
-import { DashboardItem } from '../../types/dashboard';
 import { DashboardGrid } from './DashboardGrid';
+import { useDashboardState, useDashboardActions } from './hooks';
 
+/**
+ * Dashboard Component - Refactored
+ *
+ * Main dashboard view for managing and displaying graphs.
+ * Uses modular custom hooks for clean separation of concerns.
+ */
 export function Dashboard() {
-  const navigate = useNavigate();
-  const [graphs, setGraphs] = useState<DashboardItem[]>([]);
+  // Use custom hooks to manage state and actions
+  const { graphs, loading, refreshDashboard } = useDashboardState();
+  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleCreateGraph } =
+    useDashboardActions({
+      onRefresh: refreshDashboard,
+    });
 
-  // Load graphs on mount
-  useEffect(() => {
-    loadGraphs();
-  }, []);
-
-  const loadGraphs = () => {
-    const items = getAllDashboardItems();
-    setGraphs(items);
-  };
-
-  const handleDeleteGraph = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this graph? This action cannot be undone.')) {
-      deleteGraphTemplate(id);
-      deleteGridLayout(id);
-      removeGraphFromDashboard(id);
-      loadGraphs();
-    }
-  };
-
-  const handleEditGraph = (id: string) => {
-    const template = getGraphTemplate(id);
-    if (template) {
-      navigate('/configure-graph', { state: { template } });
-    }
-  };
-
-  const handleResizeGraph = (id: string, width: number, height: number) => {
-    saveGridLayout(id, { gridWidth: width, gridHeight: height });
-    loadGraphs();
-  };
+  if (loading) {
+    return (
+      <Container size="xl" py="xl">
+        <Text>Loading...</Text>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl" py="xl">
       <Stack gap="xl">
+        {/* Header */}
         <Group justify="space-between" align="center">
           <Title order={1}>Dashboard</Title>
-          <Button onClick={() => navigate('/configure-graph')} color="red" size="lg">
+          <Button onClick={handleCreateGraph} color="red" size="lg">
             Add Graph
           </Button>
         </Group>
 
+        {/* Empty State or Grid */}
         {graphs.length === 0 ? (
           <Stack align="center" gap="md" py="xl">
             <Text size="lg" c="dimmed">
               No graphs yet. Create your first graph to get started!
             </Text>
-            <Button onClick={() => navigate('/configure-graph')} size="lg">
+            <Button onClick={handleCreateGraph} size="lg">
               Create Graph
             </Button>
           </Stack>

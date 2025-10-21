@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { DashboardItem } from '../../types/dashboard';
 import { GridItem } from './GridItem';
+import { GridOverlay } from './GridOverlay';
 import { calculateCellSize, calculateGridHeight, autoLayoutItems } from './utils/gridCalculations';
 import { useGridResize } from './hooks/useGridResize';
 
@@ -48,7 +49,7 @@ export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardG
   );
 
   // Handle resize logic
-  const { handleResizeStart } = useGridResize({
+  const { handleResizeStart, isResizing } = useGridResize({
     cellSize,
     positionedGraphs,
     onResize,
@@ -64,6 +65,10 @@ export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardG
         minHeight: cellSize > 0 ? `${cellSize}px` : 'auto',
       }}
     >
+      {/* Grid overlay - shows during resize */}
+      <GridOverlay cellSize={cellSize} gridHeight={gridHeight} isVisible={isResizing} />
+
+      {/* Grid items */}
       {cellSize > 0 &&
         positionedGraphs.map((graph) => (
           <GridItem
