@@ -1,10 +1,10 @@
 import { Paper, Title, ActionIcon, Group, Loader, Text, Center } from '@mantine/core';
 import { IconTrash, IconEdit, IconDownload } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
-import { GraphTemplate } from '../../types/graph';
-import { ChartRenderer } from '../visualizations/ChartRenderer';
-import { executeCubeGraphQL } from '../../services/cube';
-import { useDownloadCSV } from '../../hooks/useDownloadCSV';
+import { GraphTemplate } from '../../../types/graph';
+import { ChartRenderer } from '../../visualizations/ChartRenderer';
+import { executeCubeGraphQL } from '../../../services/cube';
+import { useDownloadCSV } from '../../../hooks/useDownloadCSV';
 
 interface GraphCardProps {
   template: GraphTemplate;

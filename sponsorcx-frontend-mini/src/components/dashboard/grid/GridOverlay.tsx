@@ -1,4 +1,4 @@
-import { GRID_COLUMNS, GAP_SIZE } from './utils/gridCalculations';
+import { GRID_COLUMNS, GAP_SIZE } from '../utils/gridCalculations';
 
 interface GridOverlayProps {
   cellSize: number;

@@ -1,5 +1,5 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
-import { DashboardGrid } from './DashboardGrid';
+import { DashboardGrid } from './grid/DashboardGrid';
 import { useDashboardState, useDashboardActions } from './hooks';
 
 /**
