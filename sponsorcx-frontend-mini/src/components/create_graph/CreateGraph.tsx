@@ -165,6 +165,7 @@ export function CreateGraph() {
                   onNumberPrecisionChange={graphState.setNumberPrecision}
                   primaryColor={graphState.chartConfig.primaryColor}
                   onPrimaryColorChange={graphState.setPrimaryColor}
+                  sortOrder={graphState.chartConfig.sortOrder}
                   onSortOrderChange={graphState.setSortOrder}
                   dimensions={queryExecution.chartCompatibility.dataStructure.dimensions}
                   measures={queryExecution.chartCompatibility.dataStructure.measures}

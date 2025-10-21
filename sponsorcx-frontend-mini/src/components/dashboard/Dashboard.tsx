@@ -11,7 +11,7 @@ import { useDashboardState, useDashboardActions } from './hooks';
 export function Dashboard() {
   // Use custom hooks to manage state and actions
   const { graphs, loading, refreshDashboard } = useDashboardState();
-  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleCreateGraph } =
+  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleMoveGraph, handleCreateGraph } =
     useDashboardActions({
       onRefresh: refreshDashboard,
     });
@@ -51,6 +51,7 @@ export function Dashboard() {
             onDelete={handleDeleteGraph}
             onEdit={handleEditGraph}
             onResize={handleResizeGraph}
+            onMove={handleMoveGraph}
           />
         )}
       </Stack>

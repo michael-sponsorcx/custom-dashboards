@@ -7,7 +7,7 @@ interface UseDashboardActionsOptions {
 }
 
 /**
- * Hook to manage dashboard actions (delete, edit, resize)
+ * Hook to manage dashboard actions (delete, edit, resize, move)
  */
 export function useDashboardActions({ onRefresh }: UseDashboardActionsOptions) {
   const navigate = useNavigate();
@@ -33,6 +33,11 @@ export function useDashboardActions({ onRefresh }: UseDashboardActionsOptions) {
     onRefresh();
   };
 
+  const handleMoveGraph = (id: string, column: number, row: number) => {
+    saveGridLayout(id, { gridColumn: column, gridRow: row });
+    onRefresh();
+  };
+
   const handleCreateGraph = () => {
     navigate('/configure-graph');
   };
@@ -41,6 +46,7 @@ export function useDashboardActions({ onRefresh }: UseDashboardActionsOptions) {
     handleDeleteGraph,
     handleEditGraph,
     handleResizeGraph,
+    handleMoveGraph,
     handleCreateGraph,
   };
 }

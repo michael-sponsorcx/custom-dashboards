@@ -26,7 +26,6 @@ export function OrderByControl({
 }: OrderByControlProps) {
   const handleToggle = () => {
     onSortOrderChange(sortOrder === 'asc' ? 'desc' : 'asc');
-    console.log('OrderByControl - sort order changed to:', sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   return (
@@ -95,7 +94,7 @@ export function useSortedChartData<T extends Record<string, any>>(
         return sortOrder === 'asc' ? comparison : -comparison;
       }
     });
-    console.log('useSortedChartData - sorted data:', sortedData);
+
     return sortedData;
   }, [data, dimensionField, sortOrder]);
 }

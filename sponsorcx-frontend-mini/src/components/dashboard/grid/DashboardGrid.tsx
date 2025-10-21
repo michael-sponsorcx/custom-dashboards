@@ -2,14 +2,16 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { DashboardItem } from '../../../types/dashboard';
 import { GridItem } from './GridItem';
 import { GridOverlay } from './GridOverlay';
+import { DragPreview } from './DragPreview';
 import { calculateCellSize, calculateGridHeight, autoLayoutItems } from '../utils';
-import { useGridResize } from '../hooks';
+import { useGridResize, useGridDrag } from '../hooks';
 
 interface DashboardGridProps {
   graphs: DashboardItem[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onResize?: (id: string, width: number, height: number) => void;
+  onMove?: (id: string, column: number, row: number) => void;
 }
 
 /**
@@ -22,7 +24,7 @@ interface DashboardGridProps {
  * - Responsive to viewport changes
  * - Auto-layout with collision detection
  */
-export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardGridProps) {
+export function DashboardGrid({ graphs, onDelete, onEdit, onResize, onMove }: DashboardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [cellSize, setCellSize] = useState(0);
 
@@ -55,6 +57,13 @@ export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardG
     onResize,
   });
 
+  // Handle drag logic
+  const { handleDragStart, isDragging, dragPreview } = useGridDrag({
+    cellSize,
+    positionedGraphs,
+    onMove,
+  });
+
   return (
     <div
       ref={gridRef}
@@ -65,8 +74,20 @@ export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardG
         minHeight: cellSize > 0 ? `${cellSize}px` : 'auto',
       }}
     >
-      {/* Grid overlay - shows during resize */}
-      <GridOverlay cellSize={cellSize} gridHeight={gridHeight} isVisible={isResizing} />
+      {/* Grid overlay - shows during resize or drag */}
+      <GridOverlay cellSize={cellSize} gridHeight={gridHeight} isVisible={isResizing || isDragging} />
+
+      {/* Drag preview - shows where item will snap to */}
+      {dragPreview && (
+        <DragPreview
+          column={dragPreview.column}
+          row={dragPreview.row}
+          width={dragPreview.width}
+          height={dragPreview.height}
+          cellSize={cellSize}
+          isVisible={isDragging}
+        />
+      )}
 
       {/* Grid items */}
       {cellSize > 0 &&
@@ -78,6 +99,7 @@ export function DashboardGrid({ graphs, onDelete, onEdit, onResize }: DashboardG
             onDelete={onDelete}
             onEdit={onEdit}
             onResizeStart={handleResizeStart}
+            onDragStart={handleDragStart}
           />
         ))}
     </div>
