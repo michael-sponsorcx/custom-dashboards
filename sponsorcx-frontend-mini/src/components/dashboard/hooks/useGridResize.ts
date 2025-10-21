@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DashboardItem } from '../../../types/dashboard';
-import { GRID_COLUMNS, GAP_SIZE } from '../utils/gridCalculations';
+import { GRID_COLUMNS, GAP_SIZE } from '../utils';
 
 interface ResizeState {
   id: string;

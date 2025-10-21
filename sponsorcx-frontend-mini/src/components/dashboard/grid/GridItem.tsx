@@ -1,6 +1,6 @@
 import { DashboardItem } from '../../../types/dashboard';
-import { GraphCard } from '../grid/GraphCard';
-import { calculateItemPosition, calculateItemSize } from '../utils/gridCalculations';
+import { GraphCard } from './GraphCard';
+import { calculateItemPosition, calculateItemSize } from '../utils';
 
 interface GridItemProps {
   item: DashboardItem;

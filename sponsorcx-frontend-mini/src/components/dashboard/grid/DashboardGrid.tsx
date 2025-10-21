@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { DashboardItem } from '../../../types/dashboard';
 import { GridItem } from './GridItem';
 import { GridOverlay } from './GridOverlay';
-import { calculateCellSize, calculateGridHeight, autoLayoutItems } from '../utils/gridCalculations';
-import { useGridResize } from '../hooks/useGridResize';
+import { calculateCellSize, calculateGridHeight, autoLayoutItems } from '../utils';
+import { useGridResize } from '../hooks';
 
 interface DashboardGridProps {
   graphs: DashboardItem[];
