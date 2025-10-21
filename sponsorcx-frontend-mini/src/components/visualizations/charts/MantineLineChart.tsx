@@ -4,7 +4,7 @@ import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
-import type { LegendPosition } from '../../create_graph/types';
+import { getLegendProps } from './utils/legendHelpers';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -20,7 +20,6 @@ interface MantineLineChartProps {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showGridLines?: boolean;
-  legendPosition?: LegendPosition;
 }
 
 /**
@@ -37,7 +36,6 @@ export function MantineLineChart({
   xAxisLabel,
   yAxisLabel,
   showGridLines = true,
-  legendPosition = 'bottom',
 }: MantineLineChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -63,26 +61,6 @@ export function MantineLineChart({
   // Create value formatter for the chart
   const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
 
-  // Calculate margins based on whether labels are present
-  const bottomMargin = xAxisLabel ? 60 : 20;
-  const leftMargin = yAxisLabel ? 80 : 60;
-
-  // Map our legend position into recharts legend props to support left/right
-  const legendProps = (() => {
-    switch (legendPosition) {
-      case 'top':
-        return { verticalAlign: 'top' as const, height: 50, layout: 'horizontal' as const, align: 'center' as const };
-      case 'bottom':
-        return { verticalAlign: 'bottom' as const, height: 50, layout: 'horizontal' as const, align: 'center' as const };
-      case 'left':
-        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'left' as const, width: 120 };
-      case 'right':
-        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'right' as const, width: 120 };
-      default:
-        return { verticalAlign: 'bottom' as const, height: 50, layout: 'horizontal' as const, align: 'center' as const };
-    }
-  })();
-
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
       <LineChart
@@ -94,48 +72,15 @@ export function MantineLineChart({
         connectNulls
         withLegend
         withDots
-        legendProps={legendProps}
+        legendProps={getLegendProps()}
         gridAxis={showGridLines ? 'xy' : undefined}
         tickLine="xy"
         valueFormatter={valueFormatter}
-        yAxisProps={
-          yAxisLabel
-            ? {
-                label: {
-                  value: yAxisLabel,
-                  angle: -90,
-                  position: 'insideLeft',
-                  style: {
-                    textAnchor: 'middle',
-                    fontWeight: 'bold',
-                    fontSize: 14
-                  },
-                },
-              }
-            : undefined
-        }
-        xAxisProps={
-          xAxisLabel
-            ? {
-                label: {
-                  value: xAxisLabel,
-                  position: 'insideBottom',
-                  offset: -10,
-                  style: {
-                    textAnchor: 'middle',
-                    fontWeight: 'bold',
-                    fontSize: 14
-                  },
-                },
-              }
-            : undefined
-        }
+        xAxisLabel={xAxisLabel}
+        yAxisLabel={yAxisLabel}
         tooltipProps={{
           cursor: false,
           shared: false,
-        }}
-        lineChartProps={{
-          margin: { top: 20, right: 20, bottom: bottomMargin, left: leftMargin }
         }}
       />
     </SeriesLimitWrapper>
