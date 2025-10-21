@@ -1,6 +1,11 @@
 import { ChartType } from '../utils/chartDataAnalyzer';
 import { FilterRule } from './filters';
 
+/**
+ * Legend position for charts
+ */
+export type LegendPosition = 'top' | 'bottom';
+
 export interface GraphTemplate {
   id: string;
   name: string;
@@ -25,7 +30,7 @@ export interface GraphTemplate {
   numberPrecision?: number;
   primaryColor?: string;
   sortOrder?: 'asc' | 'desc';
-  legendPosition?: 'top' | 'bottom' | 'left' | 'right';
+  legendPosition?: LegendPosition;
 
   // Grid line settings
   showXAxisGridLines?: boolean;

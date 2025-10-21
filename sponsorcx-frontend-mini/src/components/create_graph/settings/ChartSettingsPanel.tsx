@@ -1,6 +1,6 @@
 import { Paper, Stack, Title, Divider, Select } from '@mantine/core';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
-import type { LegendPosition } from '../types';
+import type { LegendPosition } from '../../../types/graph';
 import { OrderByControl, SortOrder } from './OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
 import {
@@ -186,10 +186,8 @@ export function ChartSettingsPanel({
           <Select
             label="Legend Position"
             data={[
-              { value: 'top', label: 'Top' },
-              { value: 'bottom', label: 'Bottom' },
-              { value: 'left', label: 'Left' },
-              { value: 'right', label: 'Right' },
+              { value: 'top' satisfies LegendPosition, label: 'Top' },
+              { value: 'bottom' satisfies LegendPosition, label: 'Bottom' },
             ]}
             value={legendPosition}
             onChange={(v) => v && onLegendPositionChange(v as LegendPosition)}

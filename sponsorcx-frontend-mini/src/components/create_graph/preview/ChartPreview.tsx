@@ -3,7 +3,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
-import type { LegendPosition } from '../../create_graph/types';
+import type { LegendPosition } from '../../../types/graph';
 
 interface ChartPreviewProps {
   queryResult: any | null;

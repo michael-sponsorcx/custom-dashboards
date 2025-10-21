@@ -4,7 +4,7 @@ import { NumberTile } from './charts/NumberTile';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
-import type { LegendPosition } from '../create_graph/types';
+import type { LegendPosition } from '../../types/graph';
 
 interface ChartRendererProps {
   queryResult: any;

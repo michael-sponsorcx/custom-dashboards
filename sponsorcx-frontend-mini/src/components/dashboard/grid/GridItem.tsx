@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Tooltip, ActionIcon } from '@mantine/core';
-import { IconGripVertical } from '@tabler/icons-react';
 import { DashboardItem } from '../../../types/dashboard';
 import { GraphCard } from './GraphCard';
+import { ResizeHandle } from './ResizeHandle';
 import { calculateItemPosition, calculateItemSize } from '../utils';
 
 interface GridItemProps {
@@ -51,47 +50,10 @@ export function GridItem({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <GraphCard template={item} onDelete={onDelete} onEdit={onEdit} />
-
-      {/* Drag Handle - Top Left */}
-      <Tooltip label="Drag to move" position="right" withArrow>
-        <ActionIcon
-          variant="subtle"
-          size="sm"
-          onMouseDown={(e) => {
-            e.stopPropagation();
-            onDragStart(e, item);
-          }}
-          style={{
-            position: 'absolute',
-            top: '8px',
-            left: '8px',
-            cursor: 'grab',
-            opacity: isHovered ? 1 : 0,
-            transition: 'opacity 0.2s',
-            zIndex: 15,
-          }}
-        >
-          <IconGripVertical size={16} />
-        </ActionIcon>
-      </Tooltip>
+      <GraphCard template={item} onDelete={onDelete} onEdit={onEdit} onDragStart={onDragStart} isHovered={isHovered}/>
 
       {/* Resize Handle - Bottom Right */}
-      <div
-        onMouseDown={(e) => onResizeStart(e, item)}
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          width: '20px',
-          height: '20px',
-          cursor: 'nwse-resize',
-          background: 'linear-gradient(135deg, transparent 50%, #228be6 50%)',
-          borderBottomRightRadius: '4px',
-          zIndex: 10,
-        }}
-        title="Drag to resize"
-      />
+      <ResizeHandle onMouseDown={(e) => onResizeStart(e, item)} />
     </div>
   );
 }

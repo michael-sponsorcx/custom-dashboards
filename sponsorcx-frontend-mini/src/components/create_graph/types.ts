@@ -5,8 +5,7 @@
 import { CubeMeasure, CubeDimension } from '../../types/cube';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { SortOrder } from './settings/OrderByControl';
-
-export type LegendPosition = 'top' | 'bottom' | 'left' | 'right';
+import type { LegendPosition } from '../../types/graph';
 
 /**
  * View fields structure

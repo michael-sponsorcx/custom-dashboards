@@ -4,7 +4,8 @@ import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
-import type { LegendPosition } from '../../create_graph/types';
+import type { LegendPosition } from '../../../types/graph';
+import { getLegendProps } from './utils/legendHelpers';
 
 interface MantineBarChartProps {
   queryResult: any;
@@ -76,22 +77,6 @@ export function MantineBarChart({
   const bottomMargin = xAxisLabel ? 60 : 20;
   const leftMargin = yAxisLabel ? 80 : 60;
 
-  // Map our legend position to recharts props
-  const legendProps = (() => {
-    switch (legendPosition) {
-      case 'top':
-        return { verticalAlign: 'top' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
-      case 'bottom':
-        return { verticalAlign: 'bottom' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
-      case 'left':
-        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'left' as const, width: 140 };
-      case 'right':
-        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'right' as const, width: 140 };
-      default:
-        return { verticalAlign: 'bottom' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
-    }
-  })();
-
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
       <BarChart
@@ -104,7 +89,7 @@ export function MantineBarChart({
         type={type}
         orientation={orientation}
         withLegend
-        legendProps={legendProps}
+        legendProps={getLegendProps(legendPosition)}
         gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : undefined}
         tickLine={orientation === 'vertical' ? 'y' : 'x'}
         yAxisProps={

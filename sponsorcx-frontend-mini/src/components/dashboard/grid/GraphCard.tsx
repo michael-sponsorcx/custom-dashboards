@@ -1,18 +1,22 @@
-import { Paper, Title, ActionIcon, Group, Loader, Text, Center } from '@mantine/core';
-import { IconTrash, IconEdit, IconDownload } from '@tabler/icons-react';
+import { Paper, Title, ActionIcon, Group, Loader, Text, Center, Tooltip } from '@mantine/core';
+import { IconTrash, IconEdit, IconDownload, IconGripVertical } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { GraphTemplate } from '../../../types/graph';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { executeCubeGraphQL } from '../../../services/cube';
 import { useDownloadCSV } from '../../../hooks/useDownloadCSV';
+import { DashboardItem } from '@/types/dashboard';
+import { DragHandle } from './DragHandle';
 
 interface GraphCardProps {
-  template: GraphTemplate;
+  template: DashboardItem;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onDragStart: (e: React.MouseEvent, item: DashboardItem) => void;
+  isHovered: boolean;
 }
 
-export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
+export function GraphCard({ template, onDelete, onEdit, onDragStart, isHovered }: GraphCardProps) {
   const [queryResult, setQueryResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +60,10 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
     >
       {/* Header section - fixed height */}
       <Group justify="space-between" mb="md">
-        <Title order={4}>{template.name || 'Untitled Graph'}</Title>
+        <Group gap="xs">
+          <DragHandle onMouseDown={(e) => onDragStart(e, template)} isVisible={isHovered} />
+          <Title order={4}>{template.name || 'Untitled Graph'}</Title>
+        </Group>
         <Group gap="xs">
           <ActionIcon
             color="green"

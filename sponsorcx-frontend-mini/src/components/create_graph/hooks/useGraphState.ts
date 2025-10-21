@@ -9,7 +9,8 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { GraphTemplate } from '../../../types/graph';
-import { ViewFields, ChartConfig, LegendPosition } from '../types';
+import { ViewFields, ChartConfig } from '../types';
+import type { LegendPosition } from '../../../types/graph';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../settings/OrderByControl';
 import { createSetToggler } from '../utils/fieldToggle';

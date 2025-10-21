@@ -5,6 +5,7 @@ import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import { getLegendProps } from './utils/legendHelpers';
+import type { LegendPosition } from '../../../types/graph';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -20,6 +21,7 @@ interface MantineLineChartProps {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showGridLines?: boolean;
+  legendPosition?: LegendPosition;
 }
 
 /**
@@ -36,6 +38,7 @@ export function MantineLineChart({
   xAxisLabel,
   yAxisLabel,
   showGridLines = true,
+  legendPosition = 'bottom',
 }: MantineLineChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -72,7 +75,7 @@ export function MantineLineChart({
         connectNulls
         withLegend
         withDots
-        legendProps={getLegendProps()}
+        legendProps={getLegendProps(legendPosition)}
         gridAxis={showGridLines ? 'xy' : undefined}
         tickLine="xy"
         valueFormatter={valueFormatter}
