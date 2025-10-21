@@ -45,7 +45,6 @@ export function lineChartTransformation(options: ChartSpecificTransformOptions):
   if (uniqueDimensionValues.length > MAX_LINE_CHART_DIMENSION_VALUES) {
     const topValues = getTopDimensionValues(dimensionTotals, MAX_LINE_CHART_DIMENSION_VALUES);
     finalChartData = filterToTopValues(aggregatedData, dimensionField, topValues);
-    console.log('Line chart - Filtered to top 30 dimension values:', topValues);
   }
 
   // 4. Build series configuration

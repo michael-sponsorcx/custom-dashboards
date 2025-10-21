@@ -163,12 +163,26 @@ export function CreateGraph() {
                   onNumberFormatChange={graphState.setNumberFormat}
                   numberPrecision={graphState.chartConfig.numberPrecision}
                   onNumberPrecisionChange={graphState.setNumberPrecision}
+                  colorPalette={graphState.chartConfig.colorPalette}
+                  onColorPaletteChange={graphState.setColorPalette}
                   primaryColor={graphState.chartConfig.primaryColor}
                   onPrimaryColorChange={graphState.setPrimaryColor}
                   sortOrder={graphState.chartConfig.sortOrder}
                   onSortOrderChange={graphState.setSortOrder}
                   legendPosition={graphState.chartConfig.legendPosition}
                   onLegendPositionChange={graphState.setLegendPosition}
+                  kpiValue={graphState.chartConfig.kpiValue}
+                  onKpiValueChange={graphState.setKpiValue}
+                  kpiLabel={graphState.chartConfig.kpiLabel}
+                  onKpiLabelChange={graphState.setKpiLabel}
+                  kpiSecondaryValue={graphState.chartConfig.kpiSecondaryValue}
+                  onKpiSecondaryValueChange={graphState.setKpiSecondaryValue}
+                  kpiSecondaryLabel={graphState.chartConfig.kpiSecondaryLabel}
+                  onKpiSecondaryLabelChange={graphState.setKpiSecondaryLabel}
+                  kpiShowTrend={graphState.chartConfig.kpiShowTrend}
+                  onKpiShowTrendChange={graphState.setKpiShowTrend}
+                  kpiTrendPercentage={graphState.chartConfig.kpiTrendPercentage}
+                  onKpiTrendPercentageChange={graphState.setKpiTrendPercentage}
                   xAxisLabel={graphState.chartConfig.xAxisLabel}
                   yAxisLabel={graphState.chartConfig.yAxisLabel}
                   onXAxisLabelChange={graphState.setXAxisLabel}
@@ -195,6 +209,7 @@ export function CreateGraph() {
                   numberFormat={graphState.chartConfig.numberFormat}
                   numberPrecision={graphState.chartConfig.numberPrecision}
                   primaryColor={graphState.chartConfig.primaryColor}
+                  colorPalette={graphState.chartConfig.colorPalette}
                   sortOrder={graphState.chartConfig.sortOrder}
                   primaryDimension={graphState.primaryDimension}
                   secondaryDimension={graphState.secondaryDimension}
@@ -203,6 +218,12 @@ export function CreateGraph() {
                   yAxisLabel={graphState.chartConfig.yAxisLabel}
                   showGridLines={graphState.chartConfig.showGridLines}
                   legendPosition={graphState.chartConfig.legendPosition}
+                  kpiValue={graphState.chartConfig.kpiValue}
+                  kpiLabel={graphState.chartConfig.kpiLabel}
+                  kpiSecondaryValue={graphState.chartConfig.kpiSecondaryValue}
+                  kpiSecondaryLabel={graphState.chartConfig.kpiSecondaryLabel}
+                  kpiShowTrend={graphState.chartConfig.kpiShowTrend}
+                  kpiTrendPercentage={graphState.chartConfig.kpiTrendPercentage}
                 />
               </Grid.Col>
             </Grid>

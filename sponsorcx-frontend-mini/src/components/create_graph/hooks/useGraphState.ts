@@ -7,13 +7,15 @@
  * - Data field selections for multi-dimensional charts
  */
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { GraphTemplate } from '../../../types/graph';
 import { ViewFields, ChartConfig } from '../types';
 import type { LegendPosition } from '../../../types/graph';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../settings/OrderByControl';
 import { createSetToggler } from '../utils/fieldToggle';
+import type { ColorPalette } from '../../../constants/colorPalettes';
+import { getPalettePrimaryColor } from '../../../constants/colorPalettes';
 
 interface UseGraphStateOptions {
   initialTemplate?: GraphTemplate;
@@ -54,8 +56,11 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
   const [numberPrecision, setNumberPrecision] = useState(
     initialTemplate?.numberPrecision || 2
   );
+  const [colorPalette, setColorPalette] = useState<ColorPalette>(
+    initialTemplate?.colorPalette || 'hubspot-orange'
+  );
   const [primaryColor, setPrimaryColor] = useState(
-    initialTemplate?.primaryColor || '#3b82f6'
+    initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || 'hubspot-orange')
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     initialTemplate?.sortOrder || 'desc'
@@ -68,6 +73,14 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
   const [showGridLines, setShowGridLines] = useState(
     initialTemplate?.showGridLines ?? true
   );
+
+  // KPI fields
+  const [kpiValue, setKpiValue] = useState<number | undefined>(initialTemplate?.kpiValue);
+  const [kpiLabel, setKpiLabel] = useState<string | undefined>(initialTemplate?.kpiLabel);
+  const [kpiSecondaryValue, setKpiSecondaryValue] = useState<number | undefined>(initialTemplate?.kpiSecondaryValue);
+  const [kpiSecondaryLabel, setKpiSecondaryLabel] = useState<string | undefined>(initialTemplate?.kpiSecondaryLabel);
+  const [kpiShowTrend, setKpiShowTrend] = useState<boolean | undefined>(initialTemplate?.kpiShowTrend ?? false);
+  const [kpiTrendPercentage, setKpiTrendPercentage] = useState<number | undefined>(initialTemplate?.kpiTrendPercentage);
 
   // Data field selections
   const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(
@@ -92,15 +105,32 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setSelectedDates(new Set());
   }, []);
 
+  // Wrapped setColorPalette to update primaryColor when selecting a preset palette
+  const handleSetColorPalette = useCallback((palette: ColorPalette) => {
+    setColorPalette(palette);
+    // When switching to a preset palette, update primaryColor to first color from that palette
+    // When switching to custom, keep existing primaryColor
+    if (palette !== 'custom') {
+      setPrimaryColor(getPalettePrimaryColor(palette));
+    }
+  }, []);
+
   // Grouped chart config for easy access
   const chartConfig: ChartConfig = useMemo(() => ({
     chartType: selectedChartType,
     chartTitle,
     numberFormat,
     numberPrecision,
+    colorPalette,
     primaryColor,
     sortOrder,
     legendPosition,
+    kpiValue,
+    kpiLabel,
+    kpiSecondaryValue,
+    kpiSecondaryLabel,
+    kpiShowTrend,
+    kpiTrendPercentage,
     primaryDimension,
     secondaryDimension,
     selectedMeasure: selectedMeasureField,
@@ -112,9 +142,16 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     chartTitle,
     numberFormat,
     numberPrecision,
+    colorPalette,
     primaryColor,
     sortOrder,
     legendPosition,
+    kpiValue,
+    kpiLabel,
+    kpiSecondaryValue,
+    kpiSecondaryLabel,
+    kpiShowTrend,
+    kpiTrendPercentage,
     primaryDimension,
     secondaryDimension,
     selectedMeasureField,
@@ -145,12 +182,21 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setChartTitle,
     setNumberFormat,
     setNumberPrecision,
+    setColorPalette: handleSetColorPalette,
     setPrimaryColor,
     setSortOrder,
     setLegendPosition,
     setXAxisLabel,
     setYAxisLabel,
     setShowGridLines,
+
+    // KPI setters
+    setKpiValue,
+    setKpiLabel,
+    setKpiSecondaryValue,
+    setKpiSecondaryLabel,
+    setKpiShowTrend,
+    setKpiTrendPercentage,
 
     // Data field selections
     primaryDimension,

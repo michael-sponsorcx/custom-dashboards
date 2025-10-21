@@ -1,5 +1,6 @@
 import { ChartType } from '../utils/chartDataAnalyzer';
 import { FilterRule } from './filters';
+import { ColorPalette } from '../constants/colorPalettes';
 
 /**
  * Legend position for charts
@@ -28,9 +29,18 @@ export interface GraphTemplate {
   // Chart-specific settings
   numberFormat?: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision?: number;
-  primaryColor?: string;
+  colorPalette?: ColorPalette; // Color palette selection (default: 'hubspot-orange')
+  primaryColor?: string; // Used when colorPalette === 'custom' OR for single-series charts
   sortOrder?: 'asc' | 'desc';
   legendPosition?: LegendPosition;
+
+  // KPI configuration
+  kpiValue?: number;
+  kpiLabel?: string;
+  kpiSecondaryValue?: number;
+  kpiSecondaryLabel?: string;
+  kpiShowTrend?: boolean;
+  kpiTrendPercentage?: number;
 
   // Grid line settings
   showXAxisGridLines?: boolean;

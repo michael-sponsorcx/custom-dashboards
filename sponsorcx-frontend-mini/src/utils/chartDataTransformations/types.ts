@@ -2,7 +2,7 @@
  * Shared types for chart data transformations
  */
 
-export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'number';
+export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'kpi';
 
 export interface TransformationResult {
   data: any[];

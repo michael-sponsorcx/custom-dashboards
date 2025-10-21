@@ -4,6 +4,7 @@ import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
 import type { LegendPosition } from '../../../types/graph';
+import type { ColorPalette } from '../../../constants/colorPalettes';
 
 interface ChartPreviewProps {
   queryResult: any | null;
@@ -14,6 +15,7 @@ interface ChartPreviewProps {
   numberFormat?: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision?: number;
   primaryColor?: string;
+  colorPalette?: ColorPalette;
 
   // Sort order for charts with dimensions
   sortOrder?: SortOrder;
@@ -28,6 +30,13 @@ interface ChartPreviewProps {
   yAxisLabel?: string;
   showGridLines?: boolean;
   legendPosition?: LegendPosition;
+  // KPI
+  kpiValue?: number;
+  kpiLabel?: string;
+  kpiSecondaryValue?: number;
+  kpiSecondaryLabel?: string;
+  kpiShowTrend?: boolean;
+  kpiTrendPercentage?: number;
 }
 
 /**
@@ -41,6 +50,7 @@ export function ChartPreview({
   numberFormat = 'number',
   numberPrecision = 2,
   primaryColor = '#3b82f6',
+  colorPalette = 'hubspot-orange',
   sortOrder = 'desc',
   primaryDimension,
   secondaryDimension,
@@ -49,6 +59,12 @@ export function ChartPreview({
   yAxisLabel,
   showGridLines = true,
   legendPosition = 'bottom',
+  kpiValue,
+  kpiLabel,
+  kpiSecondaryValue,
+  kpiSecondaryLabel,
+  kpiShowTrend,
+  kpiTrendPercentage,
 }: ChartPreviewProps) {
   // No data state
   if (!queryResult) {
@@ -99,6 +115,7 @@ export function ChartPreview({
             numberFormat={numberFormat}
             numberPrecision={numberPrecision}
             primaryColor={primaryColor}
+            colorPalette={colorPalette}
             sortOrder={sortOrder}
             primaryDimension={primaryDimension}
             secondaryDimension={secondaryDimension}
@@ -107,6 +124,12 @@ export function ChartPreview({
             yAxisLabel={yAxisLabel}
             showGridLines={showGridLines}
             legendPosition={legendPosition}
+            kpiValue={kpiValue}
+            kpiLabel={kpiLabel}
+            kpiSecondaryValue={kpiSecondaryValue}
+            kpiSecondaryLabel={kpiSecondaryLabel}
+            kpiShowTrend={kpiShowTrend}
+            kpiTrendPercentage={kpiTrendPercentage}
           />
         </div>
       </Stack>

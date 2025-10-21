@@ -1,10 +1,11 @@
 import { Text } from '@mantine/core';
 import { ChartType } from '../../utils/chartDataAnalyzer';
-import { NumberTile } from './charts/NumberTile';
+import { KPI } from './charts/KPI';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
 import type { LegendPosition } from '../../types/graph';
+import type { ColorPalette } from '../../constants/colorPalettes';
 
 interface ChartRendererProps {
   queryResult: any;
@@ -12,6 +13,7 @@ interface ChartRendererProps {
   numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision: number;
   primaryColor: string;
+  colorPalette?: ColorPalette;
   sortOrder?: SortOrder;
   // User-selected dimensions and measure
   primaryDimension?: string;
@@ -23,6 +25,13 @@ interface ChartRendererProps {
   showGridLines?: boolean;
   // Legend position
   legendPosition?: LegendPosition;
+  // KPI-specific optional props
+  kpiValue?: number;
+  kpiLabel?: string;
+  kpiSecondaryValue?: number;
+  kpiSecondaryLabel?: string;
+  kpiShowTrend?: boolean;
+  kpiTrendPercentage?: number;
 }
 
 /**
@@ -38,6 +47,7 @@ export function ChartRenderer({
   numberFormat,
   numberPrecision,
   primaryColor,
+  colorPalette = 'hubspot-orange',
   sortOrder = 'desc',
   primaryDimension,
   secondaryDimension,
@@ -46,15 +56,28 @@ export function ChartRenderer({
   yAxisLabel,
   showGridLines = true,
   legendPosition = 'bottom',
+  kpiValue,
+  kpiLabel,
+  kpiSecondaryValue,
+  kpiSecondaryLabel,
+  kpiShowTrend,
+  kpiTrendPercentage,
 }: ChartRendererProps) {
   switch (selectedChartType) {
     case 'number':
+    case 'kpi':
       return (
-        <NumberTile
-          queryResult={queryResult}
+        <KPI
+          value={kpiValue}
+          queryResult={kpiValue === undefined ? queryResult : undefined}
+          label={kpiLabel}
           formatType={numberFormat}
           precision={numberPrecision}
           primaryColor={primaryColor}
+          secondaryValue={kpiSecondaryValue}
+          secondaryLabel={kpiSecondaryLabel}
+          showTrend={!!kpiShowTrend}
+          trendPercentage={kpiTrendPercentage}
         />
       );
 
@@ -63,6 +86,7 @@ export function ChartRenderer({
         <MantineLineChart
           queryResult={queryResult}
           primaryColor={primaryColor}
+          colorPalette={colorPalette}
           sortOrder={sortOrder}
           primaryDimension={primaryDimension}
           selectedMeasure={selectedMeasure}
@@ -80,6 +104,7 @@ export function ChartRenderer({
         <MantineBarChart
           queryResult={queryResult}
           primaryColor={primaryColor}
+          colorPalette={colorPalette}
           orientation="vertical"
           type="default"
           sortOrder={sortOrder}
@@ -100,6 +125,7 @@ export function ChartRenderer({
         <MantineBarChart
           queryResult={queryResult}
           primaryColor={primaryColor}
+          colorPalette={colorPalette}
           orientation="vertical"
           type="stacked"
           sortOrder={sortOrder}
@@ -120,6 +146,7 @@ export function ChartRenderer({
         <MantineBarChart
           queryResult={queryResult}
           primaryColor={primaryColor}
+          colorPalette={colorPalette}
           orientation="horizontal"
           type="default"
           sortOrder={sortOrder}
@@ -140,6 +167,7 @@ export function ChartRenderer({
         <MantineBarChart
           queryResult={queryResult}
           primaryColor={primaryColor}
+          colorPalette={colorPalette}
           orientation="horizontal"
           type="stacked"
           sortOrder={sortOrder}

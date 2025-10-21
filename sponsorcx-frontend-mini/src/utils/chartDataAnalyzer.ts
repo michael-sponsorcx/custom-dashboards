@@ -1,4 +1,4 @@
-export type ChartType = 'number' | 'line' | 'bar' | 'stackedBar' | 'horizontalBar' | 'horizontalStackedBar';
+export type ChartType = 'kpi' | 'line' | 'bar' | 'stackedBar' | 'horizontalBar' | 'horizontalStackedBar';
 
 export interface ChartCompatibility {
   compatibleCharts: ChartType[];
@@ -29,7 +29,7 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
         measures: [],
         dimensions: [],
       },
-      recommendation: 'number',
+      recommendation: 'kpi',
     };
   }
 
@@ -65,9 +65,9 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   // Determine compatible chart types based on data structure
   const compatibleCharts: ChartType[] = [];
 
-  // Rule 1: Number tile is always available if there's at least one measure
+  // Rule 1: KPI is always available if there's at least one measure
   if (measureCount >= 1) {
-    compatibleCharts.push('number');
+    compatibleCharts.push('kpi');
   }
 
   // Rule 2: Multiple rows with at least 1 measure and 1 dimension → Line and all Bar variants
@@ -89,13 +89,13 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   }
 
   // Default recommendation logic
-  let recommendation: ChartType = 'number';
+  let recommendation: ChartType = 'kpi';
   if (compatibleCharts.includes('line')) {
     recommendation = 'line'; // Prefer line for time series
   } else if (compatibleCharts.includes('bar')) {
     recommendation = 'bar';
-  } else if (compatibleCharts.includes('number')) {
-    recommendation = 'number';
+  } else if (compatibleCharts.includes('kpi')) {
+    recommendation = 'kpi';
   }
 
   return {

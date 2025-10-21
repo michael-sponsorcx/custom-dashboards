@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
@@ -6,10 +7,13 @@ import { useSortedChartData, SortOrder } from '../../create_graph/settings/Order
 import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/graph';
 import { getLegendProps } from './utils/legendHelpers';
+import type { ColorPalette } from '../../../constants/colorPalettes';
+import { createPaletteColorFunction } from '../../../constants/colorPalettes';
 
 interface MantineBarChartProps {
   queryResult: any;
   primaryColor?: string;
+  colorPalette?: ColorPalette;
   orientation?: 'vertical' | 'horizontal';
   type?: BarChartType;
   sortOrder?: SortOrder;
@@ -34,6 +38,7 @@ interface MantineBarChartProps {
 export function MantineBarChart({
   queryResult,
   primaryColor = '#3b82f6',
+  colorPalette = 'hubspot-orange',
   orientation = 'vertical',
   type = 'default',
   sortOrder = 'desc',
@@ -47,18 +52,29 @@ export function MantineBarChart({
   showGridLines = true,
   legendPosition = 'bottom',
 }: MantineBarChartProps) {
+  console.log('[CHART] MantineBarChart rendering');
+
+  // Create color function based on palette (or use default chart colors for 'custom')
+  const getColorFn = useMemo(() => {
+    return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
+  }, [colorPalette]);
+
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
+  // Memoize to prevent unnecessary re-transformations
   const chartType = type === 'stacked' ? 'bar_stacked' : 'bar';
-  const transformationResult = transformChartData({
-    chartType,
-    cubeData: queryResult,
-    primaryColor,
-    getColorFn: getChartColor,
-    primaryDimension,
-    secondaryDimension,
-    selectedMeasure,
-  });
+  const transformationResult = useMemo(() =>
+    transformChartData({
+      chartType,
+      cubeData: queryResult,
+      primaryColor,
+      getColorFn,
+      primaryDimension,
+      secondaryDimension,
+      selectedMeasure,
+    }),
+    [chartType, queryResult, primaryColor, getColorFn, primaryDimension, secondaryDimension, selectedMeasure]
+  );
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
@@ -76,6 +92,12 @@ export function MantineBarChart({
   // Create axis tick formatter (abbreviated for large numbers)
   const axisTickFormatter = createAxisTickFormatter(numberFormat);
 
+  // For vertical bars: Y-axis shows numbers (needs formatter), X-axis shows categories (no formatter)
+  // For horizontal bars: X-axis shows numbers (needs formatter), Y-axis shows categories (no formatter)
+  const axisProps = orientation === 'vertical'
+    ? { yAxisProps: { width: 80, tickFormatter: axisTickFormatter } }
+    : { xAxisProps: { tickFormatter: axisTickFormatter } };
+
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
       <BarChart
@@ -89,11 +111,11 @@ export function MantineBarChart({
         orientation={orientation}
         withLegend
         legendProps={getLegendProps(legendPosition)}
-        gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : undefined}
-        tickLine={'y'}
+        gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : 'none'}
+        tickLine={orientation === 'vertical' ? 'y' : 'x'}
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
-        yAxisProps={{ width: 80, tickFormatter: axisTickFormatter }}
+        {...axisProps}
       />
     </SeriesLimitWrapper>
   );

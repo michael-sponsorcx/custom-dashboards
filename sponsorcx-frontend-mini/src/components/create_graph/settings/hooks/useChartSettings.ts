@@ -1,12 +1,14 @@
 import { useState, useCallback } from 'react';
 import { ChartType } from '../../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../OrderByControl';
+import { ColorPalette, getPalettePrimaryColor } from '../../../../constants/colorPalettes';
 
 interface ChartSettings {
   chartType: ChartType | null;
   chartTitle: string;
   numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
   numberPrecision: number;
+  colorPalette: ColorPalette;
   primaryColor: string;
   sortOrder: SortOrder;
   primaryDimension?: string;
@@ -36,7 +38,8 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
     chartTitle: initialSettings.chartTitle ?? '',
     numberFormat: initialSettings.numberFormat ?? 'number',
     numberPrecision: initialSettings.numberPrecision ?? 2,
-    primaryColor: initialSettings.primaryColor ?? '#3b82f6',
+    colorPalette: initialSettings.colorPalette ?? 'hubspot-orange',
+    primaryColor: initialSettings.primaryColor ?? '#FF7A59', // HubSpot orange
     sortOrder: initialSettings.sortOrder ?? 'desc',
     primaryDimension: initialSettings.primaryDimension,
     secondaryDimension: initialSettings.secondaryDimension,
@@ -82,6 +85,21 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
     [updateSettings]
   );
 
+  const setColorPalette = useCallback(
+    (colorPalette: ColorPalette) => {
+      // When switching to a preset palette, update primaryColor to first color from that palette
+      // When switching to custom, keep existing primaryColor
+      const updates: Partial<ChartSettings> = { colorPalette };
+
+      if (colorPalette !== 'custom') {
+        updates.primaryColor = getPalettePrimaryColor(colorPalette);
+      }
+
+      updateSettings(updates);
+    },
+    [updateSettings]
+  );
+
   const setPrimaryColor = useCallback(
     (primaryColor: string) => {
       updateSettings({ primaryColor });
@@ -123,6 +141,7 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
     setChartTitle,
     setNumberFormat,
     setNumberPrecision,
+    setColorPalette,
     setPrimaryColor,
     setSortOrder,
     setPrimaryDimension,

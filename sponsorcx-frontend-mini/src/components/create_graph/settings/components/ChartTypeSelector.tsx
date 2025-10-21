@@ -8,7 +8,7 @@ interface ChartTypeSelectorProps {
 }
 
 const CHART_TYPE_LABELS: Record<ChartType, string> = {
-  number: 'Number Tile',
+  kpi: 'KPI',
   line: 'Line Chart',
   bar: 'Bar Chart (Vertical)',
   stackedBar: 'Stacked Bar Chart',
@@ -22,7 +22,7 @@ function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
   const stroke = color;
   const fill = color;
 
-  if (type === 'number') {
+  if (type === 'kpi') {
     return (
       <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
         <text x="6" y="32" fontSize="24" fill={fill} fontFamily="inherit">123</text>
@@ -110,7 +110,7 @@ export function ChartTypeSelector({
 
   // Show all chart types, but disable incompatible ones
   const allChartTypes: ChartType[] = [
-    'number',
+    'kpi',
     'line',
     'bar',
     'stackedBar',

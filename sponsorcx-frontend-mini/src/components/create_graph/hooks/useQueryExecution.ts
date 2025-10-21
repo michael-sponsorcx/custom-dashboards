@@ -154,7 +154,7 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
           measures: [],
           dimensions: [],
         },
-        recommendation: 'number' as ChartType,
+        recommendation: 'kpi' as ChartType,
       };
     }
     return analyzeChartCompatibility(queryResult);

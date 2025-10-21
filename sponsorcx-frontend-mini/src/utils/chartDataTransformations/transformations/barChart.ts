@@ -44,7 +44,6 @@ export function barChartTransformation(options: ChartSpecificTransformOptions): 
   if (uniqueDimensionValues.length > MAX_BAR_DIMENSION_VALUES) {
     const topValues = getTopDimensionValues(dimensionTotals, MAX_BAR_DIMENSION_VALUES);
     finalChartData = filterToTopValues(aggregatedData, dimensionField, topValues);
-    console.log('Bar chart - Filtered to top dimension values:', topValues);
   }
 
   // 4. Build series configuration

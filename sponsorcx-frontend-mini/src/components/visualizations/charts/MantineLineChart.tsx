@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { LineChart } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
@@ -6,10 +7,13 @@ import { useSortedChartData, SortOrder } from '../../create_graph/settings/Order
 import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import { getLegendProps } from './utils/legendHelpers';
 import type { LegendPosition } from '../../../types/graph';
+import type { ColorPalette } from '../../../constants/colorPalettes';
+import { createPaletteColorFunction } from '../../../constants/colorPalettes';
 
 interface MantineLineChartProps {
   queryResult: any;
   primaryColor?: string;
+  colorPalette?: ColorPalette;
   sortOrder?: SortOrder;
   // User-selected dimensions and measure
   primaryDimension?: string;
@@ -30,6 +34,7 @@ interface MantineLineChartProps {
 export function MantineLineChart({
   queryResult,
   primaryColor = '#3b82f6',
+  colorPalette = 'hubspot-orange',
   sortOrder = 'desc',
   primaryDimension,
   selectedMeasure,
@@ -40,16 +45,27 @@ export function MantineLineChart({
   showGridLines = true,
   legendPosition = 'bottom',
 }: MantineLineChartProps) {
+  console.log('[CHART] MantineLineChart rendering');
+
+  // Create color function based on palette (or use default chart colors for 'custom')
+  const getColorFn = useMemo(() => {
+    return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
+  }, [colorPalette]);
+
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
-  const transformationResult = transformChartData({
-    chartType: 'line',
-    cubeData: queryResult,
-    primaryColor,
-    getColorFn: getChartColor,
-    primaryDimension,
-    selectedMeasure,
-  });
+  // Memoize to prevent unnecessary re-transformations
+  const transformationResult = useMemo(() =>
+    transformChartData({
+      chartType: 'line',
+      cubeData: queryResult,
+      primaryColor,
+      getColorFn,
+      primaryDimension,
+      selectedMeasure,
+    }),
+    [queryResult, primaryColor, getColorFn, primaryDimension, selectedMeasure]
+  );
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
@@ -79,7 +95,7 @@ export function MantineLineChart({
         withLegend
         withDots
         legendProps={getLegendProps(legendPosition)}
-        gridAxis={showGridLines ? 'xy' : undefined}
+        gridAxis={showGridLines ? 'xy' : 'none'}
         tickLine="xy"
         valueFormatter={valueFormatter}
         xAxisLabel={xAxisLabel}

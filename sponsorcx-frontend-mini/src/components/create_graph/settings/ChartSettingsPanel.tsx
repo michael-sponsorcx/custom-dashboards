@@ -1,6 +1,7 @@
-import { Paper, Stack, Title, Divider, Select } from '@mantine/core';
+import { Paper, Stack, Title, Divider, Select, TextInput, NumberInput, Switch, Group } from '@mantine/core';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import type { LegendPosition } from '../../../types/graph';
+import { ColorPalette } from '../../../constants/colorPalettes';
 import { OrderByControl, SortOrder } from './OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
 import {
@@ -27,6 +28,8 @@ interface ChartSettingsPanelProps {
   onNumberPrecisionChange?: (precision: number) => void;
 
   // Color customization
+  colorPalette?: ColorPalette;
+  onColorPaletteChange?: (palette: ColorPalette) => void;
   primaryColor?: string;
   onPrimaryColorChange?: (color: string) => void;
 
@@ -37,6 +40,20 @@ interface ChartSettingsPanelProps {
   // Legend position
   legendPosition?: LegendPosition;
   onLegendPositionChange?: (pos: LegendPosition) => void;
+
+  // KPI settings (used for number/KPI charts)
+  kpiValue?: number;
+  onKpiValueChange?: (v: number | undefined) => void;
+  kpiLabel?: string;
+  onKpiLabelChange?: (v: string) => void;
+  kpiSecondaryValue?: number;
+  onKpiSecondaryValueChange?: (v: number | undefined) => void;
+  kpiSecondaryLabel?: string;
+  onKpiSecondaryLabelChange?: (v: string) => void;
+  kpiShowTrend?: boolean;
+  onKpiShowTrendChange?: (v: boolean) => void;
+  kpiTrendPercentage?: number;
+  onKpiTrendPercentageChange?: (v: number | undefined) => void;
 
   // Axis labels
   xAxisLabel?: string;
@@ -71,6 +88,15 @@ const CHARTS_WITH_DIMENSIONS: ChartType[] = [
 // Chart types that support stacking (for secondary dimension)
 const STACKED_CHART_TYPES: ChartType[] = ['stackedBar', 'horizontalStackedBar'];
 
+// Chart types that only display a single color (allow custom color option)
+// These charts show only one data series/color at a time
+const SINGLE_COLOR_CHART_TYPES: ChartType[] = [
+  'kpi',           // KPI - single value display
+  'bar',           // Shows one measure at a time
+  'horizontalBar', // Shows one measure at a time
+  // Note: 'line', 'stackedBar', 'horizontalStackedBar' can show multiple series with different colors
+];
+
 /**
  * ChartSettingsPanel - Refactored
  *
@@ -87,12 +113,26 @@ export function ChartSettingsPanel({
   onNumberFormatChange,
   numberPrecision = 2,
   onNumberPrecisionChange,
-  primaryColor = '#3b82f6',
+  colorPalette = 'hubspot-orange',
+  onColorPaletteChange,
+  primaryColor = '#FF7A59',
   onPrimaryColorChange,
   sortOrder = 'desc',
   onSortOrderChange,
   legendPosition = 'bottom',
   onLegendPositionChange,
+  kpiValue,
+  onKpiValueChange,
+  kpiLabel,
+  onKpiLabelChange,
+  kpiSecondaryValue,
+  onKpiSecondaryValueChange,
+  kpiSecondaryLabel,
+  onKpiSecondaryLabelChange,
+  kpiShowTrend = false,
+  onKpiShowTrendChange,
+  kpiTrendPercentage,
+  onKpiTrendPercentageChange,
   xAxisLabel = '',
   yAxisLabel = '',
   onXAxisLabelChange,
@@ -116,6 +156,11 @@ export function ChartSettingsPanel({
   // Only show secondary dimension for stacked chart types
   const supportsSecondaryDimension = selectedChartType
     ? STACKED_CHART_TYPES.includes(selectedChartType)
+    : false;
+
+  // Determine if the selected chart type only uses a single color
+  const isSingleColorChart = selectedChartType
+    ? SINGLE_COLOR_CHART_TYPES.includes(selectedChartType)
     : false;
 
   return (
@@ -164,11 +209,14 @@ export function ChartSettingsPanel({
           />
         )}
 
-        {/* Color Customization */}
-        {onPrimaryColorChange && (
+        {/* Color Customization - Show for all chart types */}
+        {onPrimaryColorChange && onColorPaletteChange && selectedChartType && (
           <ColorSettings
+            colorPalette={colorPalette}
             primaryColor={primaryColor}
+            onColorPaletteChange={onColorPaletteChange}
             onPrimaryColorChange={onPrimaryColorChange}
+            isSingleColorChart={isSingleColorChart}
           />
         )}
 
@@ -182,7 +230,7 @@ export function ChartSettingsPanel({
         )}
 
         {/* Legend Position */}
-        {selectedChartType && selectedChartType !== 'number' && onLegendPositionChange && (
+        {selectedChartType && selectedChartType !== 'kpi' && onLegendPositionChange && (
           <Select
             label="Legend Position"
             data={[
@@ -194,8 +242,58 @@ export function ChartSettingsPanel({
           />
         )}
 
+        {/* KPI Settings - for KPI charts */}
+        {selectedChartType === 'kpi' && (
+          <>
+            <Divider />
+            <Title order={6}>KPI Settings</Title>
+            <Stack gap="sm">
+              <NumberInput
+                label="Primary Value (optional override)"
+                value={kpiValue ?? ''}
+                placeholder="Leave empty to use query result"
+                onChange={(v) => onKpiValueChange?.(typeof v === 'number' ? v : undefined)}
+                min={Number.NEGATIVE_INFINITY}
+              />
+              <TextInput
+                label="Primary Label"
+                value={kpiLabel ?? ''}
+                onChange={(e) => onKpiLabelChange?.(e.currentTarget.value)}
+              />
+              <Group grow>
+                <NumberInput
+                  label="Secondary Value"
+                  value={kpiSecondaryValue ?? ''}
+                  onChange={(v) => onKpiSecondaryValueChange?.(typeof v === 'number' ? v : undefined)}
+                  min={Number.NEGATIVE_INFINITY}
+                />
+                <TextInput
+                  label="Secondary Label"
+                  value={kpiSecondaryLabel ?? ''}
+                  onChange={(e) => onKpiSecondaryLabelChange?.(e.currentTarget.value)}
+                />
+              </Group>
+              <Group align="end" grow>
+                <Switch
+                  label="Show Trend"
+                  checked={!!kpiShowTrend}
+                  onChange={(e) => onKpiShowTrendChange?.(e.currentTarget.checked)}
+                />
+                <NumberInput
+                  label="Trend Percentage"
+                  value={kpiTrendPercentage ?? ''}
+                  onChange={(v) => onKpiTrendPercentageChange?.(typeof v === 'number' ? v : undefined)}
+                  min={-1000000}
+                  max={1000000}
+                  disabled={!kpiShowTrend}
+                />
+              </Group>
+            </Stack>
+          </>
+        )}
+
         {/* Axis Settings - for charts with axes */}
-        {selectedChartType && selectedChartType !== 'number' && (
+        {selectedChartType && selectedChartType !== 'kpi' && (
           <>
             <Divider />
             <AxisSettings

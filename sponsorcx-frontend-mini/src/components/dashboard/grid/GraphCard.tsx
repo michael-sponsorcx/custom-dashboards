@@ -119,10 +119,21 @@ export function GraphCard({ template, onDelete, onEdit, onDragStart, isHovered }
             numberFormat={template.numberFormat || 'number'}
             numberPrecision={template.numberPrecision || 2}
             primaryColor={template.primaryColor || '#3b82f6'}
+            colorPalette={template.colorPalette}
             sortOrder={template.sortOrder}
             primaryDimension={template.primaryDimension}
             secondaryDimension={template.secondaryDimension}
             selectedMeasure={template.selectedMeasure}
+            xAxisLabel={template.xAxisLabel}
+            yAxisLabel={template.yAxisLabel}
+            showGridLines={template.showGridLines}
+            legendPosition={template.legendPosition}
+            kpiValue={template.kpiValue}
+            kpiLabel={template.kpiLabel}
+            kpiSecondaryValue={template.kpiSecondaryValue}
+            kpiSecondaryLabel={template.kpiSecondaryLabel}
+            kpiShowTrend={template.kpiShowTrend}
+            kpiTrendPercentage={template.kpiTrendPercentage}
           />
         )}
       </div>

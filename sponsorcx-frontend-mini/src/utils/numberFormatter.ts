@@ -68,6 +68,11 @@ export function createAxisTickFormatter(
   formatType: NumberFormatType = 'number'
 ): (value: number) => string {
   return (value: number) => {
+    // Handle non-numeric values (e.g., category labels)
+    if (typeof value !== 'number' || isNaN(value)) {
+      return String(value);
+    }
+
     const absValue = Math.abs(value);
 
     // For currency, add $ prefix and abbreviate
