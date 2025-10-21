@@ -65,12 +65,13 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   // Determine compatible chart types based on data structure
   const compatibleCharts: ChartType[] = [];
 
-  // Rule 1: Single row with single measure → Number tile only
-  if (rowCount === 1 && measureCount === 1 && dimensionCount === 0) {
+  // Rule 1: Number tile is always available if there's at least one measure
+  if (measureCount >= 1) {
     compatibleCharts.push('number');
   }
+
   // Rule 2: Multiple rows with at least 1 measure and 1 dimension → Line and all Bar variants
-  else if (rowCount > 1 && measureCount >= 1 && dimensionCount >= 1) {
+  if (rowCount > 1 && measureCount >= 1 && dimensionCount >= 1) {
     compatibleCharts.push('line', 'bar', 'horizontalBar');
 
     // Stacked variants available if multiple measures OR multiple dimensions
@@ -85,10 +86,6 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
     if (measureCount > 1) {
       compatibleCharts.push('stackedBar', 'horizontalStackedBar');
     }
-  }
-  // Rule 4: Single row with multiple fields → Could be number tile for primary measure
-  else if (rowCount === 1 && measureCount >= 1) {
-    compatibleCharts.push('number');
   }
 
   // Default recommendation logic
@@ -115,7 +112,9 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
 }
 
 /**
- * Extracts the primary numeric value from a single-row response for number tiles
+ * Extracts a numeric value from query results for number tiles
+ * - For single-row results: returns the first measure value
+ * - For multi-row results: sums all values of the first measure
  * @param data - The GraphQL response data object
  * @returns The numeric value or null if not found
  */
@@ -124,17 +123,39 @@ export function extractSingleValue(data: any): number | null {
     return null;
   }
 
-  const firstRow = data.data.cube[0];
+  const cubeData = data.data.cube;
+  const firstRow = cubeData[0];
   const viewName = Object.keys(firstRow)[0];
-  const rowData = firstRow[viewName];
+  const firstRowData = firstRow[viewName];
 
-  // Find first numeric value
-  for (const key of Object.keys(rowData)) {
-    const value = rowData[key];
+  // Find first numeric field (measure)
+  let measureKey: string | null = null;
+  for (const key of Object.keys(firstRowData)) {
+    const value = firstRowData[key];
     if (typeof value === 'number') {
-      return value;
+      measureKey = key;
+      break;
     }
   }
 
-  return null;
+  if (!measureKey) {
+    return null;
+  }
+
+  // If single row, return the value
+  if (cubeData.length === 1) {
+    return firstRowData[measureKey];
+  }
+
+  // If multiple rows, sum all values of the first measure
+  let total = 0;
+  for (const row of cubeData) {
+    const rowData = row[viewName];
+    const value = rowData[measureKey];
+    if (typeof value === 'number') {
+      total += value;
+    }
+  }
+
+  return total;
 }

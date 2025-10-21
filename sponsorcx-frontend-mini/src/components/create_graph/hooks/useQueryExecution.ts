@@ -56,6 +56,7 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
 
   const [queryResult, setQueryResult] = useState<any>(null);
   const [validationResult, setValidationResult] = useState<any>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   // Generate GraphQL query based on selections
   const generatedQuery = useMemo(() => {
@@ -109,6 +110,7 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
     }
 
     console.log('Executing GraphQL Query:', generatedQuery);
+    setIsExecuting(true);
 
     try {
       const result = await executeCubeGraphQL(generatedQuery);
@@ -128,6 +130,8 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
       console.error('Error executing query:', err);
       setQueryResult(null);
       setSelectedChartType(null);
+    } finally {
+      setIsExecuting(false);
     }
   }, [generatedQuery, selectedChartType, setSelectedChartType]);
 
@@ -193,5 +197,6 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
     queryResult,
     chartCompatibility,
     executeQuery,
+    isExecuting,
   };
 }

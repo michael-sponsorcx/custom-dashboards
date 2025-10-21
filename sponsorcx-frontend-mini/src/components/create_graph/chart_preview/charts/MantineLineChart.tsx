@@ -3,6 +3,7 @@ import { transformChartData } from '../../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../settings/OrderByControl';
+import { createChartValueFormatter, NumberFormatType } from '../../../../utils/numberFormatter';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -11,6 +12,9 @@ interface MantineLineChartProps {
   // User-selected dimensions and measure
   primaryDimension?: string;
   selectedMeasure?: string;
+  // Number formatting
+  numberFormat?: NumberFormatType;
+  numberPrecision?: number;
 }
 
 /**
@@ -21,7 +25,9 @@ export function MantineLineChart({
   primaryColor = '#3b82f6',
   sortOrder = 'desc',
   primaryDimension,
-  selectedMeasure
+  selectedMeasure,
+  numberFormat = 'number',
+  numberPrecision = 2,
 }: MantineLineChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -44,6 +50,9 @@ export function MantineLineChart({
   // Apply sorting using useMemo hook inside useSortedChartData
   const chartData = useSortedChartData(transformedData, dimensionField, sortOrder);
 
+  // Create value formatter for the chart
+  const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
+
   console.log('MantineLineChart - sorted data:', chartData);
 
   return (
@@ -61,6 +70,7 @@ export function MantineLineChart({
           legendProps={{ verticalAlign: 'bottom', height: 50 }}
           gridAxis="xy"
           tickLine="xy"
+          valueFormatter={valueFormatter}
           tooltipProps={{
             cursor: false,
             shared: false,

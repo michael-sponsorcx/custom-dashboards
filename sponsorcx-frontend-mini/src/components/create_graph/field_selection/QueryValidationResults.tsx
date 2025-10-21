@@ -1,6 +1,6 @@
 import { Stack, Alert, Text } from '@mantine/core';
 import { IconAlertCircle, IconCircleCheck, IconInfoCircle } from '@tabler/icons-react';
-import { ValidationResult } from '../../types/cube';
+import { ValidationResult } from '../../../types/cube';
 
 interface QueryValidationResultsProps {
   validationResult: ValidationResult | null;

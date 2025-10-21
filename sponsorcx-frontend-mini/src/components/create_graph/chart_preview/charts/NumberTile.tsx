@@ -1,54 +1,54 @@
-import { Paper, Text, Stack } from '@mantine/core';
+import { Paper, Text, Stack, Alert } from '@mantine/core';
+import { formatNumber, NumberFormatType } from '../../../../utils/numberFormatter';
+import { extractSingleValue } from '../../../../utils/chartDataAnalyzer';
 
 interface NumberTileProps {
-  value: number;
+  // Either provide a direct value OR query result to extract from
+  value?: number;
+  queryResult?: any;
   label?: string;
-  formatType?: 'currency' | 'percentage' | 'number' | 'abbreviated';
+  formatType?: NumberFormatType;
   precision?: number;
   primaryColor?: string;
 }
 
 /**
- * Formats a number based on the specified format type
- */
-function formatNumber(value: number, formatType: string, precision: number = 2): string {
-  switch (formatType) {
-    case 'currency':
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: precision,
-        maximumFractionDigits: precision,
-      }).format(value);
-
-    case 'percentage':
-      return `${value.toFixed(precision)}%`;
-
-    case 'abbreviated':
-      // Abbreviate large numbers (e.g., 1.2M, 3.4B)
-      const absValue = Math.abs(value);
-      if (absValue >= 1_000_000_000) {
-        return `${(value / 1_000_000_000).toFixed(precision)}B`;
-      } else if (absValue >= 1_000_000) {
-        return `${(value / 1_000_000).toFixed(precision)}M`;
-      } else if (absValue >= 1_000) {
-        return `${(value / 1_000).toFixed(precision)}K`;
-      }
-      return value.toFixed(precision);
-
-    case 'number':
-    default:
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: precision,
-        maximumFractionDigits: precision,
-      }).format(value);
-  }
-}
-
-/**
  * NumberTile component - displays a single numeric value in a styled tile
+ * Can accept either a direct value or a query result to extract the value from
  */
-export function NumberTile({ value, label, formatType = 'number', precision = 2, primaryColor = '#3b82f6' }: NumberTileProps) {
+export function NumberTile({
+  value: directValue,
+  queryResult,
+  label,
+  formatType = 'number',
+  precision = 2,
+  primaryColor = '#3b82f6'
+}: NumberTileProps) {
+  // Extract value from query result if provided, otherwise use direct value
+  let value: number | undefined = directValue;
+
+  if (queryResult !== undefined) {
+    const extractedValue = extractSingleValue(queryResult);
+
+    if (extractedValue === null) {
+      return (
+        <Alert color="red" variant="light">
+          <Text size="sm">Unable to extract numeric value from query result.</Text>
+        </Alert>
+      );
+    }
+
+    value = extractedValue;
+  }
+
+  if (value === undefined) {
+    return (
+      <Alert color="red" variant="light">
+        <Text size="sm">No value provided to NumberTile component.</Text>
+      </Alert>
+    );
+  }
+
   const formattedValue = formatNumber(value, formatType, precision);
 
   // Convert hex color to rgba for background

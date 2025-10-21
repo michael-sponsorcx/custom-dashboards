@@ -95,7 +95,6 @@ export function ChartSettingsPanel({
     disabled: !compatibleCharts.includes(type),
   }));
 
-  const showNumberSettings = selectedChartType === 'number';
   // Show order by control for charts that support dimensions
   // Bar, line, area, and pie charts all have dimension fields
   const chartsWithDimensions: ChartType[] = ['bar', 'stackedBar', 'horizontalBar', 'horizontalStackedBar', 'line'];
@@ -146,9 +145,10 @@ export function ChartSettingsPanel({
           </>
         )}
 
-        {/* Number Tile Specific Settings */}
-        {showNumberSettings && (
+        {/* Number Format Settings - Available for all chart types */}
+        {selectedChartType && (
           <>
+            <Divider label="Number Formatting" labelPosition="center" />
             <Select
               label="Number Format"
               data={NUMBER_FORMAT_OPTIONS}

@@ -4,6 +4,7 @@ import { transformChartData } from '../../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../settings/OrderByControl';
+import { createChartValueFormatter, NumberFormatType } from '../../../../utils/numberFormatter';
 
 interface MantineBarChartProps {
   queryResult: any;
@@ -15,6 +16,9 @@ interface MantineBarChartProps {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Number formatting
+  numberFormat?: NumberFormatType;
+  numberPrecision?: number;
 }
 
 /**
@@ -29,7 +33,9 @@ export function MantineBarChart({
   sortOrder = 'desc',
   primaryDimension,
   secondaryDimension,
-  selectedMeasure
+  selectedMeasure,
+  numberFormat = 'number',
+  numberPrecision = 2,
 }: MantineBarChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -54,6 +60,9 @@ export function MantineBarChart({
   // Apply sorting using useMemo hook inside useSortedChartData
   const finalChartData = useSortedChartData(transformedData, dimensionField, sortOrder);
 
+  // Create value formatter for the chart
+  const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
+
   // Log when sort order changes
   useEffect(() => {
     console.log('MantineBarChart - Sort order changed to:', sortOrder);
@@ -66,7 +75,7 @@ export function MantineBarChart({
           h={500}
           data={finalChartData}
           dataKey={dimensionField}
-          valueFormatter={(value) => new Intl.NumberFormat('en-US').format(value)}
+          valueFormatter={valueFormatter}
           withBarValueLabel={type !== 'stacked'}
           series={series}
           type={type}

@@ -71,7 +71,7 @@ export function GraphBuilder({
 
   // Render chart based on selected type
   return (
-    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', maxHeight: '650px', display: 'flex', flexDirection: 'column' }}>
+    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
       <Stack gap="md" style={{ height: '100%', overflow: 'hidden' }}>
         {/* Chart Title */}
         {chartTitle && (
@@ -81,7 +81,7 @@ export function GraphBuilder({
         )}
 
         {/* Chart Content */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 0 }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', width: '100%' }}>
           <ChartRenderer
             queryResult={queryResult}
             selectedChartType={selectedChartType}

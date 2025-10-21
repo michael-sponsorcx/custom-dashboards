@@ -32,5 +32,5 @@ export function SeriesLimitWrapper({
     );
   }
 
-  return <>{children}</>;
+  return <div style={{ width: '100%', minHeight: '400px' }}>{children}</div>;
 }
