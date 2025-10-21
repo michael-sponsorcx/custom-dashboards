@@ -25,6 +25,16 @@ export interface GraphTemplate {
   numberPrecision?: number;
   primaryColor?: string;
   sortOrder?: 'asc' | 'desc';
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right';
+
+  // Grid line settings
+  showXAxisGridLines?: boolean;
+  showYAxisGridLines?: boolean;
+  showGridLines?: boolean;
+
+  // Axis labels
+  xAxisLabel?: string;
+  yAxisLabel?: string;
 
   // Data field selection (for charts with multiple dimensions/measures)
   primaryDimension?: string;

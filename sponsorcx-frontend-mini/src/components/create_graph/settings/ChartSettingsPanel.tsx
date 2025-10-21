@@ -1,5 +1,6 @@
-import { Paper, Stack, Title, Divider } from '@mantine/core';
+import { Paper, Stack, Title, Divider, Select } from '@mantine/core';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
+import type { LegendPosition } from '../types';
 import { OrderByControl, SortOrder } from './OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
 import {
@@ -32,6 +33,20 @@ interface ChartSettingsPanelProps {
   // Callback to pass sort order to parent (for rendering charts)
   sortOrder?: SortOrder;
   onSortOrderChange?: (sortOrder: SortOrder) => void;
+
+  // Legend position
+  legendPosition?: LegendPosition;
+  onLegendPositionChange?: (pos: LegendPosition) => void;
+
+  // Axis labels
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  onXAxisLabelChange?: (label: string) => void;
+  onYAxisLabelChange?: (label: string) => void;
+
+  // Grid line settings
+  showGridLines?: boolean;
+  onShowGridLinesChange?: (show: boolean) => void;
 
   // Data field configuration (dimensions and measures from query)
   dimensions?: string[];
@@ -76,6 +91,14 @@ export function ChartSettingsPanel({
   onPrimaryColorChange,
   sortOrder = 'desc',
   onSortOrderChange,
+  legendPosition = 'bottom',
+  onLegendPositionChange,
+  xAxisLabel = '',
+  yAxisLabel = '',
+  onXAxisLabelChange,
+  onYAxisLabelChange,
+  showGridLines = true,
+  onShowGridLinesChange,
   dimensions = [],
   measures = [],
   primaryDimension,
@@ -158,8 +181,35 @@ export function ChartSettingsPanel({
           />
         )}
 
-        {/* Axis Settings - placeholder for future chart-specific settings */}
-        {selectedChartType && selectedChartType !== 'number' && <AxisSettings />}
+        {/* Legend Position */}
+        {selectedChartType && selectedChartType !== 'number' && onLegendPositionChange && (
+          <Select
+            label="Legend Position"
+            data={[
+              { value: 'top', label: 'Top' },
+              { value: 'bottom', label: 'Bottom' },
+              { value: 'left', label: 'Left' },
+              { value: 'right', label: 'Right' },
+            ]}
+            value={legendPosition}
+            onChange={(v) => v && onLegendPositionChange(v as LegendPosition)}
+          />
+        )}
+
+        {/* Axis Settings - for charts with axes */}
+        {selectedChartType && selectedChartType !== 'number' && (
+          <>
+            <Divider />
+            <AxisSettings
+              xAxisLabel={xAxisLabel}
+              yAxisLabel={yAxisLabel}
+              showGridLines={showGridLines}
+              onXAxisLabelChange={onXAxisLabelChange}
+              onYAxisLabelChange={onYAxisLabelChange}
+              onShowGridLinesChange={onShowGridLinesChange}
+            />
+          </>
+        )}
       </Stack>
     </Paper>
   );

@@ -6,6 +6,8 @@ import { CubeMeasure, CubeDimension } from '../../types/cube';
 import { ChartType } from '../../utils/chartDataAnalyzer';
 import { SortOrder } from './settings/OrderByControl';
 
+export type LegendPosition = 'top' | 'bottom' | 'left' | 'right';
+
 /**
  * View fields structure
  */
@@ -25,9 +27,13 @@ export interface ChartConfig {
   numberPrecision: number;
   primaryColor: string;
   sortOrder: SortOrder;
+  legendPosition?: LegendPosition;
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  showGridLines?: boolean;
 }
 
 /**

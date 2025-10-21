@@ -167,6 +167,14 @@ export function CreateGraph() {
                   onPrimaryColorChange={graphState.setPrimaryColor}
                   sortOrder={graphState.chartConfig.sortOrder}
                   onSortOrderChange={graphState.setSortOrder}
+                  legendPosition={graphState.chartConfig.legendPosition}
+                  onLegendPositionChange={graphState.setLegendPosition}
+                  xAxisLabel={graphState.chartConfig.xAxisLabel}
+                  yAxisLabel={graphState.chartConfig.yAxisLabel}
+                  onXAxisLabelChange={graphState.setXAxisLabel}
+                  onYAxisLabelChange={graphState.setYAxisLabel}
+                  showGridLines={graphState.chartConfig.showGridLines}
+                  onShowGridLinesChange={graphState.setShowGridLines}
                   dimensions={queryExecution.chartCompatibility.dataStructure.dimensions}
                   measures={queryExecution.chartCompatibility.dataStructure.measures}
                   primaryDimension={graphState.primaryDimension}
@@ -191,6 +199,10 @@ export function CreateGraph() {
                   primaryDimension={graphState.primaryDimension}
                   secondaryDimension={graphState.secondaryDimension}
                   selectedMeasure={graphState.selectedMeasureField}
+                  xAxisLabel={graphState.chartConfig.xAxisLabel}
+                  yAxisLabel={graphState.chartConfig.yAxisLabel}
+                  showGridLines={graphState.chartConfig.showGridLines}
+                  legendPosition={graphState.chartConfig.legendPosition}
                 />
               </Grid.Col>
             </Grid>

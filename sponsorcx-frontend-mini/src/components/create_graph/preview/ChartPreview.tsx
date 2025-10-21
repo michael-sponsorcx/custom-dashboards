@@ -3,6 +3,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
+import type { LegendPosition } from '../../create_graph/types';
 
 interface ChartPreviewProps {
   queryResult: any | null;
@@ -21,6 +22,12 @@ interface ChartPreviewProps {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+
+  // Axis labels
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  showGridLines?: boolean;
+  legendPosition?: LegendPosition;
 }
 
 /**
@@ -38,6 +45,10 @@ export function ChartPreview({
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
+  xAxisLabel,
+  yAxisLabel,
+  showGridLines = true,
+  legendPosition = 'bottom',
 }: ChartPreviewProps) {
   // No data state
   if (!queryResult) {
@@ -92,6 +103,10 @@ export function ChartPreview({
             primaryDimension={primaryDimension}
             secondaryDimension={secondaryDimension}
             selectedMeasure={selectedMeasure}
+            xAxisLabel={xAxisLabel}
+            yAxisLabel={yAxisLabel}
+            showGridLines={showGridLines}
+            legendPosition={legendPosition}
           />
         </div>
       </Stack>

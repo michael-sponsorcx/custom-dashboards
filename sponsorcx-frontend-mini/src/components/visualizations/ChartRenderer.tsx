@@ -4,6 +4,7 @@ import { NumberTile } from './charts/NumberTile';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
+import type { LegendPosition } from '../create_graph/types';
 
 interface ChartRendererProps {
   queryResult: any;
@@ -16,6 +17,12 @@ interface ChartRendererProps {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Axis labels
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  showGridLines?: boolean;
+  // Legend position
+  legendPosition?: LegendPosition;
 }
 
 /**
@@ -35,6 +42,10 @@ export function ChartRenderer({
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
+  xAxisLabel,
+  yAxisLabel,
+  showGridLines = true,
+  legendPosition = 'bottom',
 }: ChartRendererProps) {
   switch (selectedChartType) {
     case 'number':
@@ -57,6 +68,10 @@ export function ChartRenderer({
           selectedMeasure={selectedMeasure}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          showGridLines={showGridLines}
+          legendPosition={legendPosition}
         />
       );
 
@@ -73,6 +88,10 @@ export function ChartRenderer({
           selectedMeasure={selectedMeasure}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          showGridLines={showGridLines}
+          legendPosition={legendPosition}
         />
       );
 
@@ -89,6 +108,10 @@ export function ChartRenderer({
           selectedMeasure={selectedMeasure}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          showGridLines={showGridLines}
+          legendPosition={legendPosition}
         />
       );
 
@@ -105,6 +128,10 @@ export function ChartRenderer({
           selectedMeasure={selectedMeasure}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          showGridLines={showGridLines}
+          legendPosition={legendPosition}
         />
       );
 
@@ -121,6 +148,10 @@ export function ChartRenderer({
           selectedMeasure={selectedMeasure}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          showGridLines={showGridLines}
+          legendPosition={legendPosition}
         />
       );
 

@@ -9,7 +9,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { GraphTemplate } from '../../../types/graph';
-import { ViewFields, ChartConfig } from '../types';
+import { ViewFields, ChartConfig, LegendPosition } from '../types';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../settings/OrderByControl';
 import { createSetToggler } from '../utils/fieldToggle';
@@ -59,6 +59,14 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     initialTemplate?.sortOrder || 'desc'
   );
+  const [legendPosition, setLegendPosition] = useState<LegendPosition>(
+    (initialTemplate?.legendPosition as LegendPosition) || 'bottom'
+  );
+  const [xAxisLabel, setXAxisLabel] = useState(initialTemplate?.xAxisLabel || '');
+  const [yAxisLabel, setYAxisLabel] = useState(initialTemplate?.yAxisLabel || '');
+  const [showGridLines, setShowGridLines] = useState(
+    initialTemplate?.showGridLines ?? true
+  );
 
   // Data field selections
   const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(
@@ -91,9 +99,13 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     numberPrecision,
     primaryColor,
     sortOrder,
+    legendPosition,
     primaryDimension,
     secondaryDimension,
     selectedMeasure: selectedMeasureField,
+    xAxisLabel,
+    yAxisLabel,
+    showGridLines,
   }), [
     selectedChartType,
     chartTitle,
@@ -101,9 +113,13 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     numberPrecision,
     primaryColor,
     sortOrder,
+    legendPosition,
     primaryDimension,
     secondaryDimension,
     selectedMeasureField,
+    xAxisLabel,
+    yAxisLabel,
+    showGridLines,
   ]);
 
   return {
@@ -130,6 +146,10 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setNumberPrecision,
     setPrimaryColor,
     setSortOrder,
+    setLegendPosition,
+    setXAxisLabel,
+    setYAxisLabel,
+    setShowGridLines,
 
     // Data field selections
     primaryDimension,

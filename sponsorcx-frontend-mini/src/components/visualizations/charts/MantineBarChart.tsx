@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import type { LegendPosition } from '../../create_graph/types';
 
 interface MantineBarChartProps {
   queryResult: any;
@@ -19,6 +19,11 @@ interface MantineBarChartProps {
   // Number formatting
   numberFormat?: NumberFormatType;
   numberPrecision?: number;
+  // Axis labels
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  showGridLines?: boolean;
+  legendPosition?: LegendPosition;
 }
 
 /**
@@ -36,6 +41,10 @@ export function MantineBarChart({
   selectedMeasure,
   numberFormat = 'number',
   numberPrecision = 2,
+  xAxisLabel,
+  yAxisLabel,
+  showGridLines = true,
+  legendPosition = 'bottom',
 }: MantineBarChartProps) {
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
@@ -63,10 +72,25 @@ export function MantineBarChart({
   // Create value formatter for the chart
   const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
 
-  // Log when sort order changes
-  useEffect(() => {
-    console.log('MantineBarChart - Sort order changed to:', sortOrder);
-  }, [sortOrder]);
+  // Calculate margins based on whether labels are present
+  const bottomMargin = xAxisLabel ? 60 : 20;
+  const leftMargin = yAxisLabel ? 80 : 60;
+
+  // Map our legend position to recharts props
+  const legendProps = (() => {
+    switch (legendPosition) {
+      case 'top':
+        return { verticalAlign: 'top' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
+      case 'bottom':
+        return { verticalAlign: 'bottom' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
+      case 'left':
+        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'left' as const, width: 140 };
+      case 'right':
+        return { verticalAlign: 'middle' as const, layout: 'vertical' as const, align: 'right' as const, width: 140 };
+      default:
+        return { verticalAlign: 'bottom' as const, height: 60, layout: 'horizontal' as const, align: 'center' as const };
+    }
+  })();
 
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
@@ -80,11 +104,43 @@ export function MantineBarChart({
         type={type}
         orientation={orientation}
         withLegend
-        legendProps={{ verticalAlign: 'bottom', height: 100 }}
-        gridAxis={orientation === 'vertical' ? 'y' : 'x'}
+        legendProps={legendProps}
+        gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : undefined}
         tickLine={orientation === 'vertical' ? 'y' : 'x'}
+        yAxisProps={
+          yAxisLabel
+            ? {
+                label: {
+                  value: yAxisLabel,
+                  angle: -90,
+                  position: 'insideLeft',
+                  style: {
+                    textAnchor: 'middle',
+                    fontWeight: 'bold',
+                    fontSize: 14
+                  },
+                },
+              }
+            : undefined
+        }
+        xAxisProps={
+          xAxisLabel
+            ? {
+                label: {
+                  value: xAxisLabel,
+                  position: 'insideBottom',
+                  offset: -10,
+                  style: {
+                    textAnchor: 'middle',
+                    fontWeight: 'bold',
+                    fontSize: 14
+                  },
+                },
+              }
+            : undefined
+        }
         barChartProps={{
-          margin: { top: 20, right: 20, bottom: 20, left: 60 }
+          margin: { top: 20, right: 20, bottom: bottomMargin, left: leftMargin }
         }}
       />
     </SeriesLimitWrapper>
