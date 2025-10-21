@@ -1,13 +1,20 @@
-import { Container, Button, Title, SimpleGrid, Stack, Text, Group } from '@mantine/core';
+import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getAllGraphTemplates, getDashboard, deleteGraphTemplate, removeGraphFromDashboard, getGraphTemplate } from '../../utils/graphTemplateStorage';
-import { GraphTemplate } from '../../types/graphTemplate';
-import { GraphCard } from './GraphCard';
+import {
+  deleteGraphTemplate,
+  getGraphTemplate,
+  getAllDashboardItems,
+  removeGraphFromDashboard,
+  saveGridLayout,
+  deleteGridLayout,
+} from '../../utils/storage';
+import { DashboardItem } from '../../types/dashboard';
+import { DashboardGrid } from './DashboardGrid';
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const [graphs, setGraphs] = useState<GraphTemplate[]>([]);
+  const [graphs, setGraphs] = useState<DashboardItem[]>([]);
 
   // Load graphs on mount
   useEffect(() => {
@@ -15,20 +22,14 @@ export function Dashboard() {
   }, []);
 
   const loadGraphs = () => {
-    const dashboard = getDashboard();
-    const allGraphs = getAllGraphTemplates();
-
-    // Filter and order graphs based on dashboard configuration
-    const orderedGraphs = dashboard.graphIds
-      .map(id => allGraphs.find(g => g.id === id))
-      .filter((g): g is GraphTemplate => g !== undefined);
-
-    setGraphs(orderedGraphs);
+    const items = getAllDashboardItems();
+    setGraphs(items);
   };
 
   const handleDeleteGraph = (id: string) => {
     if (window.confirm('Are you sure you want to delete this graph? This action cannot be undone.')) {
       deleteGraphTemplate(id);
+      deleteGridLayout(id);
       removeGraphFromDashboard(id);
       loadGraphs();
     }
@@ -39,6 +40,11 @@ export function Dashboard() {
     if (template) {
       navigate('/configure-graph', { state: { template } });
     }
+  };
+
+  const handleResizeGraph = (id: string, width: number, height: number) => {
+    saveGridLayout(id, { gridWidth: width, gridHeight: height });
+    loadGraphs();
   };
 
   return (
@@ -61,19 +67,12 @@ export function Dashboard() {
             </Button>
           </Stack>
         ) : (
-          <SimpleGrid
-            cols={{ base: 1, sm: 1, md: 2, lg: 2, xl: 3 }}
-            spacing="lg"
-          >
-            {graphs.map(graph => (
-              <GraphCard
-                key={graph.id}
-                template={graph}
-                onDelete={handleDeleteGraph}
-                onEdit={handleEditGraph}
-              />
-            ))}
-          </SimpleGrid>
+          <DashboardGrid
+            graphs={graphs}
+            onDelete={handleDeleteGraph}
+            onEdit={handleEditGraph}
+            onResize={handleResizeGraph}
+          />
         )}
       </Stack>
     </Container>

@@ -1,8 +1,8 @@
 import { Paper, Title, ActionIcon, Group, Loader, Text, Center } from '@mantine/core';
 import { IconTrash, IconEdit, IconDownload } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
-import { GraphTemplate } from '../../types/graphTemplate';
-import { ChartRenderer } from '../create_graph/chart_preview/ChartRenderer';
+import { GraphTemplate } from '../../types/graph';
+import { ChartRenderer } from '../visualizations/ChartRenderer';
 import { executeCubeGraphQL } from '../../services/cube';
 import { useDownloadCSV } from '../../hooks/useDownloadCSV';
 
@@ -46,8 +46,15 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
       p="md"
       radius="md"
       withBorder
-      style={{ height: '100%', minHeight: '400px', display: 'flex', flexDirection: 'column' }}
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}
     >
+      {/* Header section - fixed height */}
       <Group justify="space-between" mb="md">
         <Title order={4}>{template.name || 'Untitled Graph'}</Title>
         <Group gap="xs">
@@ -79,7 +86,13 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
         </Group>
       </Group>
 
-      <div style={{ flex: 1, minHeight: 0 }}>
+      {/* Chart container - flexible height, fills remaining space */}
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        width: '100%',
+        position: 'relative'
+      }}>
         {loading && (
           <Center style={{ height: '100%' }}>
             <Loader size="md" />
