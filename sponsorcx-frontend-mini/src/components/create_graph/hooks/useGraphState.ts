@@ -45,6 +45,14 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     new Set(initialTemplate?.dates || [])
   );
 
+  // Query options (orderBy)
+  const [orderByField, setOrderByField] = useState<string | undefined>(
+    initialTemplate?.orderByField
+  );
+  const [orderByDirection, setOrderByDirection] = useState<'asc' | 'desc'>(
+    initialTemplate?.orderByDirection || 'asc'
+  );
+
   // Chart configuration
   const [selectedChartType, setSelectedChartType] = useState<ChartType | null>(
     initialTemplate?.chartType || null
@@ -63,15 +71,24 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || 'hubspot-orange')
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(
-    initialTemplate?.sortOrder || 'desc'
+    initialTemplate?.sortOrder || 'asc'
   );
   const [legendPosition, setLegendPosition] = useState<LegendPosition>(
     (initialTemplate?.legendPosition as LegendPosition) || 'bottom'
   );
   const [xAxisLabel, setXAxisLabel] = useState(initialTemplate?.xAxisLabel || '');
   const [yAxisLabel, setYAxisLabel] = useState(initialTemplate?.yAxisLabel || '');
-  const [showGridLines, setShowGridLines] = useState(
-    initialTemplate?.showGridLines ?? true
+  const [showXAxisGridLines, setShowXAxisGridLines] = useState(
+    initialTemplate?.showXAxisGridLines ?? true
+  );
+  const [showYAxisGridLines, setShowYAxisGridLines] = useState(
+    initialTemplate?.showYAxisGridLines ?? true
+  );
+  const [showRegressionLine, setShowRegressionLine] = useState(
+    initialTemplate?.showRegressionLine ?? false
+  );
+  const [maxDataPoints, setMaxDataPoints] = useState<number | undefined>(
+    initialTemplate?.maxDataPoints
   );
 
   // KPI fields
@@ -116,28 +133,34 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
   }, []);
 
   // Grouped chart config for easy access
-  const chartConfig: ChartConfig = useMemo(() => ({
-    chartType: selectedChartType,
-    chartTitle,
-    numberFormat,
-    numberPrecision,
-    colorPalette,
-    primaryColor,
-    sortOrder,
-    legendPosition,
-    kpiValue,
-    kpiLabel,
-    kpiSecondaryValue,
-    kpiSecondaryLabel,
-    kpiShowTrend,
-    kpiTrendPercentage,
-    primaryDimension,
-    secondaryDimension,
-    selectedMeasure: selectedMeasureField,
-    xAxisLabel,
-    yAxisLabel,
-    showGridLines,
-  }), [
+  const chartConfig: ChartConfig = useMemo(() => {
+    const config = {
+      chartType: selectedChartType,
+      chartTitle,
+      numberFormat,
+      numberPrecision,
+      colorPalette,
+      primaryColor,
+      sortOrder,
+      legendPosition,
+      kpiValue,
+      kpiLabel,
+      kpiSecondaryValue,
+      kpiSecondaryLabel,
+      kpiShowTrend,
+      kpiTrendPercentage,
+      primaryDimension,
+      secondaryDimension,
+      selectedMeasure: selectedMeasureField,
+      xAxisLabel,
+      yAxisLabel,
+      showXAxisGridLines,
+      showYAxisGridLines,
+      showRegressionLine,
+      maxDataPoints,
+    };
+    return config;
+  }, [
     selectedChartType,
     chartTitle,
     numberFormat,
@@ -157,7 +180,10 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     selectedMeasureField,
     xAxisLabel,
     yAxisLabel,
-    showGridLines,
+    showXAxisGridLines,
+    showYAxisGridLines,
+    showRegressionLine,
+    maxDataPoints,
   ]);
 
   return {
@@ -176,6 +202,12 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     toggleDate,
     clearSelections,
 
+    // Query options
+    orderByField,
+    orderByDirection,
+    setOrderByField,
+    setOrderByDirection,
+
     // Chart config
     chartConfig,
     setSelectedChartType,
@@ -188,7 +220,10 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setLegendPosition,
     setXAxisLabel,
     setYAxisLabel,
-    setShowGridLines,
+    setShowXAxisGridLines,
+    setShowYAxisGridLines,
+    setShowRegressionLine,
+    setMaxDataPoints,
 
     // KPI setters
     setKpiValue,

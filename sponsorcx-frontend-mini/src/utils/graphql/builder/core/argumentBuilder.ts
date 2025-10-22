@@ -57,5 +57,15 @@ export function buildCubeNameArguments(
 ): string {
   if (!orderBy) return '';
 
-  return `(orderBy: {${orderBy.field}: ${orderBy.direction}})`;
+  // Direction should be lowercase (asc or desc) per Cube GraphQL API
+  const direction = orderBy.direction.toLowerCase();
+
+  // Parse field name to handle nested structure
+  // For cube fields, we need to strip the cube prefix
+  // Example: "dim_agreements.revenue" -> just use "revenue"
+  const parts = orderBy.field.split('.');
+  const fieldName = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+
+  // Simple field: orderBy: { fieldName: asc }
+  return `(orderBy: {${fieldName}: ${direction}})`;
 }

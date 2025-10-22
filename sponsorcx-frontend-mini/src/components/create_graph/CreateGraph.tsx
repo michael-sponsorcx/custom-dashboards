@@ -5,6 +5,7 @@ import { GraphTemplate } from '../../types/graph';
 import { ModelSelector } from './search/ModelSelector';
 import { QueryValidationResults } from './field_selection/QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
+import { OrderByQueryControl } from './field_selection/OrderByQueryControl';
 import { ChartPreview } from './preview/ChartPreview';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
 import { FilterModal } from './field_selection/filters/FilterModal';
@@ -38,6 +39,8 @@ export function CreateGraph() {
     selectedDimensions: graphState.selectedDimensions,
     selectedDates: graphState.selectedDates,
     filters: filterManagement.filters,
+    orderByField: graphState.orderByField,
+    orderByDirection: graphState.orderByDirection,
     isEditing: templateManager.isEditing,
     selectedChartType: graphState.chartConfig.chartType,
     setSelectedChartType: graphState.setSelectedChartType,
@@ -57,6 +60,8 @@ export function CreateGraph() {
       selectedDimensions: graphState.selectedDimensions,
       selectedDates: graphState.selectedDates,
       filters: filterManagement.filters,
+      orderByField: graphState.orderByField,
+      orderByDirection: graphState.orderByDirection,
       generatedQuery: queryExecution.generatedQuery,
       queryResult: queryExecution.queryResult,
       chartConfig: graphState.chartConfig,
@@ -107,6 +112,19 @@ export function CreateGraph() {
                       onDateToggle={graphState.toggleDate}
                       onFilterClick={filterManagement.openFilterModal}
                       activeFilters={filterManagement.activeFilterFields}
+                    />
+                  )}
+
+                  {/* Order By Control */}
+                  {graphState.selectedView && (
+                    <OrderByQueryControl
+                      measures={graphState.viewFields.measures}
+                      dimensions={graphState.viewFields.dimensions}
+                      dates={graphState.viewFields.dates}
+                      orderByField={graphState.orderByField}
+                      orderByDirection={graphState.orderByDirection}
+                      onOrderByFieldChange={graphState.setOrderByField}
+                      onOrderByDirectionChange={graphState.setOrderByDirection}
                     />
                   )}
 

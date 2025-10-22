@@ -19,6 +19,10 @@ export interface GraphTemplate {
   dates: string[];
   filters: FilterRule[];
 
+  // Query options
+  orderByField?: string;
+  orderByDirection?: 'asc' | 'desc';
+
   // GraphQL query (constructed at creation time, used to fetch fresh data)
   query: string;
 

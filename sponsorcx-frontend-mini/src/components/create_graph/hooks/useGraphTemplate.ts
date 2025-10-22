@@ -28,6 +28,8 @@ interface SaveGraphParams {
   selectedDimensions: Set<string>;
   selectedDates: Set<string>;
   filters: FilterRule[];
+  orderByField?: string;
+  orderByDirection?: 'asc' | 'desc';
   generatedQuery: string;
   queryResult: any;
   chartConfig: ChartConfig;
@@ -46,6 +48,8 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       selectedDimensions,
       selectedDates,
       filters,
+      orderByField,
+      orderByDirection,
       generatedQuery,
       chartConfig,
     } = params;
@@ -61,6 +65,8 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       dimensions: Array.from(selectedDimensions),
       dates: Array.from(selectedDates),
       filters,
+      orderByField,
+      orderByDirection,
       query: generatedQuery,
       chartType: chartConfig.chartType as ChartType,
       chartTitle: chartConfig.chartTitle,
