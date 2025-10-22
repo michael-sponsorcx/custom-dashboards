@@ -43,11 +43,6 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
   const handleMoveGraph = (id: string, column: number, row: number) => {
     const layoutToSave = { gridColumn: column, gridRow: row };
 
-    console.log('----------------------------------------');
-    console.log('[SAVE TO LOCALSTORAGE - MOVE]');
-    console.log('Item ID:', id);
-    console.log('GridLayout being saved:', layoutToSave);
-
     // Update in memory first for immediate UI feedback
     if (onUpdatePosition) {
       onUpdatePosition(id, column, row);

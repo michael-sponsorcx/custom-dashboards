@@ -76,10 +76,7 @@ export function saveGridLayout(graphId: string, layout: GridLayout): void {
     ...layouts[graphId],
     ...layout,
   };
-  console.log('========================================');
-  console.log('[SAVE TO LOCALSTORAGE - MOVE]');
-  console.log('Layouts:', layouts);
-  console.log('========================================');
+
   localStorage.setItem(DASHBOARD_ITEMS_KEY, JSON.stringify(layouts));
 }
 
