@@ -93,12 +93,6 @@ export const MantineBarChart = memo(function MantineBarChart({
   // Create axis tick formatter (abbreviated for large numbers)
   const axisTickFormatter = createAxisTickFormatter(numberFormat);
 
-  // For vertical bars: Y-axis shows numbers (needs formatter), X-axis shows categories (no formatter)
-  // For horizontal bars: X-axis shows numbers (needs formatter), Y-axis shows categories (no formatter)
-  const axisProps = orientation === 'vertical'
-    ? { yAxisProps: { width: 80, tickFormatter: axisTickFormatter } }
-    : { xAxisProps: { tickFormatter: axisTickFormatter } };
-
   return (
     <SeriesLimitWrapper seriesCount={series.length}>
       <BarChart
@@ -116,7 +110,8 @@ export const MantineBarChart = memo(function MantineBarChart({
         tickLine={orientation === 'vertical' ? 'y' : 'x'}
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
-        {...axisProps}
+        xAxisProps={orientation === 'vertical' ? { tickFormatter: axisTickFormatter } : undefined}
+        yAxisProps={orientation === 'horizontal' ? { width: 80, tickFormatter: axisTickFormatter } : { width: 80 }}
       />
     </SeriesLimitWrapper>
   );

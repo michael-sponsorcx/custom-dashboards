@@ -41,7 +41,6 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
 
     const { scrollTop, scrollHeight, clientHeight } = container;
     const scrolledToBottom = scrollHeight - scrollTop - clientHeight < SCROLL_THRESHOLD;
-
     if (scrolledToBottom) {
       setDisplayLimit(prev => {
         const total = totalRowsRef.current;
@@ -51,20 +50,30 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
     }
   }, []);
 
-  // Attach scroll listener - MUST be before any early returns
+  // Attach scroll listener - runs when queryResult changes (when table is actually rendered)
   useEffect(() => {
     const container = scrollRef.current;
 
     if (container) {
-      container.addEventListener('scroll', handleScroll, { passive: true });
-    }
+      // Mantine's ScrollArea creates a viewport div that actually scrolls
+      // We need to find and attach the listener to that viewport element
+      const viewport = container.querySelector('.mantine-ScrollArea-viewport') as HTMLElement;
 
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
+      if (viewport) {
+        viewport.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+          viewport.removeEventListener('scroll', handleScroll);
+        };
+      } else {
+        container.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+          container.removeEventListener('scroll', handleScroll);
+        };
       }
-    };
-  }, [handleScroll]);
+    }
+  }, [queryResult]);
 
   // Reset display limit when queryResult changes
   useEffect(() => {
@@ -127,15 +136,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
   const rowsToDisplay = rows.slice(0, displayLimit);
 
   return (
-    <div
-      ref={scrollRef}
-      style={{
-        height: '600px',
-        overflowY: 'auto',
-        overflowX: 'auto',
-        position: 'relative',
-      }}
-    >
+    <Table.ScrollContainer minWidth={500} h={600} ref={scrollRef}>
       <Table striped highlightOnHover withTableBorder withColumnBorders stickyHeader>
         <Table.Thead>
           <Table.Tr>
@@ -168,7 +169,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
           <Text size="xs" c="dimmed">All {rows.length} rows loaded</Text>
         </Center>
       )}
-    </div>
+    </Table.ScrollContainer>
   );
 }
 
