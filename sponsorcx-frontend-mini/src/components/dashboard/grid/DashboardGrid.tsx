@@ -33,14 +33,6 @@ export function DashboardGrid({
   onResize,
   onBatchMove,
 }: DashboardGridProps) {
-  console.log('[RGL] Rendering with graphs:', graphs.map((g: DashboardItem) => ({
-    id: g.id,
-    row: g.gridRow,
-    col: g.gridColumn,
-    w: g.gridWidth,
-    h: g.gridHeight
-  })));
-
   // Convert DashboardItem[] to react-grid-layout Layout[]
   const layout: Layout[] = useMemo(() => {
     return graphs.map((graph: DashboardItem) => ({
@@ -56,8 +48,6 @@ export function DashboardGrid({
 
   // Handle layout changes (drag/resize) - called on drag stop
   const handleDragStop = (newLayout: Layout[]) => {
-    console.log('[RGL] Drag stopped, saving to localStorage:', newLayout);
-
     if (!onBatchMove) return;
 
     // Convert Layout[] back to DashboardItem[]
@@ -81,8 +71,6 @@ export function DashboardGrid({
 
   // Handle resize stop
   const handleResizeStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
-    console.log('[RGL] Resize stop:', { oldItem, newItem });
-
     if (onResize) {
       onResize(newItem.i, newItem.w, newItem.h);
     }

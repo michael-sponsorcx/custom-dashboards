@@ -123,8 +123,6 @@ export function ModelSelector({
     if (onClearSelections) {
       onClearSelections();
     }
-
-    console.log('Selected view:', viewName);
   };
 
   const handleClearSelection = () => {

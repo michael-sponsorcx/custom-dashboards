@@ -119,10 +119,8 @@ export async function fetchCubeGraphQLSchema(): Promise<any> {
     return await getCached(
       cacheKey,
       async () => {
-        console.log('Fetching GraphQL schema via introspection...');
         const result = await executeCubeGraphQL(INTROSPECTION_QUERY);
         if (result?.data?.__schema) {
-          console.log('GraphQL schema fetched successfully');
           return result.data.__schema;
         } else {
           throw new Error('Invalid introspection response');
@@ -141,7 +139,6 @@ export async function fetchCubeGraphQLSchema(): Promise<any> {
  */
 export function clearSchemaCache(): void {
   clearCache();
-  console.log('Schema cache cleared');
 }
 
 /**

@@ -85,12 +85,10 @@ export async function getCached<T>(
   // Try to get from cache
   const cached = cacheStore.get<T>(key);
   if (cached !== null) {
-    console.log(`Cache hit for key: ${key}`);
     return cached;
   }
 
   // Cache miss - fetch and store
-  console.log(`Cache miss for key: ${key}`);
   const data = await fetchFn();
   cacheStore.set(key, data, ttl);
   return data;

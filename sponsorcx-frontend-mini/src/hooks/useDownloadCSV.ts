@@ -10,7 +10,6 @@ import { transformQueryResultsToCSV } from '../utils/csvExport';
 export function useDownloadCSV(queryResult: any, filename: string = 'data') {
   const downloadCSV = useCallback(() => {
     if (!queryResult) {
-      console.warn('No query result available to download');
       return;
     }
 

@@ -38,7 +38,8 @@ export async function fetchDistinctDimensionValues(
   viewName: string,
   dimensionName: string
 ): Promise<string[]> {
-  console.log('fetchDistinctDimensionValues called with:', { viewName, dimensionName });
+  // Strip 'Cube.' prefix from the dimension name for Cube.js
+  const cleanDimensionName = stripCubePrefix(dimensionName);
 
   // Strip cube prefix if present
   const fieldNameStripped = stripCubePrefix(dimensionName);
@@ -57,7 +58,6 @@ export async function fetchDistinctDimensionValues(
 
   try {
     const result = await executeCubeGraphQL(query);
-    console.log('Query result:', result);
 
     // Extract unique values from result
     const values = new Set<string>();
@@ -81,7 +81,6 @@ export async function fetchDistinctDimensionValues(
       });
     }
 
-    console.log('Extracted unique values:', Array.from(values));
 
     // Return sorted array of distinct values
     return Array.from(values).sort();

@@ -68,7 +68,6 @@ export function pieChartTransformation(options: ChartSpecificTransformOptions): 
     }
 
     const remainingCount = uniqueDimensionValues.length - MAX_PIE_CHART_DIMENSION_VALUES;
-    console.log(`Pie chart - Grouped ${remainingCount} categories into "Other"`);
   } else {
     // Less than or equal to 10 categories - use all data
     finalChartData = chartData;

@@ -75,7 +75,7 @@ export function DimensionFilterContent({
   const handleScroll = useCallback((e: Event) => {
     const container = e.target as HTMLDivElement;
     if (!container || !hasMore) {
-      console.log('handleScroll early return:', { container: !!container, hasMore });
+
       return;
     }
 
@@ -85,7 +85,7 @@ export function DimensionFilterContent({
     console.log('Scroll event:', { scrollTop, scrollHeight, clientHeight, scrolledToBottom, hasMore });
 
     if (scrolledToBottom) {
-      console.log('Loading more items...', { current: displayLimit, total: filteredDimensionValues.length });
+
       setDisplayLimit(prev => Math.min(prev + LOAD_INCREMENT, filteredDimensionValues.length));
     }
   }, [hasMore, displayLimit, filteredDimensionValues.length, LOAD_INCREMENT]);
@@ -95,22 +95,17 @@ export function DimensionFilterContent({
     const includeContainer = includeScrollRef.current;
     const excludeContainer = excludeScrollRef.current;
 
-    console.log('Attaching scroll listeners:', { includeContainer, excludeContainer });
-
     if (includeContainer) {
       includeContainer.addEventListener('scroll', handleScroll, { passive: true });
-      console.log('Include scroll listener attached');
     }
 
     if (excludeContainer) {
       excludeContainer.addEventListener('scroll', handleScroll, { passive: true });
-      console.log('Exclude scroll listener attached');
     }
 
     return () => {
       if (includeContainer) {
         includeContainer.removeEventListener('scroll', handleScroll);
-        console.log('Removing include scroll listener');
       }
       if (excludeContainer) {
         excludeContainer.removeEventListener('scroll', handleScroll);

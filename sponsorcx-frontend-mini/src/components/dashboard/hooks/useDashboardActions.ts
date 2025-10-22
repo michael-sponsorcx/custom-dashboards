@@ -50,19 +50,6 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
 
     // Then persist to storage (no refresh needed)
     saveGridLayout(id, layoutToSave);
-
-    // Log what's in localStorage after save
-    const allLayouts = JSON.parse(localStorage.getItem(DASHBOARD_ITEMS_KEY) || '{}');
-    console.log('All layouts in localStorage after save:');
-    Object.entries(allLayouts).forEach(([itemId, layout]: [string, any]) => {
-      console.log(`  ${itemId}:`, {
-        gridColumn: layout.gridColumn,
-        gridRow: layout.gridRow,
-        gridWidth: layout.gridWidth,
-        gridHeight: layout.gridHeight,
-      });
-    });
-    console.log('----------------------------------------');
   };
 
   const handleBatchMoveGraph = (items: DashboardItem[]) => {

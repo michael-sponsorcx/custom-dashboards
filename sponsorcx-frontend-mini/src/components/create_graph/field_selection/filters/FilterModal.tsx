@@ -94,10 +94,7 @@ export function FilterModal({
 
   // Fetch dimension values when modal opens for a dimension
   useEffect(() => {
-    console.log('FilterModal useEffect triggered:', { opened, fieldType, viewName, fieldName });
-
     if (!opened || fieldType !== 'dimension' || !viewName || !fieldName) {
-      console.log('Skipping fetch - conditions not met:', { opened, fieldType, viewName, fieldName });
       return;
     }
 
@@ -106,18 +103,15 @@ export function FilterModal({
 
     // Check if we have cached values
     if (dimensionValuesCache[cacheKey]) {
-      console.log('Using cached dimension values for:', cacheKey);
       setDimensionValues(dimensionValuesCache[cacheKey]);
       return;
     }
 
     const fetchValues = async () => {
-      console.log('Starting to fetch dimension values for:', viewName, fieldName);
       setLoadingValues(true);
       setLoadError(null);
       try {
         const values = await fetchDistinctDimensionValues(viewName, fieldName);
-        console.log('Successfully fetched dimension values:', values);
         setDimensionValues(values);
 
         // Update cache

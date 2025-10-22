@@ -105,22 +105,18 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
   // Execute query
   const executeQuery = useCallback(async () => {
     if (!generatedQuery) {
-      console.log('No query to execute');
       return;
     }
 
-    console.log('Executing GraphQL Query:', generatedQuery);
     setIsExecuting(true);
 
     try {
       const result = await executeCubeGraphQL(generatedQuery);
-      console.log('Query Result:', result);
 
       setQueryResult(result);
 
       // Analyze chart compatibility
       const compatibility = analyzeChartCompatibility(result);
-      console.log('Chart Compatibility:', compatibility);
 
       // Auto-select recommended chart type ONLY if not editing or no chart type is set
       if (compatibility.compatibleCharts.length > 0 && !selectedChartType) {
