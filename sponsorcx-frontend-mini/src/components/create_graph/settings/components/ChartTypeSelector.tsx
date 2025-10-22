@@ -14,6 +14,7 @@ const CHART_TYPE_LABELS: Record<ChartType, string> = {
   stackedBar: 'Stacked Bar Chart',
   horizontalBar: 'Bar Chart (Horizontal)',
   horizontalStackedBar: 'Horizontal Stacked Bar',
+  pie: 'Pie Chart',
 };
 
 function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
@@ -93,6 +94,24 @@ function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
     );
   }
 
+  if (type === 'pie') {
+    return (
+      <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
+        <circle cx="24" cy="24" r="18" fill={fill} opacity="0.8" />
+        <path
+          d="M 24 24 L 24 6 A 18 18 0 0 1 39.57 10.43 Z"
+          fill={fill}
+          opacity="0.5"
+        />
+        <path
+          d="M 24 24 L 39.57 10.43 A 18 18 0 0 1 42 24 Z"
+          fill={fill}
+          opacity="0.3"
+        />
+      </svg>
+    );
+  }
+
   return null;
 }
 
@@ -116,6 +135,7 @@ export function ChartTypeSelector({
     'stackedBar',
     'horizontalBar',
     'horizontalStackedBar',
+    'pie',
   ];
 
   const isDisabled = (type: ChartType) => !compatibleCharts.includes(type);

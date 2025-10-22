@@ -5,7 +5,7 @@ import { ColorPalette } from '../constants/colorPalettes';
 /**
  * Legend position for charts
  */
-export type LegendPosition = 'top' | 'bottom';
+export type LegendPosition = 'top' | 'bottom' | 'none';
 
 export interface GraphTemplate {
   id: string;
@@ -47,9 +47,15 @@ export interface GraphTemplate {
   showYAxisGridLines?: boolean;
   showGridLines?: boolean;
 
+  // Regression line
+  showRegressionLine?: boolean;
+
   // Axis labels
   xAxisLabel?: string;
   yAxisLabel?: string;
+
+  // Data limits
+  maxDataPoints?: number;
 
   // Data field selection (for charts with multiple dimensions/measures)
   primaryDimension?: string;

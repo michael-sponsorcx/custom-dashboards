@@ -13,7 +13,7 @@ import { barChartTransformation } from './transformations/barChart';
 import { barStackedTransformation } from './transformations/barStacked';
 import { lineChartTransformation, areaChartTransformation } from './transformations/lineChart';
 import { pieChartTransformation } from './transformations/pieChart';
-import { numberChartTransformation } from './transformations/numberChart';
+import { kpiChartTransformation } from './transformations/kpi';
 
 // Re-export types for convenience
 export type { ChartType, TransformationResult, TransformChartDataOptions } from './types';
@@ -76,10 +76,14 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
       return areaChartTransformation(transformOptions);
     case 'pie':
       return pieChartTransformation(transformOptions);
-    case 'number':
-      return numberChartTransformation(transformOptions);
+    case 'kpi':
+      return kpiChartTransformation(transformOptions);
     default:
-      console.warn(`Unknown chart type: ${chartType}. Returning raw data.`);
-      return { data: chartData };
+      // Unknown chart type - return raw data
+      return {
+        data: chartData,
+        dimensionField: options.primaryDimension,
+        series: [], // No specific series config for raw data
+      };
   }
 }

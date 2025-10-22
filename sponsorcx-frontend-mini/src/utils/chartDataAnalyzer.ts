@@ -1,4 +1,4 @@
-export type ChartType = 'kpi' | 'line' | 'bar' | 'stackedBar' | 'horizontalBar' | 'horizontalStackedBar';
+export type ChartType = 'kpi' | 'line' | 'bar' | 'stackedBar' | 'horizontalBar' | 'horizontalStackedBar' | 'pie';
 
 export interface ChartCompatibility {
   compatibleCharts: ChartType[];
@@ -70,9 +70,9 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
     compatibleCharts.push('kpi');
   }
 
-  // Rule 2: Multiple rows with at least 1 measure and 1 dimension → Line and all Bar variants
+  // Rule 2: Multiple rows with at least 1 measure and 1 dimension → Line and all Bar variants + Pie
   if (rowCount > 1 && measureCount >= 1 && dimensionCount >= 1) {
-    compatibleCharts.push('line', 'bar', 'horizontalBar');
+    compatibleCharts.push('line', 'bar', 'horizontalBar', 'pie');
 
     // Stacked variants available if multiple measures OR multiple dimensions
     // Multiple dimensions allow stacking by category (e.g., revenue by year AND region)

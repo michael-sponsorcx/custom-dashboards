@@ -9,7 +9,7 @@
 import { ChartSpecificTransformOptions, TransformationResult } from '../types';
 import { extractFields } from '../core/fieldExtraction';
 
-export function numberChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function kpiChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
   const { chartData } = options;
 
   // Extract fields
