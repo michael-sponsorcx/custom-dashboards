@@ -12,6 +12,7 @@ interface DashboardGridProps {
   graphs: DashboardItem[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onFilter: (id: string) => void;
   onResize?: (id: string, width: number, height: number) => void;
   onMove?: (id: string, column: number, row: number) => void;
   onBatchMove?: (items: DashboardItem[]) => void;
@@ -30,6 +31,7 @@ export function DashboardGrid({
   graphs,
   onDelete,
   onEdit,
+  onFilter,
   onResize,
   onBatchMove,
 }: DashboardGridProps) {
@@ -100,6 +102,7 @@ export function DashboardGrid({
             template={graph}
             onDelete={onDelete}
             onEdit={onEdit}
+            onFilter={onFilter}
           />
         </div>
       ))}

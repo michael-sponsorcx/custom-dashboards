@@ -1,5 +1,5 @@
 import { Paper, Title, ActionIcon, Group, Loader, Text, Center, Tooltip } from '@mantine/core';
-import { IconTrash, IconEdit, IconDownload, IconGripVertical } from '@tabler/icons-react';
+import { IconTrash, IconEdit, IconDownload, IconGripVertical, IconFilter } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { GraphTemplate } from '../../../types/graph';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
@@ -12,9 +12,10 @@ interface GraphCardProps {
   template: DashboardItem;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onFilter: (id: string) => void;
 }
 
-export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
+export function GraphCard({ template, onDelete, onEdit, onFilter }: GraphCardProps) {
   const [queryResult, setQueryResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,6 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
         const result = await executeCubeGraphQL(template.query);
         setQueryResult(result);
       } catch (err) {
-        console.error('Error fetching graph data:', err);
         setError('Failed to load graph data');
       } finally {
         setLoading(false);
@@ -63,31 +63,47 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
           <Title order={4}>{template.name || 'Untitled Graph'}</Title>
         </Group>
         <Group gap="xs">
-          <ActionIcon
-            color="green"
-            variant="subtle"
-            onClick={downloadCSV}
-            aria-label="Download CSV"
-            disabled={!queryResult || loading}
-          >
-            <IconDownload size={18} />
-          </ActionIcon>
-          <ActionIcon
-            color="blue"
-            variant="subtle"
-            onClick={() => onEdit(template.id)}
-            aria-label="Edit graph"
-          >
-            <IconEdit size={18} />
-          </ActionIcon>
-          <ActionIcon
-            color="red"
-            variant="subtle"
-            onClick={() => onDelete(template.id)}
-            aria-label="Delete graph"
-          >
-            <IconTrash size={18} />
-          </ActionIcon>
+          <Tooltip label="Filter graph">
+            <ActionIcon
+              color="violet"
+              variant="subtle"
+              onClick={() => onFilter(template.id)}
+              aria-label="Filter graph"
+            >
+              <IconFilter size={18} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Download CSV">
+            <ActionIcon
+              color="green"
+              variant="subtle"
+              onClick={downloadCSV}
+              aria-label="Download CSV"
+              disabled={!queryResult || loading}
+            >
+              <IconDownload size={18} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Edit graph">
+            <ActionIcon
+              color="blue"
+              variant="subtle"
+              onClick={() => onEdit(template.id)}
+              aria-label="Edit graph"
+            >
+              <IconEdit size={18} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Delete graph">
+            <ActionIcon
+              color="red"
+              variant="subtle"
+              onClick={() => onDelete(template.id)}
+              aria-label="Delete graph"
+            >
+              <IconTrash size={18} />
+            </ActionIcon>
+          </Tooltip>
         </Group>
       </Group>
 
@@ -124,7 +140,10 @@ export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
             selectedMeasure={template.selectedMeasure}
             xAxisLabel={template.xAxisLabel}
             yAxisLabel={template.yAxisLabel}
-            showGridLines={template.showGridLines}
+            showXAxisGridLines={template.showXAxisGridLines}
+            showYAxisGridLines={template.showYAxisGridLines}
+            showRegressionLine={template.showRegressionLine}
+            maxDataPoints={template.maxDataPoints}
             legendPosition={template.legendPosition}
             kpiValue={template.kpiValue}
             kpiLabel={template.kpiLabel}

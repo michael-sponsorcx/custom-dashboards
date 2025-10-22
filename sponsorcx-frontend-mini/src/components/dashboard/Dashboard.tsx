@@ -1,6 +1,8 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
+import { useState } from 'react';
 import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
+import { GraphFilterModal } from './GraphFilterModal';
 
 /**
  * Dashboard Component - Refactored
@@ -17,6 +19,23 @@ export function Dashboard() {
       onUpdatePosition: updateGraphPosition,
       onUpdateSize: updateGraphSize,
     });
+
+  // Filter modal state
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [selectedGraphId, setSelectedGraphId] = useState<string | null>(null);
+
+  // Find the selected graph for the modal
+  const selectedGraph = graphs.find(g => g.id === selectedGraphId);
+
+  const handleFilterGraph = (id: string) => {
+    setSelectedGraphId(id);
+    setFilterModalOpen(true);
+  };
+
+  const handleCloseFilterModal = () => {
+    setFilterModalOpen(false);
+    setSelectedGraphId(null);
+  };
 
   if (loading) {
     return (
@@ -52,12 +71,21 @@ export function Dashboard() {
             graphs={graphs}
             onDelete={handleDeleteGraph}
             onEdit={handleEditGraph}
+            onFilter={handleFilterGraph}
             onResize={handleResizeGraph}
             onMove={handleMoveGraph}
             onBatchMove={handleBatchMoveGraph}
           />
         )}
       </Stack>
+
+      {/* Filter Modal */}
+      <GraphFilterModal
+        opened={filterModalOpen}
+        onClose={handleCloseFilterModal}
+        graphId={selectedGraphId}
+        graphName={selectedGraph?.name || 'Untitled Graph'}
+      />
     </Container>
   );
 }
