@@ -25,4 +25,5 @@ export {
   deleteGridLayout,
   getDashboardItem,
   getAllDashboardItems,
+  DASHBOARD_ITEMS_KEY,
 } from './dashboardStorage';

@@ -10,10 +10,12 @@ import { useDashboardState, useDashboardActions } from './hooks';
  */
 export function Dashboard() {
   // Use custom hooks to manage state and actions
-  const { graphs, loading, refreshDashboard } = useDashboardState();
+  const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } = useDashboardState();
   const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleMoveGraph, handleCreateGraph } =
     useDashboardActions({
       onRefresh: refreshDashboard,
+      onUpdatePosition: updateGraphPosition,
+      onUpdateSize: updateGraphSize,
     });
 
   if (loading) {

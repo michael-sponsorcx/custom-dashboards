@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { deleteGraphTemplate, getGraphTemplate } from '../../../utils/storage';
-import { deleteGridLayout, removeGraphFromDashboard, saveGridLayout } from '../../../utils/storage';
+import { deleteGridLayout, removeGraphFromDashboard, saveGridLayout, DASHBOARD_ITEMS_KEY } from '../../../utils/storage';
 
 interface UseDashboardActionsOptions {
   onRefresh: () => void;
+  onUpdatePosition?: (id: string, column: number, row: number) => void;
+  onUpdateSize?: (id: string, width: number, height: number) => void;
 }
 
 /**
  * Hook to manage dashboard actions (delete, edit, resize, move)
  */
-export function useDashboardActions({ onRefresh }: UseDashboardActionsOptions) {
+export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize }: UseDashboardActionsOptions) {
   const navigate = useNavigate();
 
   const handleDeleteGraph = (id: string) => {
@@ -29,13 +31,42 @@ export function useDashboardActions({ onRefresh }: UseDashboardActionsOptions) {
   };
 
   const handleResizeGraph = (id: string, width: number, height: number) => {
+    // Update in memory first for immediate UI feedback
+    if (onUpdateSize) {
+      onUpdateSize(id, width, height);
+    }
+    // Then persist to storage (no refresh needed)
     saveGridLayout(id, { gridWidth: width, gridHeight: height });
-    onRefresh();
   };
 
   const handleMoveGraph = (id: string, column: number, row: number) => {
-    saveGridLayout(id, { gridColumn: column, gridRow: row });
-    onRefresh();
+    const layoutToSave = { gridColumn: column, gridRow: row };
+
+    console.log('----------------------------------------');
+    console.log('[SAVE TO LOCALSTORAGE - MOVE]');
+    console.log('Item ID:', id);
+    console.log('GridLayout being saved:', layoutToSave);
+
+    // Update in memory first for immediate UI feedback
+    if (onUpdatePosition) {
+      onUpdatePosition(id, column, row);
+    }
+
+    // Then persist to storage (no refresh needed)
+    saveGridLayout(id, layoutToSave);
+
+    // Log what's in localStorage after save
+    const allLayouts = JSON.parse(localStorage.getItem(DASHBOARD_ITEMS_KEY) || '{}');
+    console.log('All layouts in localStorage after save:');
+    Object.entries(allLayouts).forEach(([itemId, layout]: [string, any]) => {
+      console.log(`  ${itemId}:`, {
+        gridColumn: layout.gridColumn,
+        gridRow: layout.gridRow,
+        gridWidth: layout.gridWidth,
+        gridHeight: layout.gridHeight,
+      });
+    });
+    console.log('----------------------------------------');
   };
 
   const handleCreateGraph = () => {

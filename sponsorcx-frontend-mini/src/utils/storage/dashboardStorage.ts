@@ -2,7 +2,7 @@ import { DashboardTemplate, DashboardItem, GridLayout } from '../../types/dashbo
 import { getGraphTemplate } from './graphStorage';
 
 const DASHBOARD_KEY = 'sponsorcx_dashboard';
-const DASHBOARD_ITEMS_KEY = 'sponsorcx_dashboard_items';
+export const DASHBOARD_ITEMS_KEY = 'sponsorcx_dashboard_items';
 
 /**
  * Save dashboard configuration
@@ -71,7 +71,15 @@ export function removeGraphFromDashboard(graphId: string): void {
  */
 export function saveGridLayout(graphId: string, layout: GridLayout): void {
   const layouts = getAllGridLayouts();
-  layouts[graphId] = layout;
+  // Merge with existing layout to preserve other properties
+  layouts[graphId] = {
+    ...layouts[graphId],
+    ...layout,
+  };
+  console.log('========================================');
+  console.log('[SAVE TO LOCALSTORAGE - MOVE]');
+  console.log('Layouts:', layouts);
+  console.log('========================================');
   localStorage.setItem(DASHBOARD_ITEMS_KEY, JSON.stringify(layouts));
 }
 
