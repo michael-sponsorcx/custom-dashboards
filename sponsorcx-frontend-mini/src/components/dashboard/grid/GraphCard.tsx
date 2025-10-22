@@ -12,11 +12,9 @@ interface GraphCardProps {
   template: DashboardItem;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
-  onDragStart: (e: React.MouseEvent, item: DashboardItem) => void;
-  isHovered: boolean;
 }
 
-export function GraphCard({ template, onDelete, onEdit, onDragStart, isHovered }: GraphCardProps) {
+export function GraphCard({ template, onDelete, onEdit }: GraphCardProps) {
   const [queryResult, setQueryResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +59,7 @@ export function GraphCard({ template, onDelete, onEdit, onDragStart, isHovered }
       {/* Header section - fixed height */}
       <Group justify="space-between" mb="md">
         <Group gap="xs">
-          <DragHandle onMouseDown={(e) => onDragStart(e, template)} isVisible={isHovered} />
+          <DragHandle />
           <Title order={4}>{template.name || 'Untitled Graph'}</Title>
         </Group>
         <Group gap="xs">

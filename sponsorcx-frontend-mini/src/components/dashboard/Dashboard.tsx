@@ -1,6 +1,6 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
-import { DashboardGrid } from './grid';
 import { useDashboardState, useDashboardActions } from './hooks';
+import { DashboardGrid } from './grid';
 
 /**
  * Dashboard Component - Refactored
@@ -11,7 +11,7 @@ import { useDashboardState, useDashboardActions } from './hooks';
 export function Dashboard() {
   // Use custom hooks to manage state and actions
   const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } = useDashboardState();
-  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleMoveGraph, handleCreateGraph } =
+  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleMoveGraph, handleBatchMoveGraph, handleCreateGraph } =
     useDashboardActions({
       onRefresh: refreshDashboard,
       onUpdatePosition: updateGraphPosition,
@@ -54,6 +54,7 @@ export function Dashboard() {
             onEdit={handleEditGraph}
             onResize={handleResizeGraph}
             onMove={handleMoveGraph}
+            onBatchMove={handleBatchMoveGraph}
           />
         )}
       </Stack>

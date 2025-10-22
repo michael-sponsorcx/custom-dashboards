@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useMemo } from 'react';
+import RGL, { Layout, WidthProvider } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import { DashboardItem } from '../../../types/dashboard';
-import { GridItem } from './GridItem';
-import { GridOverlay } from './GridOverlay';
-import { DragPreview } from './DragPreview';
-import { calculateCellSize, calculateGridHeight, autoLayoutItems } from '../utils';
-import { useGridResize, useGridDrag } from '../hooks';
+import { GraphCard } from './GraphCard';
+
+// @ts-ignore - WidthProvider type issue
+const GridLayout = WidthProvider(RGL);
 
 interface DashboardGridProps {
   graphs: DashboardItem[];
@@ -12,96 +14,107 @@ interface DashboardGridProps {
   onEdit: (id: string) => void;
   onResize?: (id: string, width: number, height: number) => void;
   onMove?: (id: string, column: number, row: number) => void;
+  onBatchMove?: (items: DashboardItem[]) => void;
 }
 
 /**
- * DashboardGrid - A responsive 6-column grid with perfect squares
+ * DashboardGrid using react-grid-layout
  *
  * Features:
- * - Always 6 columns wide
- * - Square cells that maintain aspect ratio
- * - Graphs can span multiple columns and rows
- * - Responsive to viewport changes
- * - Auto-layout with collision detection
+ * - Drag and drop with live collision resolution
+ * - Resizable items
+ * - Automatic compaction
+ * - 6-column responsive grid
  */
-export function DashboardGrid({ graphs, onDelete, onEdit, onResize, onMove }: DashboardGridProps) {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const [cellSize, setCellSize] = useState(0);
+export function DashboardGrid({
+  graphs,
+  onDelete,
+  onEdit,
+  onResize,
+  onBatchMove,
+}: DashboardGridProps) {
+  console.log('[RGL] Rendering with graphs:', graphs.map((g: DashboardItem) => ({
+    id: g.id,
+    row: g.gridRow,
+    col: g.gridColumn,
+    w: g.gridWidth,
+    h: g.gridHeight
+  })));
 
-  // Calculate cell size on mount and window resize
-  useEffect(() => {
-    const updateCellSize = () => {
-      if (!gridRef.current) return;
-      const size = calculateCellSize(gridRef.current.offsetWidth);
-      setCellSize(size);
-    };
+  // Convert DashboardItem[] to react-grid-layout Layout[]
+  const layout: Layout[] = useMemo(() => {
+    return graphs.map((graph: DashboardItem) => ({
+      i: graph.id, // Unique identifier
+      x: (graph.gridColumn || 1) - 1, // RGL uses 0-based columns
+      y: (graph.gridRow || 1) - 1, // RGL uses 0-based rows
+      w: graph.gridWidth || 2, // Width in columns
+      h: graph.gridHeight || 2, // Height in rows
+      minW: 1, // Minimum width
+      minH: 1, // Minimum height
+    }));
+  }, [graphs]);
 
-    updateCellSize();
-    window.addEventListener('resize', updateCellSize);
-    return () => window.removeEventListener('resize', updateCellSize);
-  }, []);
+  // Handle layout changes (drag/resize) - called on drag stop
+  const handleDragStop = (newLayout: Layout[]) => {
+    console.log('[RGL] Drag stopped, saving to localStorage:', newLayout);
 
-  // Auto-layout graphs using efficient grid packing
-  const positionedGraphs = useMemo(() => autoLayoutItems(graphs), [graphs]);
+    if (!onBatchMove) return;
 
-  // Calculate total grid height
-  const gridHeight = useMemo(
-    () => calculateGridHeight(positionedGraphs, cellSize),
-    [positionedGraphs, cellSize]
-  );
+    // Convert Layout[] back to DashboardItem[]
+    const updatedItems = graphs.map((graph: DashboardItem) => {
+      const layoutItem = newLayout.find(l => l.i === graph.id);
+      if (!layoutItem) return graph;
 
-  // Handle resize logic
-  const { handleResizeStart, isResizing } = useGridResize({
-    cellSize,
-    positionedGraphs,
-    onResize,
-  });
+      return {
+        ...graph,
+        gridColumn: layoutItem.x + 1, // Convert back to 1-based
+        gridRow: layoutItem.y + 1,
+        gridWidth: layoutItem.w,
+        gridHeight: layoutItem.h,
+      };
+    });
 
-  // Handle drag logic
-  const { handleDragStart, isDragging, dragPreview } = useGridDrag({
-    cellSize,
-    positionedGraphs,
-    onMove,
-  });
+    // Only save to localStorage, don't update state
+    // React-grid-layout already updated the visual positions
+    onBatchMove(updatedItems);
+  };
+
+  // Handle resize stop
+  const handleResizeStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
+    console.log('[RGL] Resize stop:', { oldItem, newItem });
+
+    if (onResize) {
+      onResize(newItem.i, newItem.w, newItem.h);
+    }
+  };
 
   return (
-    <div
-      ref={gridRef}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: gridHeight > 0 ? `${gridHeight}px` : 'auto',
-        minHeight: cellSize > 0 ? `${cellSize}px` : 'auto',
-      }}
+    // @ts-ignore - WidthProvider wrapped component
+    <GridLayout
+      className="layout"
+      layout={layout}
+      cols={6}
+      rowHeight={150}
+      margin={[16, 16]}
+      containerPadding={[0, 0]}
+      compactType="vertical"
+      preventCollision={false}
+      onDragStop={handleDragStop}
+      onResizeStop={handleResizeStop}
+      draggableHandle=".drag-handle"
+      isDraggable={true}
+      isResizable={true}
+      useCSSTransforms={true}
     >
-      {/* Grid overlay - shows during resize or drag */}
-      <GridOverlay cellSize={cellSize} gridHeight={gridHeight} isVisible={isResizing || isDragging} />
-
-      {/* Drag preview - shows where item will snap to */}
-      {dragPreview && (
-        <DragPreview
-          column={dragPreview.column}
-          row={dragPreview.row}
-          width={dragPreview.width}
-          height={dragPreview.height}
-          cellSize={cellSize}
-          isVisible={isDragging}
-        />
-      )}
-
-      {/* Grid items */}
-      {cellSize > 0 &&
-        positionedGraphs.map((graph) => (
-          <GridItem
-            key={graph.id}
-            item={graph}
-            cellSize={cellSize}
+      {graphs.map((graph: DashboardItem) => (
+        <div key={graph.id}>
+          <GraphCard
+            template={graph}
             onDelete={onDelete}
             onEdit={onEdit}
-            onResizeStart={handleResizeStart}
-            onDragStart={handleDragStart}
           />
-        ))}
-    </div>
+        </div>
+      ))}
+    </GridLayout>
   );
 }

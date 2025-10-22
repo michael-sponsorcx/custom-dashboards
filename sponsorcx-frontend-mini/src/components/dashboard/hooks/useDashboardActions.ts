@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { deleteGraphTemplate, getGraphTemplate } from '../../../utils/storage';
 import { deleteGridLayout, removeGraphFromDashboard, saveGridLayout, DASHBOARD_ITEMS_KEY } from '../../../utils/storage';
+import { DashboardItem } from '../../../types/dashboard';
 
 interface UseDashboardActionsOptions {
   onRefresh: () => void;
@@ -69,6 +70,23 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
     console.log('----------------------------------------');
   };
 
+  const handleBatchMoveGraph = (items: DashboardItem[]) => {
+    console.log('[RGL] Batch move - saving to localStorage');
+
+    // Just persist to localStorage
+    // React-grid-layout already updated the visual positions
+    // No need to call setGraphs - it would cause redundant re-renders
+    items.forEach(item => {
+      const layoutToSave = {
+        gridColumn: item.gridColumn,
+        gridRow: item.gridRow,
+        gridWidth: item.gridWidth,
+        gridHeight: item.gridHeight,
+      };
+      saveGridLayout(item.id, layoutToSave);
+    });
+  };
+
   const handleCreateGraph = () => {
     navigate('/configure-graph');
   };
@@ -78,6 +96,7 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
     handleEditGraph,
     handleResizeGraph,
     handleMoveGraph,
+    handleBatchMoveGraph,
     handleCreateGraph,
   };
 }
