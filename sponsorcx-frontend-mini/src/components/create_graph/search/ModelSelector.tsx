@@ -41,10 +41,8 @@ export function ModelSelector({
       try {
         const data = await fetchCubeMetadata();
         setMetadata(data);
-        console.log('Cube metadata:', data);
       } catch (err) {
         setError('Failed to load metadata');
-        console.error(err);
       } finally {
         setLoading(false);
       }

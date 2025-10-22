@@ -20,14 +20,14 @@ export function lineChartTransformation(options: ChartSpecificTransformOptions):
     primaryColor = '#3b82f6',
     getColorFn,
     primaryDimension,
-    selectedMeasure
+    selectedMeasure,
+    maxDataPoints
   } = options;
 
   // 1. Extract and select fields
   const { dimensionFields, measureFields } = extractFields(chartData);
 
   if (dimensionFields.length === 0 || measureFields.length === 0) {
-    console.warn('Line chart requires at least one dimension and one measure');
     return { data: [] };
   }
 
@@ -38,12 +38,13 @@ export function lineChartTransformation(options: ChartSpecificTransformOptions):
   const dimensionTotals = aggregateDimensionValues(chartData, dimensionField, measure);
   const aggregatedData = createAggregatedData(dimensionTotals, dimensionField, measure);
 
-  // 3. Filter to top 30 dimension values if necessary
+  // 3. Filter to top N dimension values if necessary
   const uniqueDimensionValues = Object.keys(dimensionTotals);
   let finalChartData = aggregatedData;
+  const limit = maxDataPoints ?? MAX_LINE_CHART_DIMENSION_VALUES;
 
-  if (uniqueDimensionValues.length > MAX_LINE_CHART_DIMENSION_VALUES) {
-    const topValues = getTopDimensionValues(dimensionTotals, MAX_LINE_CHART_DIMENSION_VALUES);
+  if (uniqueDimensionValues.length > limit) {
+    const topValues = getTopDimensionValues(dimensionTotals, limit);
     finalChartData = filterToTopValues(aggregatedData, dimensionField, topValues);
   }
 

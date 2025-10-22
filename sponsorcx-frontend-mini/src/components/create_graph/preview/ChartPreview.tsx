@@ -28,7 +28,10 @@ interface ChartPreviewProps {
   // Axis labels
   xAxisLabel?: string;
   yAxisLabel?: string;
-  showGridLines?: boolean;
+  showXAxisGridLines?: boolean;
+  showYAxisGridLines?: boolean;
+  showRegressionLine?: boolean;
+  maxDataPoints?: number;
   legendPosition?: LegendPosition;
   // KPI
   kpiValue?: number;
@@ -57,7 +60,10 @@ export function ChartPreview({
   selectedMeasure,
   xAxisLabel,
   yAxisLabel,
-  showGridLines = true,
+  showXAxisGridLines = true,
+  showYAxisGridLines = true,
+  showRegressionLine = false,
+  maxDataPoints,
   legendPosition = 'bottom',
   kpiValue,
   kpiLabel,
@@ -98,7 +104,7 @@ export function ChartPreview({
 
   // Render chart based on selected type
   return (
-    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', maxHeight: '500px', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
       <Stack gap="md" style={{ height: '100%', overflow: 'hidden' }}>
         {/* Chart Title */}
         {chartTitle && (
@@ -109,28 +115,35 @@ export function ChartPreview({
 
         {/* Chart Content */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', width: '100%' }}>
-          <ChartRenderer
-            queryResult={queryResult}
-            selectedChartType={selectedChartType}
-            numberFormat={numberFormat}
-            numberPrecision={numberPrecision}
-            primaryColor={primaryColor}
-            colorPalette={colorPalette}
-            sortOrder={sortOrder}
-            primaryDimension={primaryDimension}
-            secondaryDimension={secondaryDimension}
-            selectedMeasure={selectedMeasure}
-            xAxisLabel={xAxisLabel}
-            yAxisLabel={yAxisLabel}
-            showGridLines={showGridLines}
-            legendPosition={legendPosition}
-            kpiValue={kpiValue}
-            kpiLabel={kpiLabel}
-            kpiSecondaryValue={kpiSecondaryValue}
-            kpiSecondaryLabel={kpiSecondaryLabel}
-            kpiShowTrend={kpiShowTrend}
-            kpiTrendPercentage={kpiTrendPercentage}
-          />
+          {(() => {
+            return (
+              <ChartRenderer
+                queryResult={queryResult}
+                selectedChartType={selectedChartType}
+                numberFormat={numberFormat}
+                numberPrecision={numberPrecision}
+                primaryColor={primaryColor}
+                colorPalette={colorPalette}
+                sortOrder={sortOrder}
+                primaryDimension={primaryDimension}
+                secondaryDimension={secondaryDimension}
+                selectedMeasure={selectedMeasure}
+                xAxisLabel={xAxisLabel}
+                yAxisLabel={yAxisLabel}
+                showXAxisGridLines={showXAxisGridLines}
+                showYAxisGridLines={showYAxisGridLines}
+                showRegressionLine={showRegressionLine}
+                maxDataPoints={maxDataPoints}
+                legendPosition={legendPosition}
+                kpiValue={kpiValue}
+                kpiLabel={kpiLabel}
+                kpiSecondaryValue={kpiSecondaryValue}
+                kpiSecondaryLabel={kpiSecondaryLabel}
+                kpiShowTrend={kpiShowTrend}
+                kpiTrendPercentage={kpiTrendPercentage}
+              />
+            );
+          })()}
         </div>
       </Stack>
     </Paper>

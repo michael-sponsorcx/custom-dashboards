@@ -15,13 +15,12 @@ import { groupIntoOther } from '../core/filtering';
 import { buildPieSeriesConfig } from '../core/seriesConfig';
 
 export function pieChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
-  const { chartData, getColorFn } = options;
+  const { chartData, getColorFn, maxDataPoints } = options;
 
   // 1. Extract fields
   const { dimensionFields, measureFields } = extractFields(chartData);
 
   if (dimensionFields.length === 0 || measureFields.length === 0) {
-    console.warn('Pie chart requires one dimension and one measure');
     return { data: [] };
   }
 
@@ -36,12 +35,13 @@ export function pieChartTransformation(options: ChartSpecificTransformOptions): 
 
   let finalChartData: any[] = [];
   let finalSeries: Array<{ name: string; color?: string }> = [];
+  const limit = maxDataPoints ?? MAX_PIE_CHART_DIMENSION_VALUES;
 
-  // 4. Limit to top 10 dimension values and group rest into "Other"
-  if (uniqueDimensionValues.length > MAX_PIE_CHART_DIMENSION_VALUES) {
+  // 4. Limit to top N dimension values and group rest into "Other"
+  if (uniqueDimensionValues.length > limit) {
     const { topData, otherTotal } = groupIntoOther(
       dimensionTotals,
-      MAX_PIE_CHART_DIMENSION_VALUES,
+      limit,
       dimensionField,
       measure
     );
@@ -63,11 +63,9 @@ export function pieChartTransformation(options: ChartSpecificTransformOptions): 
     if (otherTotal > 0) {
       finalSeries.push({
         name: 'Other',
-        color: getColorFn ? getColorFn(MAX_PIE_CHART_DIMENSION_VALUES) : undefined,
+        color: getColorFn ? getColorFn(limit) : undefined,
       });
     }
-
-    const remainingCount = uniqueDimensionValues.length - MAX_PIE_CHART_DIMENSION_VALUES;
   } else {
     // Less than or equal to 10 categories - use all data
     finalChartData = chartData;

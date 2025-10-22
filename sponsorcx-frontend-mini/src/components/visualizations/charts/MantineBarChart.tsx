@@ -6,7 +6,7 @@ import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/graph';
-import { getLegendProps } from './utils/legendHelpers';
+import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { ColorPalette } from '../../../constants/colorPalettes';
 import { createPaletteColorFunction } from '../../../constants/colorPalettes';
 
@@ -27,7 +27,9 @@ interface MantineBarChartProps {
   // Axis labels
   xAxisLabel?: string;
   yAxisLabel?: string;
-  showGridLines?: boolean;
+  showXAxisGridLines?: boolean;
+  showYAxisGridLines?: boolean;
+  maxDataPoints?: number;
   legendPosition?: LegendPosition;
 }
 
@@ -50,11 +52,11 @@ export const MantineBarChart = memo(function MantineBarChart({
   numberPrecision = 2,
   xAxisLabel,
   yAxisLabel,
-  showGridLines = true,
+  showXAxisGridLines = true,
+  showYAxisGridLines = true,
+  maxDataPoints,
   legendPosition = 'bottom',
 }: MantineBarChartProps) {
-  console.log('[CHART] MantineBarChart rendering');
-
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
     return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
@@ -73,8 +75,9 @@ export const MantineBarChart = memo(function MantineBarChart({
       primaryDimension,
       secondaryDimension,
       selectedMeasure,
+      maxDataPoints,
     }),
-    [chartType, queryResult, primaryColor, getColorFn, primaryDimension, secondaryDimension, selectedMeasure]
+    [chartType, queryResult, primaryColor, getColorFn, primaryDimension, secondaryDimension, selectedMeasure, maxDataPoints]
   );
 
   const { data: transformedData, dimensionField, series } = transformationResult;
@@ -93,8 +96,42 @@ export const MantineBarChart = memo(function MantineBarChart({
   // Create axis tick formatter (abbreviated for large numbers)
   const axisTickFormatter = createAxisTickFormatter(numberFormat);
 
+  const showLegend = shouldShowLegend(legendPosition);
+  const legendPropsValue = getLegendProps(legendPosition);
+
+  // Determine which gridlines to show based on individual settings
+  // Note: In Mantine/Recharts, gridAxis refers to which axis the gridlines extend FROM
+  // - 'x' means horizontal gridlines extending from X-axis (which are Y-axis gridlines visually)
+  // - 'y' means vertical gridlines extending from Y-axis (which are X-axis gridlines visually)
+  // So we need to swap the logic to match user expectations
+  const getGridAxis = (): 'x' | 'y' | 'xy' | 'none' => {
+    const showX = showXAxisGridLines; // User wants vertical gridlines
+    const showY = showYAxisGridLines; // User wants horizontal gridlines
+
+    let result: 'x' | 'y' | 'xy' | 'none';
+    if (showX && showY) {
+      result = 'xy';
+    } else if (showX) {
+      result = 'y'; // Vertical gridlines = gridAxis 'y'
+    } else if (showY) {
+      result = 'x'; // Horizontal gridlines = gridAxis 'x'
+    } else {
+      result = 'none';
+    }
+
+    return result;
+  };
+
+  const gridAxisValue = getGridAxis();
+
+  // Build gridProps based on individual grid line settings
+  const gridProps = gridAxisValue !== 'none' ? {
+    strokeDasharray: '3 3',
+    stroke: 'var(--mantine-color-gray-3)',
+  } : undefined;
+
   return (
-    <SeriesLimitWrapper seriesCount={series.length}>
+    <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>
       <BarChart
         h="100%"
         data={finalChartData}
@@ -104,13 +141,14 @@ export const MantineBarChart = memo(function MantineBarChart({
         series={series}
         type={type}
         orientation={orientation}
-        withLegend
-        legendProps={getLegendProps(legendPosition)}
-        gridAxis={showGridLines ? (orientation === 'vertical' ? 'y' : 'x') : 'none'}
-        tickLine={orientation === 'vertical' ? 'y' : 'x'}
+        withLegend={showLegend}
+        {...(showLegend && legendPropsValue ? { legendProps: legendPropsValue } : {})}
+        gridAxis={gridAxisValue}
+        {...(gridProps ? { gridProps } : {})}
+        tickLine={'xy'}
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
-        xAxisProps={orientation === 'vertical' ? { tickFormatter: axisTickFormatter } : undefined}
+        xAxisProps={orientation === 'horizontal' ? { tickFormatter: axisTickFormatter } : undefined}
         yAxisProps={orientation === 'horizontal' ? { width: 80, tickFormatter: axisTickFormatter } : { width: 80 }}
       />
     </SeriesLimitWrapper>

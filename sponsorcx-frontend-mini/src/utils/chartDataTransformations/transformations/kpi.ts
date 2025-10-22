@@ -16,7 +16,6 @@ export function kpiChartTransformation(options: ChartSpecificTransformOptions): 
   const { measureFields } = extractFields(chartData);
 
   if (measureFields.length === 0) {
-    console.warn('Number chart requires at least one numeric measure');
     return { data: [] };
   }
 

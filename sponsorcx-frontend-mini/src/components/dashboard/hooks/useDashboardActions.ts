@@ -53,8 +53,6 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
   };
 
   const handleBatchMoveGraph = (items: DashboardItem[]) => {
-    console.log('[RGL] Batch move - saving to localStorage');
-
     // Just persist to localStorage
     // React-grid-layout already updated the visual positions
     // No need to call setGraphs - it would cause redundant re-renders

@@ -14,8 +14,6 @@ import { CubeApiError } from '../types';
  * @returns Formatted error
  */
 export function handleApiError(error: unknown, context: string): CubeApiError {
-  console.error(`Error in ${context}:`, error);
-
   if (error instanceof CubeApiError) {
     return error;
   }

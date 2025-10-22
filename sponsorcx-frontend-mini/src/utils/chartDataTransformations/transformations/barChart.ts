@@ -19,14 +19,14 @@ export function barChartTransformation(options: ChartSpecificTransformOptions): 
     primaryColor = '#3b82f6',
     getColorFn,
     primaryDimension,
-    selectedMeasure
+    selectedMeasure,
+    maxDataPoints
   } = options;
 
   // 1. Extract and select fields
   const { dimensionFields, measureFields } = extractFields(chartData);
 
   if (dimensionFields.length === 0 || measureFields.length === 0) {
-    console.warn('Bar chart requires at least one dimension and one measure');
     return { data: [] };
   }
 
@@ -40,9 +40,10 @@ export function barChartTransformation(options: ChartSpecificTransformOptions): 
   // 3. Filter to top N dimension values if necessary
   const uniqueDimensionValues = Object.keys(dimensionTotals);
   let finalChartData = aggregatedData;
+  const limit = maxDataPoints ?? MAX_BAR_DIMENSION_VALUES;
 
-  if (uniqueDimensionValues.length > MAX_BAR_DIMENSION_VALUES) {
-    const topValues = getTopDimensionValues(dimensionTotals, MAX_BAR_DIMENSION_VALUES);
+  if (uniqueDimensionValues.length > limit) {
+    const topValues = getTopDimensionValues(dimensionTotals, limit);
     finalChartData = filterToTopValues(aggregatedData, dimensionField, topValues);
   }
 

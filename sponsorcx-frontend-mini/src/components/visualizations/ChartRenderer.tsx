@@ -3,6 +3,7 @@ import { ChartType } from '../../utils/chartDataAnalyzer';
 import { KPI } from './charts/KPI';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
+import { MantinePieChart } from './charts/MantinePieChart';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
 import type { LegendPosition } from '../../types/graph';
 import type { ColorPalette } from '../../constants/colorPalettes';
@@ -22,7 +23,10 @@ interface ChartRendererProps {
   // Axis labels
   xAxisLabel?: string;
   yAxisLabel?: string;
-  showGridLines?: boolean;
+  showXAxisGridLines?: boolean;
+  showYAxisGridLines?: boolean;
+  showRegressionLine?: boolean;
+  maxDataPoints?: number;
   // Legend position
   legendPosition?: LegendPosition;
   // KPI-specific optional props
@@ -54,7 +58,10 @@ export function ChartRenderer({
   selectedMeasure,
   xAxisLabel,
   yAxisLabel,
-  showGridLines = true,
+  showXAxisGridLines = true,
+  showYAxisGridLines = true,
+  showRegressionLine = false,
+  maxDataPoints,
   legendPosition = 'bottom',
   kpiValue,
   kpiLabel,
@@ -62,7 +69,8 @@ export function ChartRenderer({
   kpiSecondaryLabel,
   kpiShowTrend,
   kpiTrendPercentage,
-}: ChartRendererProps) {
+  }: ChartRendererProps) {
+
   switch (selectedChartType) {
     case 'kpi':
       return (
@@ -93,7 +101,10 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
-          showGridLines={showGridLines}
+          showXAxisGridLines={showXAxisGridLines}
+          showYAxisGridLines={showYAxisGridLines}
+          showRegressionLine={showRegressionLine}
+          maxDataPoints={maxDataPoints}
           legendPosition={legendPosition}
         />
       );
@@ -114,7 +125,9 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
-          showGridLines={showGridLines}
+          showXAxisGridLines={showXAxisGridLines}
+          showYAxisGridLines={showYAxisGridLines}
+          maxDataPoints={maxDataPoints}
           legendPosition={legendPosition}
         />
       );
@@ -135,7 +148,9 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
-          showGridLines={showGridLines}
+          showXAxisGridLines={showXAxisGridLines}
+          showYAxisGridLines={showYAxisGridLines}
+          maxDataPoints={maxDataPoints}
           legendPosition={legendPosition}
         />
       );
@@ -156,7 +171,9 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
-          showGridLines={showGridLines}
+          showXAxisGridLines={showXAxisGridLines}
+          showYAxisGridLines={showYAxisGridLines}
+          maxDataPoints={maxDataPoints}
           legendPosition={legendPosition}
         />
       );
@@ -177,8 +194,25 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
-          showGridLines={showGridLines}
+          showXAxisGridLines={showXAxisGridLines}
+          showYAxisGridLines={showYAxisGridLines}
+          maxDataPoints={maxDataPoints}
           legendPosition={legendPosition}
+        />
+      );
+
+    case 'pie':
+      return (
+        <MantinePieChart
+          queryResult={queryResult}
+          primaryColor={primaryColor}
+          colorPalette={colorPalette}
+          primaryDimension={primaryDimension}
+          selectedMeasure={selectedMeasure}
+          numberFormat={numberFormat}
+          numberPrecision={numberPrecision}
+          legendPosition={legendPosition}
+          maxDataPoints={maxDataPoints}
         />
       );
 

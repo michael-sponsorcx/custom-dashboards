@@ -32,7 +32,6 @@ export function getDashboard(): DashboardTemplate {
   try {
     return JSON.parse(data);
   } catch (error) {
-    console.error('Failed to parse dashboard config:', error);
     return {
       id: 'default',
       name: 'My Dashboard',
@@ -98,7 +97,6 @@ function getAllGridLayouts(): Record<string, GridLayout> {
   try {
     return JSON.parse(data);
   } catch (error) {
-    console.error('Failed to parse grid layouts:', error);
     return {};
   }
 }

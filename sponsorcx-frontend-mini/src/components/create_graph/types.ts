@@ -41,7 +41,10 @@ export interface ChartConfig {
   selectedMeasure?: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
-  showGridLines?: boolean;
+  showXAxisGridLines?: boolean;
+  showYAxisGridLines?: boolean;
+  showRegressionLine?: boolean;
+  maxDataPoints?: number;
 }
 
 /**

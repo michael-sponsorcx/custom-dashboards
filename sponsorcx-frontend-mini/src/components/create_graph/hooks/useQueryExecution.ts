@@ -24,6 +24,8 @@ interface UseQueryExecutionOptions {
   selectedDimensions: Set<string>;
   selectedDates: Set<string>;
   filters: FilterRule[];
+  orderByField?: string;
+  orderByDirection?: 'asc' | 'desc';
   isEditing: boolean;
   selectedChartType: ChartType | null;
   setSelectedChartType: (type: ChartType | null) => void;
@@ -43,6 +45,8 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
     selectedDimensions,
     selectedDates,
     filters,
+    orderByField,
+    orderByDirection,
     isEditing,
     selectedChartType,
     setSelectedChartType,
@@ -81,14 +85,20 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
       return '';
     }
 
+    // Build orderBy parameter if field is selected
+    const orderBy = orderByField && orderByDirection
+      ? { field: orderByField, direction: orderByDirection }
+      : undefined;
+
     return buildSimpleCubeQuery({
       cubeName: selectedView,
       measures: selectedMeasuresList,
       dimensions: selectedDimensionsList,
       timeDimensions: selectedDatesList,
       filters,
+      orderBy,
     });
-  }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields, filters]);
+  }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields, filters, orderByField, orderByDirection]);
 
   // Validate query automatically
   useEffect(() => {
@@ -123,7 +133,6 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
         setSelectedChartType(compatibility.recommendation);
       }
     } catch (err) {
-      console.error('Error executing query:', err);
       setQueryResult(null);
       setSelectedChartType(null);
     } finally {

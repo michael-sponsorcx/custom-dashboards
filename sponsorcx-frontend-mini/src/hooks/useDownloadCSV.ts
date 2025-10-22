@@ -17,7 +17,6 @@ export function useDownloadCSV(queryResult: any, filename: string = 'data') {
     const csvContent = transformQueryResultsToCSV(queryResult);
 
     if (!csvContent) {
-      console.warn('Failed to transform query result to CSV');
       return;
     }
 

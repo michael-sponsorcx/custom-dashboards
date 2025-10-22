@@ -19,6 +19,7 @@ interface MantinePieChartProps {
   numberPrecision?: number;
   // Legend position
   legendPosition?: LegendPosition;
+  maxDataPoints?: number;
 }
 
 /**
@@ -33,19 +34,8 @@ export const MantinePieChart = memo(function MantinePieChart({
   selectedMeasure,
   numberFormat = 'number',
   numberPrecision = 2,
-  legendPosition = 'bottom',
+  maxDataPoints,
 }: MantinePieChartProps) {
-  console.log('[PIE CHART] Rendering with props:', {
-    queryResult,
-    primaryColor,
-    colorPalette,
-    primaryDimension,
-    selectedMeasure,
-    numberFormat,
-    numberPrecision,
-    legendPosition
-  });
-
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
     return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
@@ -62,25 +52,15 @@ export const MantinePieChart = memo(function MantinePieChart({
       getColorFn,
       primaryDimension,
       selectedMeasure,
+      maxDataPoints,
     }),
-    [queryResult, primaryColor, getColorFn, primaryDimension, selectedMeasure]
+    [queryResult, primaryColor, getColorFn, primaryDimension, selectedMeasure, maxDataPoints]
   );
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
-  console.log('[PIE CHART] Transformation result:', {
-    transformedData,
-    dimensionField,
-    series,
-    hasData: !!transformedData,
-    dataLength: transformedData?.length,
-    hasDimensionField: !!dimensionField,
-    hasSeries: !!series
-  });
-
   // Handle case where transformation failed
   if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
-    console.log('[PIE CHART] Transformation failed - no data available');
     return <div>No data available for chart</div>;
   }
 
@@ -97,17 +77,8 @@ export const MantinePieChart = memo(function MantinePieChart({
     const measureKey = selectedMeasure || Object.keys(sampleItem).find(
       key => key !== dimensionField && typeof sampleItem[key] === 'number'
     );
-    
-    console.log('[PIE CHART] Transforming to Mantine format:', {
-      measureKey,
-      selectedMeasure,
-      dimensionField,
-      sampleTransformedData: transformedData[0],
-      allKeys: Object.keys(sampleItem)
-    });
 
     if (!measureKey) {
-      console.log('[PIE CHART] No measure key found!');
       return [];
     }
 
@@ -117,19 +88,8 @@ export const MantinePieChart = memo(function MantinePieChart({
       color: series[index]?.color || primaryColor,
     }));
 
-    console.log('[PIE CHART] Mantine data prepared:', {
-      resultCount: result.length,
-      sampleData: result.slice(0, 3),
-      allData: result
-    });
-
     return result;
   }, [transformedData, dimensionField, series, selectedMeasure, primaryColor]);
-
-  console.log('[PIE CHART] Rendering PieChart component with:', {
-    dataLength: mantineData.length,
-    data: mantineData
-  });
 
   // Mantine PieChart valid props (from docs):
   // - data: { name: string, value: number, color: string }[]

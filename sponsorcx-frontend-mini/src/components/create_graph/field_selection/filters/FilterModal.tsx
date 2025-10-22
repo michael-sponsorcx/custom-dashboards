@@ -119,7 +119,6 @@ export function FilterModal({
           onUpdateCache(cacheKey, values);
         }
       } catch (error) {
-        console.error('Error fetching dimension values:', error);
         setLoadError('Failed to load filter options');
       } finally {
         setLoadingValues(false);

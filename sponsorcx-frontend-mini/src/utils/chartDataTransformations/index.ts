@@ -62,6 +62,7 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
     primaryDimension: options.primaryDimension,
     secondaryDimension: options.secondaryDimension,
     selectedMeasure: options.selectedMeasure,
+    maxDataPoints: options.maxDataPoints,
   };
 
   // Route to appropriate transformation based on chart type

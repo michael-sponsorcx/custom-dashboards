@@ -28,7 +28,6 @@ export function getAllGraphTemplates(): GraphTemplate[] {
   try {
     return JSON.parse(data);
   } catch (error) {
-    console.error('Failed to parse saved graphs:', error);
     return [];
   }
 }

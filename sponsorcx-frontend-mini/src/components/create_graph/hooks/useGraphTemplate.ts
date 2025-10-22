@@ -73,7 +73,10 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       // Axis & grid
       xAxisLabel: chartConfig.xAxisLabel,
       yAxisLabel: chartConfig.yAxisLabel,
-      showGridLines: chartConfig.showGridLines,
+      showXAxisGridLines: chartConfig.showXAxisGridLines,
+      showYAxisGridLines: chartConfig.showYAxisGridLines,
+      showRegressionLine: chartConfig.showRegressionLine,
+      maxDataPoints: chartConfig.maxDataPoints,
       // KPI
       kpiValue: chartConfig.kpiValue,
       kpiLabel: chartConfig.kpiLabel,

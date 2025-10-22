@@ -7,7 +7,6 @@ export function transformQueryResultsToCSV(queryResult: any): string {
   // Extract the data array from the query result
   // Structure: { data: { cube: [ {...}, {...} ] } }
   if (!queryResult?.data?.cube || !Array.isArray(queryResult.data.cube)) {
-    console.error('Invalid query result structure:', queryResult);
     return '';
   }
 

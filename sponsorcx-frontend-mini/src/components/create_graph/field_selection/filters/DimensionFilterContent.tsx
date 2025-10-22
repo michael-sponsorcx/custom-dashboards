@@ -82,8 +82,6 @@ export function DimensionFilterContent({
     const { scrollTop, scrollHeight, clientHeight } = container;
     const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
 
-    console.log('Scroll event:', { scrollTop, scrollHeight, clientHeight, scrolledToBottom, hasMore });
-
     if (scrolledToBottom) {
 
       setDisplayLimit(prev => Math.min(prev + LOAD_INCREMENT, filteredDimensionValues.length));
@@ -121,10 +119,6 @@ export function DimensionFilterContent({
   // Memoized list rendering
   const dimensionValuesList = useMemo(() => {
     const valuesToDisplay = filteredDimensionValues.slice(0, displayLimit);
-    console.log('Rendering dimension values list:', {
-      valuesToDisplayCount: valuesToDisplay.length,
-      firstFew: valuesToDisplay.slice(0, 3)
-    });
     return valuesToDisplay.map((value) => (
       <DimensionValueRow
         key={value}

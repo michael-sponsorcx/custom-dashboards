@@ -54,8 +54,6 @@ export async function fetchDistinctDimensionValues(
   }
 }`;
 
-  console.log('Generated query for dimension values:', query);
-
   try {
     const result = await executeCubeGraphQL(query);
 
@@ -66,13 +64,11 @@ export async function fetchDistinctDimensionValues(
     // Note: cube is an ARRAY, not an object
     if (result?.data?.cube && Array.isArray(result.data.cube)) {
       const rows = result.data.cube;
-      console.log('Found rows:', rows);
 
       rows.forEach((row: any) => {
         // Each row is structured as { viewName: { fieldName: value } }
         if (row[lowercaseViewName]) {
           const value = row[lowercaseViewName][fieldNameStripped];
-          console.log('Processing row:', row, 'extracted value:', value);
 
           if (value !== null && value !== undefined) {
             values.add(String(value));

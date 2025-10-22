@@ -184,7 +184,6 @@ export async function getValidFilterOperators(): Promise<string[]> {
       ttl
     );
   } catch (error) {
-    console.error('Failed to fetch schema for validation, using fallback operators:', error);
     // Fallback to known operators if schema fetch fails
     return [
       'equals',

@@ -19,6 +19,8 @@ export interface TransformChartDataOptions {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Data point limit (optional - falls back to chart-specific defaults)
+  maxDataPoints?: number;
 }
 
 export interface ChartSpecificTransformOptions {
@@ -29,6 +31,8 @@ export interface ChartSpecificTransformOptions {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Data point limit (optional - falls back to chart-specific defaults)
+  maxDataPoints?: number;
 }
 
 export interface FieldStructure {

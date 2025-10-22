@@ -34,7 +34,6 @@ export async function getValidOperators(): Promise<string[]> {
     cachedValidOperators = operators;
     return operators;
   } catch (error) {
-    console.error('Failed to fetch schema for validation, using fallback operators:', error);
     return FALLBACK_OPERATORS;
   }
 }

@@ -21,14 +21,14 @@ export function barStackedTransformation(options: ChartSpecificTransformOptions)
     getColorFn,
     primaryDimension: userPrimaryDimension,
     secondaryDimension: userSecondaryDimension,
-    selectedMeasure
+    selectedMeasure,
+    maxDataPoints
   } = options;
 
   // 1. Extract and validate fields
   const { dimensionFields, measureFields } = extractFields(chartData);
 
   if (dimensionFields.length < 2 || measureFields.length !== 1) {
-    console.warn('Stacked bar chart requires 2+ dimensions and exactly 1 measure');
     return { data: [] };
   }
 
@@ -53,11 +53,12 @@ export function barStackedTransformation(options: ChartSpecificTransformOptions)
   );
 
   // 4. Get top N values for both dimensions
+  const limit = maxDataPoints ?? MAX_BAR_DIMENSION_VALUES;
   const { topPrimaryValues, topSecondaryValues } = getTopDualDimensionValues(
     primaryTotals,
     secondaryTotals,
-    MAX_BAR_DIMENSION_VALUES,
-    MAX_BAR_DIMENSION_VALUES
+    limit,
+    limit
   );
 
   // 5. Pivot data
