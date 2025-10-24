@@ -8,7 +8,7 @@ import { FilterRule, isMeasureFilter, isDimensionFilter, isDateFilter } from '..
 import { stripCubePrefix } from './utils';
 
 /**
- * Operator mapping for comparison operators
+ * Operator mapping for comparison operators (measures)
  */
 const COMPARISON_OPERATOR_MAP: Record<string, string> = {
   '=': 'equals',
@@ -16,6 +16,17 @@ const COMPARISON_OPERATOR_MAP: Record<string, string> = {
   '<': 'lt',
   '>=': 'gte',
   '<=': 'lte',
+};
+
+/**
+ * Operator mapping for DateTime filters
+ */
+const DATE_OPERATOR_MAP: Record<string, string> = {
+  '=': 'equals',
+  '>': 'afterDate',
+  '<': 'beforeDate',
+  '>=': 'afterOrOnDate',
+  '<=': 'beforeOrOnDate',
 };
 
 /**
@@ -55,7 +66,7 @@ function buildDimensionFilterCondition(filter: any): string {
  */
 function buildDateFilterCondition(filter: any): string {
   const fieldName = stripCubePrefix(filter.fieldName);
-  const cubeOp = COMPARISON_OPERATOR_MAP[filter.operator];
+  const cubeOp = DATE_OPERATOR_MAP[filter.operator];
   return `${fieldName}: { ${cubeOp}: "${filter.value}" }`;
 }
 
