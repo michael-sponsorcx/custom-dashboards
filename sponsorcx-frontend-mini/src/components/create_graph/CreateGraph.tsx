@@ -62,7 +62,6 @@ export function CreateGraph() {
       filters: filterManagement.filters,
       orderByField: graphState.orderByField,
       orderByDirection: graphState.orderByDirection,
-      generatedQuery: queryExecution.generatedQuery,
       queryResult: queryExecution.queryResult,
       chartConfig: graphState.chartConfig,
     });

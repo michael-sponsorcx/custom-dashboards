@@ -31,3 +31,11 @@ coverage/
 
 # Misc
 .cache/
+
+# Ignore test files and directories
+__tests__/
+tests/
+test/
+*.test.*
+*.spec.*
+src/tests/

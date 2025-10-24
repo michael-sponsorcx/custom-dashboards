@@ -9,6 +9,7 @@ export type { QueryBuilderParams, ValidationResult, ValidationError, ValidationW
 
 // Export query builder
 export { buildCubeQuery, buildSimpleCubeQuery } from './builder';
+export { buildQueryFromTemplate } from './builder/builders/buildQueryFromTemplate';
 
 // Export validator
 export { validateCubeGraphQLQuery } from './validator';

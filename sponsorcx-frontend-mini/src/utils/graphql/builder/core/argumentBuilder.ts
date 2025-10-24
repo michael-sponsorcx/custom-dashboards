@@ -55,7 +55,7 @@ export function buildCubeArguments(
 export function buildCubeNameArguments(
   orderBy?: { field: string; direction: 'asc' | 'desc' }
 ): string {
-  if (!orderBy) return '';
+  if (!orderBy || !orderBy.field || !orderBy.direction) return '';
 
   // Direction should be lowercase (asc or desc) per Cube GraphQL API
   const direction = orderBy.direction.toLowerCase();

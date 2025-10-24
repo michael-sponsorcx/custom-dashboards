@@ -1,12 +1,13 @@
 import { Paper, Title, ActionIcon, Group, Loader, Text, Center, Tooltip } from '@mantine/core';
 import { IconTrash, IconEdit, IconDownload, IconGripVertical, IconFilter } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { GraphTemplate } from '../../../types/graph';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { executeCubeGraphQL } from '../../../services/cube';
 import { useDownloadCSV } from '../../../hooks/useDownloadCSV';
 import { DashboardItem } from '@/types/dashboard';
 import { DragHandle } from './DragHandle';
+import { buildQueryFromTemplate } from '../../../utils/graphql/builder/builders/buildQueryFromTemplate';
 
 interface GraphCardProps {
   template: DashboardItem;
@@ -24,13 +25,24 @@ export function GraphCard({ template, onDelete, onEdit, onFilter }: GraphCardPro
   const downloadFilename = template.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
   const downloadCSV = useDownloadCSV(queryResult, downloadFilename);
 
+  // Build query dynamically from template
+  const query = useMemo(() => buildQueryFromTemplate(template), [
+    template.viewName,
+    template.measures,
+    template.dimensions,
+    template.dates,
+    template.filters,
+    template.orderByField,
+    template.orderByDirection,
+  ]);
+
   useEffect(() => {
-    // Fetch fresh data when component mounts
+    // Fetch fresh data when component mounts or query changes
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const result = await executeCubeGraphQL(template.query);
+        const result = await executeCubeGraphQL(query);
         setQueryResult(result);
       } catch (err) {
         setError('Failed to load graph data');
@@ -40,7 +52,7 @@ export function GraphCard({ template, onDelete, onEdit, onFilter }: GraphCardPro
     };
 
     fetchData();
-  }, [template.query]);
+  }, [query]);
 
   return (
     <Paper

@@ -30,7 +30,6 @@ interface SaveGraphParams {
   filters: FilterRule[];
   orderByField?: string;
   orderByDirection?: 'asc' | 'desc';
-  generatedQuery: string;
   queryResult: any;
   chartConfig: ChartConfig;
 }
@@ -50,7 +49,6 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       filters,
       orderByField,
       orderByDirection,
-      generatedQuery,
       chartConfig,
     } = params;
 
@@ -67,7 +65,6 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       filters,
       orderByField,
       orderByDirection,
-      query: generatedQuery,
       chartType: chartConfig.chartType as ChartType,
       chartTitle: chartConfig.chartTitle,
       numberFormat: chartConfig.numberFormat,
@@ -102,11 +99,10 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
       selectedView,
       queryResult,
       chartConfig,
-      generatedQuery,
     } = params;
 
     // Validate required fields
-    if (!selectedView || !queryResult || !chartConfig.chartType || !generatedQuery) {
+    if (!selectedView || !queryResult || !chartConfig.chartType) {
       notifications.show({
         title: 'Cannot Save',
         message: 'Please select a view, execute a query, and configure a chart before saving.',

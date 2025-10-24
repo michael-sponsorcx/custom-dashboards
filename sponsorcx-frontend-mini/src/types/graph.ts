@@ -23,9 +23,6 @@ export interface GraphTemplate {
   orderByField?: string;
   orderByDirection?: 'asc' | 'desc';
 
-  // GraphQL query (constructed at creation time, used to fetch fresh data)
-  query: string;
-
   // Chart configuration
   chartType: ChartType;
   chartTitle: string;
