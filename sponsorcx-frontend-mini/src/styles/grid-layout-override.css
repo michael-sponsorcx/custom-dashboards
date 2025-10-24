@@ -1,0 +1,4 @@
+/* Override react-grid-layout placeholder color from red to blue */
+.react-grid-item.react-grid-placeholder {
+  background: #00adef;
+}
