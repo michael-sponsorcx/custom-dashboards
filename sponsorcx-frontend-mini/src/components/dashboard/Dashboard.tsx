@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
 import { GraphFilterModal } from './GraphFilterModal';
+import { DashboardFilters } from './DashboardFilters';
+import { DashboardFilterModal } from './DashboardFilterModal';
 
 /**
  * Dashboard Component - Refactored
@@ -20,9 +22,12 @@ export function Dashboard() {
       onUpdateSize: updateGraphSize,
     });
 
-  // Filter modal state
+  // Graph filter modal state
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedGraphId, setSelectedGraphId] = useState<string | null>(null);
+
+  // Dashboard filter modal state
+  const [dashboardFilterModalOpen, setDashboardFilterModalOpen] = useState(false);
 
   // Find the selected graph for the modal
   const selectedGraph = graphs.find(g => g.id === selectedGraphId);
@@ -35,6 +40,14 @@ export function Dashboard() {
   const handleCloseFilterModal = () => {
     setFilterModalOpen(false);
     setSelectedGraphId(null);
+  };
+
+  const handleOpenDashboardFilters = () => {
+    setDashboardFilterModalOpen(true);
+  };
+
+  const handleCloseDashboardFilters = () => {
+    setDashboardFilterModalOpen(false);
   };
 
   if (loading) {
@@ -51,9 +64,12 @@ export function Dashboard() {
         {/* Header */}
         <Group justify="space-between" align="center">
           <Title order={1}>Dashboard</Title>
-          <Button onClick={handleCreateGraph} color="red" size="lg">
-            Add Graph
-          </Button>
+          <Group gap="md">
+            <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
+            <Button onClick={handleCreateGraph} color="red" size="lg">
+              Add Graph
+            </Button>
+          </Group>
         </Group>
 
         {/* Empty State or Grid */}
@@ -79,12 +95,18 @@ export function Dashboard() {
         )}
       </Stack>
 
-      {/* Filter Modal */}
+      {/* Graph Filter Modal */}
       <GraphFilterModal
         opened={filterModalOpen}
         onClose={handleCloseFilterModal}
         graphId={selectedGraphId}
         graphName={selectedGraph?.name || 'Untitled Graph'}
+      />
+
+      {/* Dashboard Filter Modal */}
+      <DashboardFilterModal
+        opened={dashboardFilterModalOpen}
+        onClose={handleCloseDashboardFilters}
       />
     </Container>
   );
