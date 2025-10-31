@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchCubeMetadata } from '../../../services/cube';
-import { CubeView, CubeMeasure, CubeDimension } from '../../../types/cube';
+import { fetchCubeMetadata } from '../../services/cube';
+import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
 import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
 
 interface ViewFields {

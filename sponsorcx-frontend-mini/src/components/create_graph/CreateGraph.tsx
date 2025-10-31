@@ -2,13 +2,13 @@ import { Container, Paper, Title, Button, Stack, Code, Grid, Group, Tabs, Toolti
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GraphTemplate } from '../../types/graph';
-import { ModelSelector } from './search/ModelSelector';
+import { ModelSelector } from '../shared/ModelSelector';
 import { QueryValidationResults } from './field_selection/QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
 import { OrderByQueryControl } from './field_selection/OrderByQueryControl';
 import { ChartPreview } from './preview/ChartPreview';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
-import { FilterModal } from './field_selection/filters/FilterModal';
+import { CreateGraphFilterModal } from './CreateGraphFilterModal';
 import { QueryResultsTable } from '../visualizations/tables/QueryResultsTable';
 import { useGraphState, useFilterManagement, useQueryExecution, useGraphTemplate } from './hooks';
 
@@ -255,7 +255,7 @@ export function CreateGraph() {
             </Grid>
 
             {/* Filter Modal */}
-            <FilterModal
+            <CreateGraphFilterModal
               opened={filterManagement.filterModalOpened}
               onClose={filterManagement.closeFilterModal}
               fieldName={filterManagement.currentFilterField?.fieldName || null}

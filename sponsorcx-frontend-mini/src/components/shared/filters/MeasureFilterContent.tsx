@@ -1,11 +1,11 @@
-import { Stack, Select, TextInput } from '@mantine/core';
-import { ComparisonOperator } from '../../../../types/filters';
+import { Stack, Select, NumberInput } from '@mantine/core';
+import { ComparisonOperator } from '../../../types/filters';
 
-interface DateFilterContentProps {
-  dateOperator: ComparisonOperator;
-  dateValue: string;
+interface MeasureFilterContentProps {
+  measureOperator: ComparisonOperator;
+  measureValue: number | string;
   onOperatorChange: (operator: ComparisonOperator) => void;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: number | string) => void;
 }
 
 const COMPARISON_OPERATORS: { value: ComparisonOperator; label: string }[] = [
@@ -16,26 +16,25 @@ const COMPARISON_OPERATORS: { value: ComparisonOperator; label: string }[] = [
   { value: '<=', label: 'Less than or equal (≤)' },
 ];
 
-export function DateFilterContent({
-  dateOperator,
-  dateValue,
+export function MeasureFilterContent({
+  measureOperator,
+  measureValue,
   onOperatorChange,
   onValueChange
-}: DateFilterContentProps) {
+}: MeasureFilterContentProps) {
   return (
     <Stack gap="md">
       <Select
         label="Comparison"
         data={COMPARISON_OPERATORS}
-        value={dateOperator}
+        value={measureOperator}
         onChange={(value) => value && onOperatorChange(value as ComparisonOperator)}
       />
-      <TextInput
-        label="Date"
-        placeholder="YYYY-MM-DD"
-        value={dateValue}
-        onChange={(event) => onValueChange(event.currentTarget.value)}
-        type="date"
+      <NumberInput
+        label="Value"
+        placeholder="Enter numeric value"
+        value={measureValue}
+        onChange={onValueChange}
       />
     </Stack>
   );

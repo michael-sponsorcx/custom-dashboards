@@ -1,12 +1,9 @@
-import { Modal, Button, Stack, Title } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { FilterRule, FieldType, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../../../types/filters';
-import { fetchDistinctDimensionValues } from '../../../../services/cube';
-import { DimensionFilterContent } from './DimensionFilterContent';
-import { MeasureFilterContent } from './MeasureFilterContent';
-import { DateFilterContent } from './DateFilterContent';
+import { FilterRule, FieldType, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../types/filters';
+import { fetchDistinctDimensionValues } from '../../services/cube';
+import { SharedFilterModalUI } from '../shared/filters/SharedFilterModalUI';
 
-interface FilterModalProps {
+interface CreateGraphFilterModalProps {
   /** Whether the modal is open */
   opened: boolean;
   /** Callback to close the modal */
@@ -28,14 +25,15 @@ interface FilterModalProps {
 }
 
 /**
- * FilterModal Component
+ * CreateGraphFilterModal Component
  *
- * Modal dialog for configuring field-specific filters.
+ * Modal dialog for configuring field-specific filters in CreateGraph.
+ * Handles filter logic and query generation, delegates UI to SharedFilterModalUI.
  * - Measures: Numeric comparison (=, >, <, >=, <=)
  * - Dimensions: Include/Exclude lists
  * - Dates: Date comparison (=, >, <, >=, <=)
  */
-export function FilterModal({
+export function CreateGraphFilterModal({
   opened,
   onClose,
   fieldName,
@@ -46,7 +44,7 @@ export function FilterModal({
   onApplyFilter,
   dimensionValuesCache = {},
   onUpdateCache,
-}: FilterModalProps) {
+}: CreateGraphFilterModalProps) {
 
   // Measure filter state
   const [measureOperator, setMeasureOperator] = useState<ComparisonOperator>('=');
@@ -207,63 +205,33 @@ export function FilterModal({
     return false;
   };
 
-
-
   return (
-    <Modal
+    <SharedFilterModalUI
       opened={opened}
       onClose={onClose}
-      title={<Title order={4}>Filter: {fieldTitle}</Title>}
-      size="lg"
-      centered
-    >
-      <Stack gap="md">
-        {/* Render filter UI based on field type */}
-        {fieldType === 'measure' && (
-          <MeasureFilterContent
-            measureOperator={measureOperator}
-            measureValue={measureValue}
-            onOperatorChange={setMeasureOperator}
-            onValueChange={setMeasureValue}
-          />
-        )}
-        {fieldType === 'dimension' && (
-          <DimensionFilterContent
-            dimensionValues={dimensionValues}
-            loadingValues={loadingValues}
-            loadError={loadError}
-            dimensionMode={dimensionMode}
-            selectedValues={selectedValues}
-            onModeChange={setDimensionMode}
-            onToggleValue={handleToggleValue}
-            onSelectAll={handleSelectAll}
-            onDeselectAll={handleDeselectAll}
-          />
-        )}
-        {fieldType === 'date' && (
-          <DateFilterContent
-            dateOperator={dateOperator}
-            dateValue={dateValue}
-            onOperatorChange={setDateOperator}
-            onValueChange={setDateValue}
-          />
-        )}
-
-        {/* Action Buttons */}
-        <Stack gap="sm">
-          <Button onClick={handleApply} fullWidth disabled={!isValidFilter()}>
-            Apply Filter
-          </Button>
-          {existingFilter && (
-            <Button onClick={handleRemoveFilter} variant="outline" color="red" fullWidth>
-              Remove Filter
-            </Button>
-          )}
-          <Button onClick={onClose} variant="outline" fullWidth>
-            Cancel
-          </Button>
-        </Stack>
-      </Stack>
-    </Modal>
+      title={`Filter: ${fieldTitle || 'Unknown'}`}
+      fieldType={fieldType}
+      measureOperator={measureOperator}
+      measureValue={measureValue}
+      onMeasureOperatorChange={setMeasureOperator}
+      onMeasureValueChange={setMeasureValue}
+      dimensionMode={dimensionMode}
+      dimensionValues={dimensionValues}
+      selectedValues={selectedValues}
+      loadingValues={loadingValues}
+      loadError={loadError}
+      onDimensionModeChange={setDimensionMode}
+      onToggleValue={handleToggleValue}
+      onSelectAll={handleSelectAll}
+      onDeselectAll={handleDeselectAll}
+      dateOperator={dateOperator}
+      dateValue={dateValue}
+      onDateOperatorChange={setDateOperator}
+      onDateValueChange={setDateValue}
+      onApply={handleApply}
+      onRemove={handleRemoveFilter}
+      isValidFilter={isValidFilter()}
+      hasExistingFilter={!!existingFilter}
+    />
   );
 }

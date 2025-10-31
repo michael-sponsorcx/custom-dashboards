@@ -6,3 +6,4 @@
 
 export { useDashboardState } from './useDashboardState';
 export { useDashboardActions } from './useDashboardActions';
+export { useDashboardFilters } from './useDashboardFilters';

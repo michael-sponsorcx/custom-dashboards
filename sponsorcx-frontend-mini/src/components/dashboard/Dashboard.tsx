@@ -5,6 +5,8 @@ import { DashboardGrid } from './grid';
 import { GraphFilterModal } from './GraphFilterModal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
+import { DashboardAvailableFilters } from './DashboardAvailableFilters';
+import { DashboardAvailableFiltersModal } from './DashboardAvailableFiltersModal';
 
 /**
  * Dashboard Component - Refactored
@@ -29,6 +31,10 @@ export function Dashboard() {
   // Dashboard filter modal state
   const [dashboardFilterModalOpen, setDashboardFilterModalOpen] = useState(false);
 
+  // Filter value modal state
+  const [filterValueModalOpen, setFilterValueModalOpen] = useState(false);
+  const [selectedFilterField, setSelectedFilterField] = useState<string | null>(null);
+
   // Find the selected graph for the modal
   const selectedGraph = graphs.find(g => g.id === selectedGraphId);
 
@@ -48,6 +54,16 @@ export function Dashboard() {
 
   const handleCloseDashboardFilters = () => {
     setDashboardFilterModalOpen(false);
+  };
+
+  const handleFilterFieldClick = (fieldName: string) => {
+    setSelectedFilterField(fieldName);
+    setFilterValueModalOpen(true);
+  };
+
+  const handleCloseFilterValue = () => {
+    setFilterValueModalOpen(false);
+    setSelectedFilterField(null);
   };
 
   if (loading) {
@@ -71,6 +87,9 @@ export function Dashboard() {
             </Button>
           </Group>
         </Group>
+
+        {/* Available Filter Fields */}
+        <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
 
         {/* Empty State or Grid */}
         {graphs.length === 0 ? (
@@ -107,6 +126,13 @@ export function Dashboard() {
       <DashboardFilterModal
         opened={dashboardFilterModalOpen}
         onClose={handleCloseDashboardFilters}
+      />
+
+      {/* Dashboard Available Filters Modal */}
+      <DashboardAvailableFiltersModal
+        opened={filterValueModalOpen}
+        onClose={handleCloseFilterValue}
+        fieldName={selectedFilterField}
       />
     </Container>
   );

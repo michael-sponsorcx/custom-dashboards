@@ -1,4 +1,8 @@
-import { Modal, Stack, Title, Text, Button } from '@mantine/core';
+import { Modal, Stack, Title, Text, Button, Group, Stepper } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { useDashboardFilters } from './hooks/useDashboardFilters';
+import { DataSourceSelection } from './filter_config/DataSourceSelection';
+import { CommonFieldsSelection } from './filter_config/CommonFieldsSelection';
 
 interface DashboardFilterModalProps {
   opened: boolean;
@@ -8,30 +12,94 @@ interface DashboardFilterModalProps {
 /**
  * DashboardFilterModal Component
  *
- * Modal for applying filters across all graphs on the dashboard.
- * This modal will contain filter controls that affect every graph.
+ * Multi-step modal for configuring dashboard-wide filters:
+ * Step 1: Select data sources (views) to filter
+ * Step 2: Select common fields across those views
  */
 export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalProps) {
+  const [activeStep, setActiveStep] = useState(0);
+  const [selectedViews, setSelectedViews] = useState<string[]>([]);
+  const { selectedViews: savedSelectedViews, setSelectedViews: saveSelectedViews, setAvailableFields } = useDashboardFilters();
+
+  // Reset to step 0 when modal opens
+  useEffect(() => {
+    if (opened) {
+      setActiveStep(0);
+      setSelectedViews(savedSelectedViews);
+    }
+  }, [opened, savedSelectedViews]);
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      // Moving from data source selection to field selection
+      setActiveStep(1);
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
+  };
+
+  const handleSave = (selectedFields: Array<{ fieldName: string; fieldTitle: string; fieldType: 'measure' | 'dimension' | 'date' }>) => {
+    // Save the selected views and available fields
+    saveSelectedViews(selectedViews);
+    setAvailableFields(selectedFields);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setActiveStep(0);
+    setSelectedViews([]);
+    onClose();
+  };
+
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
-      title={<Title order={3}>Dashboard Filters</Title>}
-      size="lg"
+      onClose={handleCancel}
+      title={<Title order={3}>Add Dashboard Filters</Title>}
+      size="xl"
       centered
     >
       <Stack gap="md">
-        <Text>
-          Dashboard-wide filter configuration UI will be implemented here.
-        </Text>
+        <Stepper active={activeStep} size="sm">
+          <Stepper.Step label="Select Data Sources" description="Choose views to filter">
+            <DataSourceSelection
+              selectedViews={selectedViews}
+              onViewsChange={setSelectedViews}
+            />
+          </Stepper.Step>
 
-        <Text size="sm" c="dimmed">
-          These filters will apply to all graphs on the dashboard.
-        </Text>
+          <Stepper.Step label="Select Fields" description="Choose common fields">
+            <CommonFieldsSelection
+              selectedViews={selectedViews}
+              onSave={handleSave}
+            />
+          </Stepper.Step>
+        </Stepper>
 
-        <Button onClick={onClose} fullWidth>
-          Close
-        </Button>
+        <Group justify="space-between" mt="xl">
+          <Button variant="default" onClick={handleCancel}>
+            Cancel
+          </Button>
+
+          <Group>
+            {activeStep > 0 && (
+              <Button variant="default" onClick={handleBack}>
+                Back
+              </Button>
+            )}
+
+            {activeStep === 0 && (
+              <Button
+                onClick={handleNext}
+                disabled={selectedViews.length === 0}
+              >
+                Next
+              </Button>
+            )}
+          </Group>
+        </Group>
       </Stack>
     </Modal>
   );
