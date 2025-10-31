@@ -1,0 +1,145 @@
+import { useRef, useEffect } from 'react';
+import { Box } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { DashboardItem } from '@/types/dashboard';
+import { useDashboardFilterState } from '../hooks/useDashboardFilters';
+import { usePDFGeneration } from './hooks';
+import { PDFGenerationProgress } from './components';
+import { TitleSlide, GraphSlide } from '../shared/slides';
+
+interface DownloadPDFProps {
+  graphs: DashboardItem[];
+  dashboardName: string;
+  onComplete: () => void;
+}
+
+/**
+ * DownloadPDF component - Generates a PDF document from dashboard slides
+ * Renders slides off-screen, captures them as images, and combines into PDF
+ */
+export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFProps) {
+  const { activeFilters: dashboardFilters } = useDashboardFilterState();
+
+  // Refs for slide elements to capture
+  const titleSlideRef = useRef<HTMLDivElement>(null);
+  const graphSlideRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // PDF generation hook
+  const { generatePDF, isGenerating, progress, error, cancel } = usePDFGeneration({
+    graphs,
+    dashboardName,
+    titleSlideRef,
+    graphSlideRefs,
+  });
+
+  // Start generation when component mounts
+  useEffect(() => {
+    // Small delay to ensure slides are rendered
+    const timer = setTimeout(() => {
+      generatePDF();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [generatePDF]);
+
+  // Handle completion
+  useEffect(() => {
+    if (!isGenerating && progress.current === progress.total && progress.total > 0) {
+      notifications.show({
+        title: 'PDF Generated',
+        message: 'Your dashboard PDF has been downloaded successfully',
+        color: 'green',
+      });
+      onComplete();
+    }
+  }, [isGenerating, progress, onComplete]);
+
+  // Handle errors
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: 'PDF Generation Failed',
+        message: error,
+        color: 'red',
+      });
+      onComplete();
+    }
+  }, [error, onComplete]);
+
+  const handleCancel = () => {
+    cancel();
+    onComplete();
+  };
+
+  return (
+    <>
+      {/* Hidden container for rendering slides off-screen */}
+      <Box
+        style={{
+          position: 'fixed',
+          left: '-9999px',
+          top: 0,
+          width: '1920px',
+          height: '1080px',
+          backgroundColor: 'white',
+        }}
+      >
+        {/* Title Slide */}
+        <Box
+          ref={titleSlideRef}
+          style={{
+            width: '1920px',
+            height: '1080px',
+            backgroundColor: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
+          <TitleSlide dashboardName={dashboardName} />
+        </Box>
+
+        {/* Graph Slides */}
+        {graphs.map((graph, index) => (
+          <Box
+            key={graph.id}
+            ref={el => (graphSlideRefs.current[index] = el)}
+            style={{
+              width: '1920px',
+              height: '1080px',
+              backgroundColor: 'white',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              padding: '48px',
+            }}
+          >
+            <Box
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                paddingTop: '60px',
+              }}
+            >
+              <GraphSlide
+                graph={graph}
+                dashboardFilters={dashboardFilters}
+                dashboardName={dashboardName}
+              />
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* Progress Modal */}
+      {isGenerating && (
+        <PDFGenerationProgress
+          current={progress.current}
+          total={progress.total}
+          onCancel={handleCancel}
+        />
+      )}
+    </>
+  );
+}

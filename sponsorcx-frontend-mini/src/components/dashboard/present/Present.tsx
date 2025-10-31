@@ -2,7 +2,8 @@ import { Box } from '@mantine/core';
 import { DashboardItem } from '@/types/dashboard';
 import { useDashboardFilterState } from '../hooks/useDashboardFilters';
 import { useFullscreenMode, useSlideNavigation } from './hooks';
-import { PresentationControls, TitleSlide, GraphSlide } from './components';
+import { PresentationControls } from './components';
+import { TitleSlide, GraphSlide } from '../shared/slides';
 
 interface PresentProps {
   graphs: DashboardItem[];

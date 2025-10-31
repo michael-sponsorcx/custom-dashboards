@@ -7,6 +7,9 @@ import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
 import { DashboardAvailableFiltersModal } from './DashboardAvailableFiltersModal';
+import { Present } from './present';
+import { DownloadPDF } from './download_pdf';
+import { DashboardFilterProvider } from './context';
 
 /**
  * Dashboard Component - Refactored
@@ -34,6 +37,12 @@ export function Dashboard() {
   // Filter value modal state
   const [filterValueModalOpen, setFilterValueModalOpen] = useState(false);
   const [selectedFilterField, setSelectedFilterField] = useState<string | null>(null);
+
+  // Presentation mode state
+  const [presentationMode, setPresentationMode] = useState(false);
+
+  // PDF generation state
+  const [pdfGenerationMode, setPdfGenerationMode] = useState(false);
 
   // Find the selected graph for the modal
   const selectedGraph = graphs.find(g => g.id === selectedGraphId);
@@ -66,6 +75,35 @@ export function Dashboard() {
     setSelectedFilterField(null);
   };
 
+  const handleStartPresentation = () => {
+    setPresentationMode(true);
+  };
+
+  const handleClosePresentation = () => {
+    setPresentationMode(false);
+  };
+
+  const handleDownloadPDF = () => {
+    setPdfGenerationMode(true);
+  };
+
+  const handleClosePDFGeneration = () => {
+    setPdfGenerationMode(false);
+  };
+
+  // If in presentation mode, render the Present component
+  if (presentationMode) {
+    return (
+      <DashboardFilterProvider>
+        <Present
+          graphs={graphs}
+          dashboardName="Dashboard"
+          onClose={handleClosePresentation}
+        />
+      </DashboardFilterProvider>
+    );
+  }
+
   if (loading) {
     return (
       <Container size="xl" py="xl">
@@ -75,13 +113,20 @@ export function Dashboard() {
   }
 
   return (
-    <Container size="xl" py="xl">
-      <Stack gap="xl">
-        {/* Header */}
-        <Group justify="space-between" align="center">
-          <Title order={1}>Dashboard</Title>
+    <DashboardFilterProvider>
+      <Container size="xl" py="xl">
+        <Stack gap="xl">
+          {/* Header */}
+          <Group justify="space-between" align="center">
+            <Title order={1}>Dashboard</Title>
           <Group gap="md">
             <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
+            <Button onClick={handleStartPresentation} color="blue" size="lg" disabled={graphs.length === 0}>
+              Present
+            </Button>
+            <Button onClick={handleDownloadPDF} color="green" size="lg" disabled={graphs.length === 0}>
+              Download PDF
+            </Button>
             <Button onClick={handleCreateGraph} color="red" size="lg">
               Add Graph
             </Button>
@@ -134,6 +179,16 @@ export function Dashboard() {
         onClose={handleCloseFilterValue}
         fieldName={selectedFilterField}
       />
-    </Container>
+
+        {/* PDF Generation (non-blocking, renders off-screen) */}
+        {pdfGenerationMode && (
+          <DownloadPDF
+            graphs={graphs}
+            dashboardName="Dashboard"
+            onComplete={handleClosePDFGeneration}
+          />
+        )}
+      </Container>
+    </DashboardFilterProvider>
   );
 }
