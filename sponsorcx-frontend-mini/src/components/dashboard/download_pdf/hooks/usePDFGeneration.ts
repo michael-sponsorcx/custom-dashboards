@@ -57,11 +57,10 @@ export function usePDFGeneration({
 
       // PDF dimensions (A4 landscape)
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
 
       // Helper function to wait for charts to load
       const waitForChartsToLoad = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       };
 
       // Helper function to capture a slide as canvas

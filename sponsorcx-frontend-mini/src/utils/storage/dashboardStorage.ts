@@ -60,7 +60,7 @@ export function addGraphToDashboard(graphId: string): void {
  */
 export function removeGraphFromDashboard(graphId: string): void {
   const dashboard = getDashboard();
-  dashboard.graphIds = dashboard.graphIds.filter(id => id !== graphId);
+  dashboard.graphIds = dashboard.graphIds.filter((id) => id !== graphId);
   dashboard.updatedAt = new Date().toISOString();
   saveDashboard(dashboard);
 }

@@ -58,11 +58,7 @@ export function ModelSelectionSearchBar({
         disabled={loading}
         rightSection={
           selectedView && (
-            <ActionIcon
-              variant="subtle"
-              onClick={onClearSelection}
-              aria-label="Clear selection"
-            >
+            <ActionIcon variant="subtle" onClick={onClearSelection} aria-label="Clear selection">
               <IconX size={16} />
             </ActionIcon>
           )
@@ -79,7 +75,7 @@ export function ModelSelectionSearchBar({
             left: 0,
             right: 0,
             zIndex: 1000,
-            marginTop: '4px'
+            marginTop: '4px',
           }}
         >
           <Stack gap="xs">
@@ -93,14 +89,16 @@ export function ModelSelectionSearchBar({
                   borderRadius: '4px',
                   backgroundColor: selectedView === view.name ? '#f0f0f0' : 'transparent',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor =
                     selectedView === view.name ? '#f0f0f0' : 'transparent';
                 }}
               >
                 <Text size="sm">{view.name}</Text>
-                <Text size="xs" c="dimmed">{view.title}</Text>
+                <Text size="xs" c="dimmed">
+                  {view.title}
+                </Text>
               </div>
             ))}
           </Stack>

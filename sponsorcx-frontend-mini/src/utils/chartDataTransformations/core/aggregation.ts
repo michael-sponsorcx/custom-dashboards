@@ -20,10 +20,11 @@ export function aggregateDimensionValues(
 ): Record<string, number> {
   const dimensionValueTotals: Record<string, number> = {};
 
-  data.forEach(row => {
+  data.forEach((row) => {
     const dimensionValue = String(row[dimensionField]); // Convert to string for consistent key handling
     const measureValue = row[measureField];
-    dimensionValueTotals[dimensionValue] = (dimensionValueTotals[dimensionValue] || 0) + measureValue;
+    dimensionValueTotals[dimensionValue] =
+      (dimensionValueTotals[dimensionValue] || 0) + measureValue;
   });
 
   return dimensionValueTotals;
@@ -44,7 +45,7 @@ export function createAggregatedData(
 ): any[] {
   return Object.entries(dimensionTotals).map(([dimensionValue, total]) => ({
     [dimensionField]: dimensionValue,
-    [measureField]: total
+    [measureField]: total,
   }));
 }
 
@@ -69,7 +70,7 @@ export function aggregateDualDimensions(
   const primaryTotals: Record<string, number> = {};
   const secondaryTotals: Record<string, number> = {};
 
-  data.forEach(row => {
+  data.forEach((row) => {
     const primaryValue = row[primaryDimension];
     const secondaryValue = row[secondaryDimension];
     const measureValue = row[measure];
@@ -107,7 +108,7 @@ export function pivotStackedData(
   // Group data by primary dimension and pivot secondary dimension
   const pivotedData: Record<string, any> = {};
 
-  data.forEach(row => {
+  data.forEach((row) => {
     const primaryValue = row[primaryDimension];
     const secondaryValue = row[secondaryDimension];
     const measureValue = row[measure];

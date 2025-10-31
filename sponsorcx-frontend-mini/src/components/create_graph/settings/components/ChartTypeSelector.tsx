@@ -26,7 +26,9 @@ function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
   if (type === 'kpi') {
     return (
       <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
-        <text x="6" y="32" fontSize="24" fill={fill} fontFamily="inherit">123</text>
+        <text x="6" y="32" fontSize="24" fill={fill} fontFamily="inherit">
+          123
+        </text>
       </svg>
     );
   }
@@ -98,16 +100,8 @@ function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
     return (
       <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden>
         <circle cx="24" cy="24" r="18" fill={fill} opacity="0.8" />
-        <path
-          d="M 24 24 L 24 6 A 18 18 0 0 1 39.57 10.43 Z"
-          fill={fill}
-          opacity="0.5"
-        />
-        <path
-          d="M 24 24 L 39.57 10.43 A 18 18 0 0 1 42 24 Z"
-          fill={fill}
-          opacity="0.3"
-        />
+        <path d="M 24 24 L 24 6 A 18 18 0 0 1 39.57 10.43 Z" fill={fill} opacity="0.5" />
+        <path d="M 24 24 L 39.57 10.43 A 18 18 0 0 1 42 24 Z" fill={fill} opacity="0.3" />
       </svg>
     );
   }
@@ -141,13 +135,16 @@ export function ChartTypeSelector({
   const isDisabled = (type: ChartType) => !compatibleCharts.includes(type);
   const isSelected = (type: ChartType) => selectedChartType === type;
 
-  const tileBorder = (active: boolean) => `1px solid ${active ? theme.colors.blue[6] : theme.colors.gray[4]}`;
+  const tileBorder = (active: boolean) =>
+    `1px solid ${active ? theme.colors.blue[6] : theme.colors.gray[4]}`;
   const tileBg = (active: boolean) => (active ? theme.colors.blue[0] : theme.colors.gray[0]);
   const iconColor = (active: boolean) => (active ? theme.colors.blue[6] : theme.colors.gray[7]);
 
   return (
     <Box>
-      <Text size="sm" fw={500} mb={6}>Chart Type</Text>
+      <Text size="sm" fw={500} mb={6}>
+        Chart Type
+      </Text>
       <SimpleGrid cols={3} spacing="xs">
         {allChartTypes.map((type) => {
           const disabled = isDisabled(type);

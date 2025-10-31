@@ -4,7 +4,12 @@
  * Builds WHERE clause for GraphQL queries from filter rules.
  */
 
-import { FilterRule, isMeasureFilter, isDimensionFilter, isDateFilter } from '../../../../types/filters';
+import {
+  FilterRule,
+  isMeasureFilter,
+  isDimensionFilter,
+  isDateFilter,
+} from '../../../../types/filters';
 import { stripCubePrefix } from './utils';
 
 /**
@@ -82,7 +87,7 @@ export function buildFilterWhereClause(cubeName: string, filters: FilterRule[]):
 
   const filterConditions: string[] = [];
 
-  filters.forEach(filter => {
+  filters.forEach((filter) => {
     if (isMeasureFilter(filter)) {
       filterConditions.push(buildMeasureFilterCondition(filter));
     } else if (isDimensionFilter(filter)) {

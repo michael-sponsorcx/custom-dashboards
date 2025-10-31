@@ -7,7 +7,7 @@ import { transformQueryResultsToCSV } from '../utils/csvExport';
  * @param filename - The name of the downloaded file (without .csv extension)
  * @returns A function that triggers the download
  */
-export function useDownloadCSV(queryResult: any, filename: string = 'data') {
+export function useDownloadCSV(queryResult: any, filename = 'data') {
   const downloadCSV = useCallback(() => {
     if (!queryResult) {
       return;

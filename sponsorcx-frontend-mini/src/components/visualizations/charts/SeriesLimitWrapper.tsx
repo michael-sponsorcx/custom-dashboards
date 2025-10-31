@@ -14,15 +14,15 @@ interface SeriesLimitWrapperProps {
 export function SeriesLimitWrapper({
   seriesCount,
   maxSeries = 100,
-  children
+  children,
 }: SeriesLimitWrapperProps) {
   if (seriesCount > maxSeries) {
     return (
       <div style={{ width: '100%', padding: '2rem' }}>
         <Alert color="yellow" title="Too Many Series" variant="light">
           <Text size="sm">
-            This chart would display {seriesCount} series, which exceeds the maximum limit of {maxSeries}.
-            Please refine your query to reduce the number of series.
+            This chart would display {seriesCount} series, which exceeds the maximum limit of{' '}
+            {maxSeries}. Please refine your query to reduce the number of series.
           </Text>
           <Text size="xs" c="dimmed" mt="sm">
             Tip: Use filters or aggregations to group your data into fewer categories.

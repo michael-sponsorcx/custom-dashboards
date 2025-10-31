@@ -28,10 +28,7 @@ interface UseChartSettingsOptions {
  * Provides callbacks for updating individual settings
  */
 export function useChartSettings(options: UseChartSettingsOptions = {}) {
-  const {
-    initialSettings = {},
-    onSettingsChange,
-  } = options;
+  const { initialSettings = {}, onSettingsChange } = options;
 
   const [settings, setSettings] = useState<ChartSettings>({
     chartType: initialSettings.chartType ?? null,

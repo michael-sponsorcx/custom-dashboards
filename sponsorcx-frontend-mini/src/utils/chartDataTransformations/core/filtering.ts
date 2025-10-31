@@ -30,13 +30,9 @@ export function getTopDimensionValues(
  * @param topValues - Array of dimension values to keep
  * @returns Filtered data array
  */
-export function filterToTopValues(
-  data: any[],
-  dimensionField: string,
-  topValues: string[]
-): any[] {
+export function filterToTopValues(data: any[], dimensionField: string, topValues: string[]): any[] {
   const topValuesSet = new Set(topValues);
-  return data.filter(row => topValuesSet.has(String(row[dimensionField])));
+  return data.filter((row) => topValuesSet.has(String(row[dimensionField])));
 }
 
 /**

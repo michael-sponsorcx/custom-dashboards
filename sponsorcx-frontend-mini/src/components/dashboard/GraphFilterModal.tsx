@@ -27,9 +27,7 @@ export function GraphFilterModal({ opened, onClose, graphId, graphName }: GraphF
           Graph ID: {graphId}
         </Text>
 
-        <Text>
-          Filter configuration UI will be implemented here.
-        </Text>
+        <Text>Filter configuration UI will be implemented here.</Text>
 
         <Text size="sm" c="dimmed">
           This will allow you to:

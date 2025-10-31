@@ -40,8 +40,4 @@ export type {
 
 // Export utility functions
 export { getCacheStats, clearCache } from './core/cache';
-export {
-  getUserFriendlyErrorMessage,
-  isNetworkError,
-  isAuthError,
-} from './core/errorHandler';
+export { getUserFriendlyErrorMessage, isNetworkError, isAuthError } from './core/errorHandler';

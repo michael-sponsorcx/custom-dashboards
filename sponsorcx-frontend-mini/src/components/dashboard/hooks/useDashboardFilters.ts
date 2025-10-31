@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { loadDashboardFilters, saveDashboardFilters } from '../../../services/dashboardFilterPersistence';
+import {
+  loadDashboardFilters,
+  saveDashboardFilters,
+} from '../../../services/dashboardFilterPersistence';
 import { FilterRule } from '../../../types/filters';
 
 export interface DashboardFilterField {
@@ -66,15 +69,24 @@ export function useDashboardFilters() {
 
   // Filter management actions
   const addFilter = useCallback((filter: FilterRule) => {
-    setActiveFilters(prev => [...prev, filter]);
+    setActiveFilters((prev) => {
+      // Check if filter for this field already exists
+      const existingIndex = prev.findIndex((f) => f.fieldName === filter.fieldName);
+      if (existingIndex >= 0) {
+        // Replace existing filter
+        return prev.map((f, i) => (i === existingIndex ? filter : f));
+      }
+      // Add new filter
+      return [...prev, filter];
+    });
   }, []);
 
   const updateFilter = useCallback((index: number, filter: FilterRule) => {
-    setActiveFilters(prev => prev.map((f, i) => (i === index ? filter : f)));
+    setActiveFilters((prev) => prev.map((f, i) => (i === index ? filter : f)));
   }, []);
 
   const removeFilter = useCallback((index: number) => {
-    setActiveFilters(prev => prev.filter((_, i) => i !== index));
+    setActiveFilters((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const clearAllFilters = useCallback(() => {

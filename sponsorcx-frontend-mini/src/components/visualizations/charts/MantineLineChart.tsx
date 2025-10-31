@@ -4,7 +4,11 @@ import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
-import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import {
+  createChartValueFormatter,
+  createAxisTickFormatter,
+  NumberFormatType,
+} from '../../../utils/numberFormatter';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { LegendPosition } from '../../../types/graph';
 import type { ColorPalette } from '../../../constants/colorPalettes';
@@ -61,16 +65,17 @@ export const MantineLineChart = memo(function MantineLineChart({
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
   // Memoize to prevent unnecessary re-transformations
-  const transformationResult = useMemo(() =>
-    transformChartData({
-      chartType: 'line',
-      cubeData: queryResult,
-      primaryColor,
-      getColorFn,
-      primaryDimension,
-      selectedMeasure,
-      maxDataPoints,
-    }),
+  const transformationResult = useMemo(
+    () =>
+      transformChartData({
+        chartType: 'line',
+        cubeData: queryResult,
+        primaryColor,
+        getColorFn,
+        primaryDimension,
+        selectedMeasure,
+        maxDataPoints,
+      }),
     [queryResult, primaryColor, getColorFn, primaryDimension, selectedMeasure, maxDataPoints]
   );
 
@@ -101,7 +106,7 @@ export const MantineLineChart = memo(function MantineLineChart({
       // For non-numeric X (dates, categories), add index-based regression
       const dataWithIndices = sortedData.map((point, index) => ({
         ...point,
-        _index: index
+        _index: index,
       }));
       return addRegressionLineToData(dataWithIndices, '_index', firstSeriesKey, '_regressionLine');
     }
@@ -154,10 +159,13 @@ export const MantineLineChart = memo(function MantineLineChart({
   const gridAxisValue = getGridAxis();
 
   // Build gridProps based on individual grid line settings
-  const gridProps = gridAxisValue !== 'none' ? {
-    strokeDasharray: '3 3',
-    stroke: 'var(--mantine-color-gray-3)',
-  } : undefined;
+  const gridProps =
+    gridAxisValue !== 'none'
+      ? {
+          strokeDasharray: '3 3',
+          stroke: 'var(--mantine-color-gray-3)',
+        }
+      : undefined;
 
   return (
     <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>

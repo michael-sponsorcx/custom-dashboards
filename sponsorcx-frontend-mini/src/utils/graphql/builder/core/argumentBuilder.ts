@@ -52,9 +52,10 @@ export function buildCubeArguments(
  * @param orderBy - Order by configuration
  * @returns Argument string formatted for GraphQL
  */
-export function buildCubeNameArguments(
-  orderBy?: { field: string; direction: 'asc' | 'desc' }
-): string {
+export function buildCubeNameArguments(orderBy?: {
+  field: string;
+  direction: 'asc' | 'desc';
+}): string {
   if (!orderBy || !orderBy.field || !orderBy.direction) return '';
 
   // Direction should be lowercase (asc or desc) per Cube GraphQL API

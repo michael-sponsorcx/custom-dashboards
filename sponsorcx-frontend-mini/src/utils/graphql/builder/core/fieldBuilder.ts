@@ -23,19 +23,19 @@ export function buildFieldsList(
   const fields: string[] = [];
 
   // Add measures
-  measures.forEach(measure => {
+  measures.forEach((measure) => {
     const fieldName = stripCubePrefix(measure.name);
     fields.push(`      ${fieldName}`);
   });
 
   // Add regular dimensions
-  dimensions.forEach(dimension => {
+  dimensions.forEach((dimension) => {
     const fieldName = stripCubePrefix(dimension.name);
     fields.push(`      ${fieldName}`);
   });
 
   // Add time dimensions with granularity
-  timeDimensions.forEach(timeDim => {
+  timeDimensions.forEach((timeDim) => {
     const fieldName = stripCubePrefix(timeDim.name);
     // Default to 'value' for time dimensions
     fields.push(`      ${fieldName} {

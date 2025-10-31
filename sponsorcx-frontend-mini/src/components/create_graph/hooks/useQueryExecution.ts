@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { executeCubeGraphQL } from '../../../services/cube';
+import { executeCubeGraphQL } from '../../../services/backendCube';
 import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
 import { analyzeChartCompatibility, ChartType } from '../../../utils/chartDataAnalyzer';
 import { ViewFields } from '../types';
@@ -86,9 +86,10 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
     }
 
     // Build orderBy parameter if field is selected
-    const orderBy = orderByField && orderByDirection
-      ? { field: orderByField, direction: orderByDirection }
-      : undefined;
+    const orderBy =
+      orderByField && orderByDirection
+        ? { field: orderByField, direction: orderByDirection }
+        : undefined;
 
     return buildSimpleCubeQuery({
       cubeName: selectedView,
@@ -98,7 +99,16 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
       filters,
       orderBy,
     });
-  }, [selectedView, selectedMeasures, selectedDimensions, selectedDates, viewFields, filters, orderByField, orderByDirection]);
+  }, [
+    selectedView,
+    selectedMeasures,
+    selectedDimensions,
+    selectedDates,
+    viewFields,
+    filters,
+    orderByField,
+    orderByDirection,
+  ]);
 
   // Validate query automatically
   useEffect(() => {
@@ -107,7 +117,7 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
       return;
     }
 
-    validateCubeGraphQLQuery(generatedQuery).then(result => {
+    validateCubeGraphQLQuery(generatedQuery).then((result) => {
       setValidationResult(result);
     });
   }, [generatedQuery]);

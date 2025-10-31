@@ -75,11 +75,18 @@ export function ChartPreview({
   // No data state
   if (!queryResult) {
     return (
-      <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', minHeight: '400px' }}>
+      <Paper
+        shadow="sm"
+        p="xl"
+        radius="md"
+        withBorder
+        style={{ height: '100%', minHeight: '400px' }}
+      >
         <Stack align="center" justify="center" style={{ height: '100%' }}>
           <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
             <Text size="sm">
-              Execute a query to generate a chart. Select fields from the left panel and click "Execute Query".
+              Execute a query to generate a chart. Select fields from the left panel and click
+              "Execute Query".
             </Text>
           </Alert>
         </Stack>
@@ -90,7 +97,13 @@ export function ChartPreview({
   // No chart type selected
   if (!selectedChartType) {
     return (
-      <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', minHeight: '400px' }}>
+      <Paper
+        shadow="sm"
+        p="xl"
+        radius="md"
+        withBorder
+        style={{ height: '100%', minHeight: '400px' }}
+      >
         <Stack align="center" justify="center" style={{ height: '100%' }}>
           <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
             <Text size="sm">
@@ -104,7 +117,19 @@ export function ChartPreview({
 
   // Render chart based on selected type
   return (
-    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ height: '100%', maxHeight: '500px', minHeight: '500px', display: 'flex', flexDirection: 'column' }}>
+    <Paper
+      shadow="sm"
+      p="xl"
+      radius="md"
+      withBorder
+      style={{
+        height: '100%',
+        maxHeight: '500px',
+        minHeight: '500px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <Stack gap="md" style={{ height: '100%', overflow: 'hidden' }}>
         {/* Chart Title */}
         {chartTitle && (
@@ -114,7 +139,16 @@ export function ChartPreview({
         )}
 
         {/* Chart Content */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px', width: '100%' }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+            width: '100%',
+          }}
+        >
           {(() => {
             return (
               <ChartRenderer

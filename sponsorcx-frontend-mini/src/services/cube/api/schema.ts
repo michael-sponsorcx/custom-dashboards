@@ -149,8 +149,8 @@ export function clearSchemaCache(): void {
  */
 export function getFilterOperatorsFromSchema(schema: any): string[] {
   // Look for filter input types in the schema
-  const filterTypes = schema.types?.filter((type: any) =>
-    type.name?.includes('Filter') || type.name?.includes('Where')
+  const filterTypes = schema.types?.filter(
+    (type: any) => type.name?.includes('Filter') || type.name?.includes('Where')
   );
 
   const operators = new Set<string>();

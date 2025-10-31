@@ -20,7 +20,11 @@ export async function validateCubeGraphQLQuery(query: string): Promise<Validatio
   const syntaxResult = validateGraphQLSyntax(query);
 
   // Step 2: Validate Cube-specific rules (only if syntax is valid)
-  let cubeResult = { valid: true, errors: [] as ValidationError[], warnings: [] as ValidationWarning[] };
+  let cubeResult = {
+    valid: true,
+    errors: [] as ValidationError[],
+    warnings: [] as ValidationWarning[],
+  };
   if (syntaxResult.valid) {
     cubeResult = await validateCubeRules(query);
   }
@@ -32,7 +36,7 @@ export async function validateCubeGraphQLQuery(query: string): Promise<Validatio
   return {
     valid: allErrors.length === 0,
     errors: allErrors,
-    warnings: allWarnings
+    warnings: allWarnings,
   };
 }
 

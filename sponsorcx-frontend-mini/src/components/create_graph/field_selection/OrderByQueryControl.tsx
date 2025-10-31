@@ -41,9 +41,9 @@ export function OrderByQueryControl({
 
   // Add Measures group if available
   if (measures.length > 0) {
-    const measureItems = measures.map(m => m.title || m.name);
+    const measureItems = measures.map((m) => m.title || m.name);
     groupedData.push({ group: 'Measures', items: measureItems });
-    measures.forEach(m => {
+    measures.forEach((m) => {
       const label = m.title || m.name;
       labelToFieldMap[label] = m.name;
       fieldToLabelMap[m.name] = label;
@@ -52,9 +52,9 @@ export function OrderByQueryControl({
 
   // Add Dimensions group if available
   if (dimensions.length > 0) {
-    const dimensionItems = dimensions.map(d => d.title || d.name);
+    const dimensionItems = dimensions.map((d) => d.title || d.name);
     groupedData.push({ group: 'Dimensions', items: dimensionItems });
-    dimensions.forEach(d => {
+    dimensions.forEach((d) => {
       const label = d.title || d.name;
       labelToFieldMap[label] = d.name;
       fieldToLabelMap[d.name] = label;
@@ -63,9 +63,9 @@ export function OrderByQueryControl({
 
   // Add Dates group if available
   if (dates.length > 0) {
-    const dateItems = dates.map(d => d.title || d.name);
+    const dateItems = dates.map((d) => d.title || d.name);
     groupedData.push({ group: 'Dates', items: dateItems });
-    dates.forEach(d => {
+    dates.forEach((d) => {
       const label = d.title || d.name;
       labelToFieldMap[label] = d.name;
       fieldToLabelMap[d.name] = label;
@@ -93,7 +93,9 @@ export function OrderByQueryControl({
         <Select
           label="Direction"
           data={['Ascending (A → Z, 1 → 9)', 'Descending (Z → A, 9 → 1)']}
-          value={orderByDirection === 'asc' ? 'Ascending (A → Z, 1 → 9)' : 'Descending (Z → A, 9 → 1)'}
+          value={
+            orderByDirection === 'asc' ? 'Ascending (A → Z, 1 → 9)' : 'Descending (Z → A, 9 → 1)'
+          }
           onChange={(value) => {
             if (value === 'Ascending (A → Z, 1 → 9)') {
               onOrderByDirectionChange('asc');

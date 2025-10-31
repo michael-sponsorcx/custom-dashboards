@@ -90,7 +90,7 @@ export function addRegressionLineToData(
   data: any[],
   xKey: string,
   yKey: string,
-  regressionKey: string = 'regressionLine'
+  regressionKey = 'regressionLine'
 ): any[] {
   const regression = calculateLinearRegression(data, xKey, yKey);
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchCubeMetadata } from '../../services/cube';
+import { fetchCubeMetadata } from '../../services/backendCube';
 import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
 import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
 
@@ -68,9 +68,7 @@ export function ModelSelector({
     if (!searchQuery.trim()) return views;
 
     const query = searchQuery.toLowerCase();
-    return views.filter((view: CubeView) =>
-      view.name.toLowerCase().includes(query)
-    );
+    return views.filter((view: CubeView) => view.name.toLowerCase().includes(query));
   }, [views, searchQuery]);
 
   // Limit to top 5 results
@@ -87,17 +85,19 @@ export function ModelSelector({
       return { measures: [], dimensions: [], dates: [] };
     }
 
-    const measures = view.measures?.map((m: any) => ({
-      name: m.name,
-      title: m.shortTitle || m.title || m.name,
-      type: m.type,
-    })) || [];
+    const measures =
+      view.measures?.map((m: any) => ({
+        name: m.name,
+        title: m.shortTitle || m.title || m.name,
+        type: m.type,
+      })) || [];
 
-    const allDimensions = view.dimensions?.map((d: any) => ({
-      name: d.name,
-      title: d.shortTitle || d.title || d.name,
-      type: d.type,
-    })) || [];
+    const allDimensions =
+      view.dimensions?.map((d: any) => ({
+        name: d.name,
+        title: d.shortTitle || d.title || d.name,
+        type: d.type,
+      })) || [];
 
     // Separate date dimensions from regular dimensions
     const dates = allDimensions.filter((d: any) => d.type === 'time');

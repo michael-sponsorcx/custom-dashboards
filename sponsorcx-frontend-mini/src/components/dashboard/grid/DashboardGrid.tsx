@@ -5,7 +5,6 @@ import 'react-resizable/css/styles.css';
 import { DashboardItem } from '../../../types/dashboard';
 import { GraphCard } from './GraphCard';
 
-// @ts-ignore - WidthProvider type issue
 const GridLayout = WidthProvider(RGL);
 
 interface DashboardGridProps {
@@ -54,7 +53,7 @@ export function DashboardGrid({
 
     // Convert Layout[] back to DashboardItem[]
     const updatedItems = graphs.map((graph: DashboardItem) => {
-      const layoutItem = newLayout.find(l => l.i === graph.id);
+      const layoutItem = newLayout.find((l) => l.i === graph.id);
       if (!layoutItem) return graph;
 
       return {
@@ -72,14 +71,14 @@ export function DashboardGrid({
   };
 
   // Handle resize stop
-  const handleResizeStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
+  const handleResizeStop = (_layout: Layout[], _oldItem: Layout, newItem: Layout) => {
     if (onResize) {
       onResize(newItem.i, newItem.w, newItem.h);
     }
   };
 
   return (
-    // @ts-ignore - WidthProvider wrapped component
+    // @ts-expect-error - WidthProvider wrapped component types issue
     <GridLayout
       className="layout"
       layout={layout}
@@ -98,12 +97,7 @@ export function DashboardGrid({
     >
       {graphs.map((graph: DashboardItem) => (
         <div key={graph.id}>
-          <GraphCard
-            template={graph}
-            onDelete={onDelete}
-            onEdit={onEdit}
-            onFilter={onFilter}
-          />
+          <GraphCard template={graph} onDelete={onDelete} onEdit={onEdit} onFilter={onFilter} />
         </div>
       ))}
     </GridLayout>

@@ -1,4 +1,11 @@
-export type ChartType = 'kpi' | 'line' | 'bar' | 'stackedBar' | 'horizontalBar' | 'horizontalStackedBar' | 'pie';
+export type ChartType =
+  | 'kpi'
+  | 'line'
+  | 'bar'
+  | 'stackedBar'
+  | 'horizontalBar'
+  | 'horizontalStackedBar'
+  | 'pie';
 
 export interface ChartCompatibility {
   compatibleCharts: ChartType[];
@@ -48,7 +55,7 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   const measures: string[] = [];
   const dimensions: string[] = [];
 
-  fields.forEach(field => {
+  fields.forEach((field) => {
     const value = rowData[field];
     // Dimensions typically have names like "dim_" or contain "label", "name", "date"
     // Measures are numeric values

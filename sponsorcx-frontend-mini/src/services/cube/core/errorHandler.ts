@@ -13,7 +13,7 @@ import { CubeApiError } from '../types';
  * @param context - Context string for logging
  * @returns Formatted error
  */
-export function handleApiError(error: unknown, context: string): CubeApiError {
+export function handleApiError(error: unknown, _context: string): CubeApiError {
   if (error instanceof CubeApiError) {
     return error;
   }

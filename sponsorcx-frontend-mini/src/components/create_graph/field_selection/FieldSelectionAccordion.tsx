@@ -35,7 +35,14 @@ export function FieldSelectionAccordion({
     <Accordion multiple>
       {/* Measures Section */}
       {measures.length > 0 && (
-        <Accordion.Item value="measures" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', marginBottom: '8px' }}>
+        <Accordion.Item
+          value="measures"
+          style={{
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '8px',
+            marginBottom: '8px',
+          }}
+        >
           <Accordion.Control>
             <Title order={4}>Measures</Title>
           </Accordion.Control>
@@ -69,7 +76,14 @@ export function FieldSelectionAccordion({
 
       {/* Dimensions Section */}
       {dimensions.length > 0 && (
-        <Accordion.Item value="dimensions" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', borderRadius: '8px', marginBottom: '8px' }}>
+        <Accordion.Item
+          value="dimensions"
+          style={{
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            borderRadius: '8px',
+            marginBottom: '8px',
+          }}
+        >
           <Accordion.Control>
             <Title order={4}>Dimensions</Title>
           </Accordion.Control>
@@ -103,7 +117,10 @@ export function FieldSelectionAccordion({
 
       {/* Dates Section */}
       {dates.length > 0 && (
-        <Accordion.Item value="dates" style={{ backgroundColor: 'rgba(168, 85, 247, 0.1)', borderRadius: '8px' }}>
+        <Accordion.Item
+          value="dates"
+          style={{ backgroundColor: 'rgba(168, 85, 247, 0.1)', borderRadius: '8px' }}
+        >
           <Accordion.Control>
             <Title order={4}>Dates</Title>
           </Accordion.Control>

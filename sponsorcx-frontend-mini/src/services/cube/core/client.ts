@@ -15,10 +15,7 @@ export function getCubeConfig(): CubeConfig {
   const token = import.meta.env.VITE_CUBE_API_TOKEN;
 
   if (!baseUrl || !token) {
-    throw new CubeApiError(
-      'Missing Cube API configuration. Please check your .env file.',
-      500
-    );
+    throw new CubeApiError('Missing Cube API configuration. Please check your .env file.', 500);
   }
 
   return { baseUrl, token };
@@ -32,7 +29,7 @@ export function buildHeaders(
   additionalHeaders?: Record<string, string>
 ): Record<string, string> {
   return {
-    'Authorization': `Bearer ${config.token}`,
+    Authorization: `Bearer ${config.token}`,
     'Content-Type': 'application/json',
     ...additionalHeaders,
   };

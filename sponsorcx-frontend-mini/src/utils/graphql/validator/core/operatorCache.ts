@@ -13,9 +13,24 @@ let cachedValidOperators: string[] | null = null;
  * Fallback operators to use if schema fetch fails
  */
 const FALLBACK_OPERATORS = [
-  'equals', 'notEquals', 'in', 'notIn', 'contains', 'notContains',
-  'set', 'notSet', 'gt', 'gte', 'lt', 'lte',
-  'inDateRange', 'notInDateRange', 'beforeDate', 'afterDate', 'beforeOrOnDate', 'afterOrOnDate'
+  'equals',
+  'notEquals',
+  'in',
+  'notIn',
+  'contains',
+  'notContains',
+  'set',
+  'notSet',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'inDateRange',
+  'notInDateRange',
+  'beforeDate',
+  'afterDate',
+  'beforeOrOnDate',
+  'afterOrOnDate',
 ];
 
 /**

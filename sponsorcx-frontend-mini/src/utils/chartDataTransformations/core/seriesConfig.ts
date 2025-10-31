@@ -16,12 +16,12 @@
  */
 export function buildSeriesConfig(
   measureFields: string[],
-  primaryColor: string = '#3b82f6',
+  primaryColor = '#3b82f6',
   getColorFn?: (index: number) => string
 ): Array<{ name: string; color?: string }> {
   return measureFields.map((field, index) => ({
     name: field,
-    color: measureFields.length === 1 ? primaryColor : (getColorFn ? getColorFn(index) : undefined),
+    color: measureFields.length === 1 ? primaryColor : getColorFn ? getColorFn(index) : undefined,
   }));
 }
 
@@ -36,12 +36,12 @@ export function buildSeriesConfig(
  */
 export function buildStackedSeriesConfig(
   dimensionValues: string[],
-  primaryColor: string = '#3b82f6',
+  primaryColor = '#3b82f6',
   getColorFn?: (index: number) => string
 ): Array<{ name: string; color?: string }> {
   return dimensionValues.map((value, index) => ({
     name: value,
-    color: dimensionValues.length === 1 ? primaryColor : (getColorFn ? getColorFn(index) : undefined),
+    color: dimensionValues.length === 1 ? primaryColor : getColorFn ? getColorFn(index) : undefined,
   }));
 }
 

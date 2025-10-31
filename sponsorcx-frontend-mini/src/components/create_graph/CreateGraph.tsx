@@ -1,4 +1,15 @@
-import { Container, Paper, Title, Button, Stack, Code, Grid, Group, Tabs, Tooltip } from '@mantine/core';
+import {
+  Container,
+  Paper,
+  Title,
+  Button,
+  Stack,
+  Code,
+  Grid,
+  Group,
+  Tabs,
+  Tooltip,
+} from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GraphTemplate } from '../../types/graph';
@@ -132,10 +143,20 @@ export function CreateGraph() {
                     <Paper p="md" radius="md" withBorder>
                       <Stack gap="sm">
                         <Title order={5}>GraphQL Query</Title>
-                        <Code block style={{ whiteSpace: 'pre', overflow: 'auto', fontSize: '0.75rem', maxHeight: '200px' }}>
+                        <Code
+                          block
+                          style={{
+                            whiteSpace: 'pre',
+                            overflow: 'auto',
+                            fontSize: '0.75rem',
+                            maxHeight: '200px',
+                          }}
+                        >
                           {queryExecution.generatedQuery}
                         </Code>
-                        <QueryValidationResults validationResult={queryExecution.validationResult} />
+                        <QueryValidationResults
+                          validationResult={queryExecution.validationResult}
+                        />
                         <Button
                           onClick={queryExecution.executeQuery}
                           fullWidth
@@ -218,7 +239,9 @@ export function CreateGraph() {
                   secondaryDimension={graphState.secondaryDimension}
                   selectedMeasure={graphState.selectedMeasureField}
                   onPrimaryDimensionChange={graphState.setPrimaryDimension}
-                  onSecondaryDimensionChange={(dim) => graphState.setSecondaryDimension(dim || undefined)}
+                  onSecondaryDimensionChange={(dim) =>
+                    graphState.setSecondaryDimension(dim || undefined)
+                  }
                   onMeasureChange={graphState.setSelectedMeasureField}
                 />
               </Grid.Col>

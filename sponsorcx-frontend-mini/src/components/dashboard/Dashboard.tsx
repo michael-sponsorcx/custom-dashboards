@@ -19,13 +19,20 @@ import { DashboardFilterProvider } from './context';
  */
 export function Dashboard() {
   // Use custom hooks to manage state and actions
-  const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } = useDashboardState();
-  const { handleDeleteGraph, handleEditGraph, handleResizeGraph, handleMoveGraph, handleBatchMoveGraph, handleCreateGraph } =
-    useDashboardActions({
-      onRefresh: refreshDashboard,
-      onUpdatePosition: updateGraphPosition,
-      onUpdateSize: updateGraphSize,
-    });
+  const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
+    useDashboardState();
+  const {
+    handleDeleteGraph,
+    handleEditGraph,
+    handleResizeGraph,
+    handleMoveGraph,
+    handleBatchMoveGraph,
+    handleCreateGraph,
+  } = useDashboardActions({
+    onRefresh: refreshDashboard,
+    onUpdatePosition: updateGraphPosition,
+    onUpdateSize: updateGraphSize,
+  });
 
   // Graph filter modal state
   const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -45,7 +52,7 @@ export function Dashboard() {
   const [pdfGenerationMode, setPdfGenerationMode] = useState(false);
 
   // Find the selected graph for the modal
-  const selectedGraph = graphs.find(g => g.id === selectedGraphId);
+  const selectedGraph = graphs.find((g) => g.id === selectedGraphId);
 
   const handleFilterGraph = (id: string) => {
     setSelectedGraphId(id);
@@ -95,11 +102,7 @@ export function Dashboard() {
   if (presentationMode) {
     return (
       <DashboardFilterProvider>
-        <Present
-          graphs={graphs}
-          dashboardName="Dashboard"
-          onClose={handleClosePresentation}
-        />
+        <Present graphs={graphs} dashboardName="Dashboard" onClose={handleClosePresentation} />
       </DashboardFilterProvider>
     );
   }
@@ -119,66 +122,76 @@ export function Dashboard() {
           {/* Header */}
           <Group justify="space-between" align="center">
             <Title order={1}>Dashboard</Title>
-          <Group gap="md">
-            <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
-            <Button onClick={handleStartPresentation} color="blue" size="lg" disabled={graphs.length === 0}>
-              Present
-            </Button>
-            <Button onClick={handleDownloadPDF} color="green" size="lg" disabled={graphs.length === 0}>
-              Download PDF
-            </Button>
-            <Button onClick={handleCreateGraph} color="red" size="lg">
-              Add Graph
-            </Button>
+            <Group gap="md">
+              <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
+              <Button
+                onClick={handleStartPresentation}
+                color="blue"
+                size="lg"
+                disabled={graphs.length === 0}
+              >
+                Present
+              </Button>
+              <Button
+                onClick={handleDownloadPDF}
+                color="green"
+                size="lg"
+                disabled={graphs.length === 0}
+              >
+                Download PDF
+              </Button>
+              <Button onClick={handleCreateGraph} color="red" size="lg">
+                Add Graph
+              </Button>
+            </Group>
           </Group>
-        </Group>
 
-        {/* Available Filter Fields */}
-        <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
+          {/* Available Filter Fields */}
+          <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
 
-        {/* Empty State or Grid */}
-        {graphs.length === 0 ? (
-          <Stack align="center" gap="md" py="xl">
-            <Text size="lg" c="dimmed">
-              No graphs yet. Create your first graph to get started!
-            </Text>
-            <Button onClick={handleCreateGraph} size="lg">
-              Create Graph
-            </Button>
-          </Stack>
-        ) : (
-          <DashboardGrid
-            graphs={graphs}
-            onDelete={handleDeleteGraph}
-            onEdit={handleEditGraph}
-            onFilter={handleFilterGraph}
-            onResize={handleResizeGraph}
-            onMove={handleMoveGraph}
-            onBatchMove={handleBatchMoveGraph}
-          />
-        )}
-      </Stack>
+          {/* Empty State or Grid */}
+          {graphs.length === 0 ? (
+            <Stack align="center" gap="md" py="xl">
+              <Text size="lg" c="dimmed">
+                No graphs yet. Create your first graph to get started!
+              </Text>
+              <Button onClick={handleCreateGraph} size="lg">
+                Create Graph
+              </Button>
+            </Stack>
+          ) : (
+            <DashboardGrid
+              graphs={graphs}
+              onDelete={handleDeleteGraph}
+              onEdit={handleEditGraph}
+              onFilter={handleFilterGraph}
+              onResize={handleResizeGraph}
+              onMove={handleMoveGraph}
+              onBatchMove={handleBatchMoveGraph}
+            />
+          )}
+        </Stack>
 
-      {/* Graph Filter Modal */}
-      <GraphFilterModal
-        opened={filterModalOpen}
-        onClose={handleCloseFilterModal}
-        graphId={selectedGraphId}
-        graphName={selectedGraph?.name || 'Untitled Graph'}
-      />
+        {/* Graph Filter Modal */}
+        <GraphFilterModal
+          opened={filterModalOpen}
+          onClose={handleCloseFilterModal}
+          graphId={selectedGraphId}
+          graphName={selectedGraph?.name || 'Untitled Graph'}
+        />
 
-      {/* Dashboard Filter Modal */}
-      <DashboardFilterModal
-        opened={dashboardFilterModalOpen}
-        onClose={handleCloseDashboardFilters}
-      />
+        {/* Dashboard Filter Modal */}
+        <DashboardFilterModal
+          opened={dashboardFilterModalOpen}
+          onClose={handleCloseDashboardFilters}
+        />
 
-      {/* Dashboard Available Filters Modal */}
-      <DashboardAvailableFiltersModal
-        opened={filterValueModalOpen}
-        onClose={handleCloseFilterValue}
-        fieldName={selectedFilterField}
-      />
+        {/* Dashboard Available Filters Modal */}
+        <DashboardAvailableFiltersModal
+          opened={filterValueModalOpen}
+          onClose={handleCloseFilterValue}
+          fieldName={selectedFilterField}
+        />
 
         {/* PDF Generation (non-blocking, renders off-screen) */}
         {pdfGenerationMode && (

@@ -103,7 +103,7 @@ export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFPr
         {graphs.map((graph, index) => (
           <Box
             key={graph.id}
-            ref={el => (graphSlideRefs.current[index] = el)}
+            ref={(el) => (graphSlideRefs.current[index] = el)}
             style={{
               width: '1920px',
               height: '1080px',

@@ -20,7 +20,7 @@ export function MeasureFilterContent({
   measureOperator,
   measureValue,
   onOperatorChange,
-  onValueChange
+  onValueChange,
 }: MeasureFilterContentProps) {
   return (
     <Stack gap="md">

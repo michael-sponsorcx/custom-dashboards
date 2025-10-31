@@ -15,16 +15,8 @@ import { buildCubeArguments, buildCubeNameArguments } from '../core/argumentBuil
  * @returns Complete GraphQL query string
  */
 export function buildCubeQuery(params: QueryBuilderParams): string {
-  const {
-    cubeName,
-    measures,
-    dimensions,
-    timeDimensions,
-    orderBy,
-    limit,
-    timezone,
-    filters
-  } = params;
+  const { cubeName, measures, dimensions, timeDimensions, orderBy, limit, timezone, filters } =
+    params;
 
   // Build the fields list
   const fields = buildFieldsList(measures, dimensions, timeDimensions);

@@ -8,7 +8,11 @@
  * All chart components should pass raw Cube data to these functions.
  */
 
-import { TransformChartDataOptions, TransformationResult, ChartSpecificTransformOptions } from './types';
+import {
+  TransformChartDataOptions,
+  TransformationResult,
+  ChartSpecificTransformOptions,
+} from './types';
 import { barChartTransformation } from './transformations/barChart';
 import { barStackedTransformation } from './transformations/barStacked';
 import { lineChartTransformation, areaChartTransformation } from './transformations/lineChart';

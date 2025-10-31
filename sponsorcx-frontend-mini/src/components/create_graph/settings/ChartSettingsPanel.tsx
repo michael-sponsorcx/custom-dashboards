@@ -1,4 +1,15 @@
-import { Paper, Stack, Title, Divider, Select, TextInput, NumberInput, Switch, Group, Text as MantineText } from '@mantine/core';
+import {
+  Paper,
+  Stack,
+  Title,
+  Divider,
+  Select,
+  TextInput,
+  NumberInput,
+  Switch,
+  Group,
+  Text as MantineText,
+} from '@mantine/core';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 import type { LegendPosition } from '../../../types/graph';
 import { ColorPalette } from '../../../constants/colorPalettes';
@@ -101,8 +112,8 @@ const STACKED_CHART_TYPES: ChartType[] = ['stackedBar', 'horizontalStackedBar'];
 // Chart types that only display a single color (allow custom color option)
 // These charts show only one data series/color at a time
 const SINGLE_COLOR_CHART_TYPES: ChartType[] = [
-  'kpi',           // KPI - single value display
-  'bar',           // Shows one measure at a time
+  'kpi', // KPI - single value display
+  'bar', // Shows one measure at a time
   'horizontalBar', // Shows one measure at a time
   // Note: 'line', 'stackedBar', 'horizontalStackedBar', 'pie' can show multiple series with different colors
 ];
@@ -192,10 +203,7 @@ export function ChartSettingsPanel({
         />
 
         {/* Chart Title */}
-        <ChartBasicSettings
-          chartTitle={chartTitle}
-          onChartTitleChange={onChartTitleChange}
-        />
+        <ChartBasicSettings chartTitle={chartTitle} onChartTitleChange={onChartTitleChange} />
 
         {/* Data Field Configuration */}
         {(dimensions.length > 0 || measures.length > 0) && (
@@ -220,7 +228,9 @@ export function ChartSettingsPanel({
           <>
             <Divider />
             <Stack gap="xs">
-              <MantineText size="sm" fw={500}>Data Limits</MantineText>
+              <MantineText size="sm" fw={500}>
+                Data Limits
+              </MantineText>
               <NumberInput
                 label="Max Series/Data Points"
                 description="Maximum number of series to display (leave empty for default: 50)"
@@ -271,18 +281,21 @@ export function ChartSettingsPanel({
         )}
 
         {/* Legend Position */}
-        {selectedChartType && selectedChartType !== 'kpi' && selectedChartType !== 'pie' && onLegendPositionChange && (
-          <Select
-            label="Legend Position"
-            data={[
-              { value: 'top' satisfies LegendPosition, label: 'Top' },
-              { value: 'bottom' satisfies LegendPosition, label: 'Bottom' },
-              { value: 'none' satisfies LegendPosition, label: 'None' },
-            ]}
-            value={legendPosition}
-            onChange={(v) => v && onLegendPositionChange(v as LegendPosition)}
-          />
-        )}
+        {selectedChartType &&
+          selectedChartType !== 'kpi' &&
+          selectedChartType !== 'pie' &&
+          onLegendPositionChange && (
+            <Select
+              label="Legend Position"
+              data={[
+                { value: 'top' satisfies LegendPosition, label: 'Top' },
+                { value: 'bottom' satisfies LegendPosition, label: 'Bottom' },
+                { value: 'none' satisfies LegendPosition, label: 'None' },
+              ]}
+              value={legendPosition}
+              onChange={(v) => v && onLegendPositionChange(v as LegendPosition)}
+            />
+          )}
 
         {/* KPI Settings - for KPI charts */}
         {selectedChartType === 'kpi' && (
@@ -306,7 +319,9 @@ export function ChartSettingsPanel({
                 <NumberInput
                   label="Secondary Value"
                   value={kpiSecondaryValue ?? ''}
-                  onChange={(v) => onKpiSecondaryValueChange?.(typeof v === 'number' ? v : undefined)}
+                  onChange={(v) =>
+                    onKpiSecondaryValueChange?.(typeof v === 'number' ? v : undefined)
+                  }
                   min={Number.NEGATIVE_INFINITY}
                 />
                 <TextInput
@@ -324,7 +339,9 @@ export function ChartSettingsPanel({
                 <NumberInput
                   label="Trend Percentage"
                   value={kpiTrendPercentage ?? ''}
-                  onChange={(v) => onKpiTrendPercentageChange?.(typeof v === 'number' ? v : undefined)}
+                  onChange={(v) =>
+                    onKpiTrendPercentageChange?.(typeof v === 'number' ? v : undefined)
+                  }
                   min={-1000000}
                   max={1000000}
                   disabled={!kpiShowTrend}
@@ -335,26 +352,29 @@ export function ChartSettingsPanel({
         )}
 
         {/* Axis Settings - for charts with axes */}
-        {selectedChartType && selectedChartType !== 'kpi' && selectedChartType !== 'pie' && (() => {
-          return (
-            <>
-              <Divider />
-              <AxisSettings
-                chartType={selectedChartType}
-                xAxisLabel={xAxisLabel}
-                yAxisLabel={yAxisLabel}
-                showXAxisGridLines={showXAxisGridLines}
-                showYAxisGridLines={showYAxisGridLines}
-                showRegressionLine={showRegressionLine}
-                onXAxisLabelChange={onXAxisLabelChange}
-                onYAxisLabelChange={onYAxisLabelChange}
-                onShowXAxisGridLinesChange={onShowXAxisGridLinesChange}
-                onShowYAxisGridLinesChange={onShowYAxisGridLinesChange}
-                onShowRegressionLineChange={onShowRegressionLineChange}
-              />
-            </>
-          );
-        })()}
+        {selectedChartType &&
+          selectedChartType !== 'kpi' &&
+          selectedChartType !== 'pie' &&
+          (() => {
+            return (
+              <>
+                <Divider />
+                <AxisSettings
+                  chartType={selectedChartType}
+                  xAxisLabel={xAxisLabel}
+                  yAxisLabel={yAxisLabel}
+                  showXAxisGridLines={showXAxisGridLines}
+                  showYAxisGridLines={showYAxisGridLines}
+                  showRegressionLine={showRegressionLine}
+                  onXAxisLabelChange={onXAxisLabelChange}
+                  onYAxisLabelChange={onYAxisLabelChange}
+                  onShowXAxisGridLinesChange={onShowXAxisGridLinesChange}
+                  onShowYAxisGridLinesChange={onShowYAxisGridLinesChange}
+                  onShowRegressionLineChange={onShowRegressionLineChange}
+                />
+              </>
+            );
+          })()}
       </Stack>
     </Paper>
   );

@@ -1,6 +1,11 @@
-import { Box, SimpleGrid, Text, Stack, Group } from '@mantine/core';
+import { Box, Text, Stack, Group } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
-import { ColorPalette, getAllPalettes, getPalettePreview, getPaletteName } from '../../../../constants/colorPalettes';
+import {
+  ColorPalette,
+  getAllPalettes,
+  getPalettePreview,
+  getPaletteName,
+} from '../../../../constants/colorPalettes';
 
 interface PaletteSelectorProps {
   selectedPalette: ColorPalette;
@@ -19,9 +24,13 @@ interface PaletteSelectorProps {
  * - Responsive layout
  * - Conditional 'Custom' option for single-dimension charts
  */
-export function PaletteSelector({ selectedPalette, onPaletteChange, showCustomOption = true }: PaletteSelectorProps) {
+export function PaletteSelector({
+  selectedPalette,
+  onPaletteChange,
+  showCustomOption = true,
+}: PaletteSelectorProps) {
   const allPalettes = getAllPalettes();
-  const palettes = showCustomOption ? allPalettes : allPalettes.filter(p => p !== 'custom');
+  const palettes = showCustomOption ? allPalettes : allPalettes.filter((p) => p !== 'custom');
 
   return (
     <Stack gap="xs">
@@ -78,7 +87,17 @@ function PaletteCard({ palette, selected, onClick }: PaletteCardProps) {
     >
       <Stack gap="xs">
         <Group justify="space-between" align="center">
-          <Text size="sm" fw={500} style={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <Text
+            size="sm"
+            fw={500}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {paletteName}
           </Text>
           {selected && <IconCheck size={16} color="#0969da" />}

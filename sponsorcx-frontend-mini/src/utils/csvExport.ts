@@ -43,7 +43,7 @@ export function transformQueryResultsToCSV(queryResult: any): string {
   // Get all unique column headers
   const headers = new Set<string>();
   flattenedRows.forEach((row: Record<string, any>) => {
-    Object.keys(row).forEach(key => headers.add(key));
+    Object.keys(row).forEach((key) => headers.add(key));
   });
 
   const headerArray = Array.from(headers);
@@ -52,11 +52,11 @@ export function transformQueryResultsToCSV(queryResult: any): string {
   const csvRows: string[] = [];
 
   // Add header row
-  csvRows.push(headerArray.map(header => escapeCSVValue(header)).join(','));
+  csvRows.push(headerArray.map((header) => escapeCSVValue(header)).join(','));
 
   // Add data rows
   flattenedRows.forEach((row: Record<string, any>) => {
-    const values = headerArray.map(header => {
+    const values = headerArray.map((header) => {
       const value = row[header];
       return escapeCSVValue(value);
     });

@@ -20,7 +20,7 @@ export function DateFilterContent({
   dateOperator,
   dateValue,
   onOperatorChange,
-  onValueChange
+  onValueChange,
 }: DateFilterContentProps) {
   return (
     <Stack gap="md">

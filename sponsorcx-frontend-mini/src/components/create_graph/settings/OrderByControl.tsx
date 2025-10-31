@@ -22,7 +22,7 @@ export interface OrderByControlProps {
 export function OrderByControl({
   sortOrder,
   onSortOrderChange,
-  label = "Order By"
+  label = 'Order By',
 }: OrderByControlProps) {
   const handleToggle = () => {
     onSortOrderChange(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -39,16 +39,11 @@ export function OrderByControl({
         onClick={handleToggle}
         aria-label={`Sort ${sortOrder === 'asc' ? 'ascending' : 'descending'}`}
       >
-        {sortOrder === 'asc' ? (
-          <IconSortAscending size={18} />
-        ) : (
-          <IconSortDescending size={18} />
-        )}
+        {sortOrder === 'asc' ? <IconSortAscending size={18} /> : <IconSortDescending size={18} />}
       </ActionIcon>
     </Group>
   );
 }
-
 
 /**
  * Hook to sort chart data by the primary dimension field

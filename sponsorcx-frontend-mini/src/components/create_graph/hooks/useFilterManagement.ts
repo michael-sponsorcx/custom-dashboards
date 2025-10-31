@@ -21,9 +21,7 @@ export function useFilterManagement(options: UseFilterManagementOptions = {}) {
   const { initialTemplate } = options;
 
   // Filter state
-  const [filters, setFilters] = useState<FilterRule[]>(
-    initialTemplate?.filters || []
-  );
+  const [filters, setFilters] = useState<FilterRule[]>(initialTemplate?.filters || []);
   const [filterModalOpened, setFilterModalOpened] = useState(false);
   const [currentFilterField, setCurrentFilterField] = useState<FilterFieldInfo | null>(null);
 
@@ -32,24 +30,23 @@ export function useFilterManagement(options: UseFilterManagementOptions = {}) {
 
   // Get active filter field names for UI highlighting
   const activeFilterFields = useMemo(() => {
-    return new Set(filters.map(f => f.fieldName));
+    return new Set(filters.map((f) => f.fieldName));
   }, [filters]);
 
   // Get existing filter for current field
   const currentExistingFilter = useMemo(() => {
     if (!currentFilterField) return null;
-    return filters.find(f => f.fieldName === currentFilterField.fieldName) || null;
+    return filters.find((f) => f.fieldName === currentFilterField.fieldName) || null;
   }, [filters, currentFilterField]);
 
   // Open filter modal
-  const openFilterModal = useCallback((
-    fieldName: string,
-    fieldTitle: string,
-    fieldType: FieldType
-  ) => {
-    setCurrentFilterField({ fieldName, fieldTitle, fieldType });
-    setFilterModalOpened(true);
-  }, []);
+  const openFilterModal = useCallback(
+    (fieldName: string, fieldTitle: string, fieldType: FieldType) => {
+      setCurrentFilterField({ fieldName, fieldTitle, fieldType });
+      setFilterModalOpened(true);
+    },
+    []
+  );
 
   // Close filter modal
   const closeFilterModal = useCallback(() => {
@@ -57,25 +54,28 @@ export function useFilterManagement(options: UseFilterManagementOptions = {}) {
   }, []);
 
   // Apply or remove filter
-  const applyFilter = useCallback((filter: FilterRule | null) => {
-    if (!currentFilterField) return;
+  const applyFilter = useCallback(
+    (filter: FilterRule | null) => {
+      if (!currentFilterField) return;
 
-    setFilters(prev => {
-      // Remove existing filter for this field
-      const filtered = prev.filter(f => f.fieldName !== currentFilterField.fieldName);
+      setFilters((prev) => {
+        // Remove existing filter for this field
+        const filtered = prev.filter((f) => f.fieldName !== currentFilterField.fieldName);
 
-      // Add new filter if provided (null means remove filter)
-      if (filter) {
-        return [...filtered, filter];
-      }
+        // Add new filter if provided (null means remove filter)
+        if (filter) {
+          return [...filtered, filter];
+        }
 
-      return filtered;
-    });
-  }, [currentFilterField]);
+        return filtered;
+      });
+    },
+    [currentFilterField]
+  );
 
   // Update dimension values cache
   const updateDimensionCache = useCallback((key: string, values: string[]) => {
-    setDimensionValuesCache(prev => ({
+    setDimensionValuesCache((prev) => ({
       ...prev,
       [key]: values,
     }));

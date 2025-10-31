@@ -15,7 +15,7 @@ export function createSetToggler<T>(
   setter: React.Dispatch<React.SetStateAction<Set<T>>>
 ): (item: T) => void {
   return (item: T) => {
-    setter(prev => {
+    setter((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(item)) {
         newSet.delete(item);

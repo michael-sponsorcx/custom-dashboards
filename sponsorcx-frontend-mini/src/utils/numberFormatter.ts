@@ -11,7 +11,11 @@ export type NumberFormatType = 'currency' | 'percentage' | 'number' | 'abbreviat
  * @param precision - Number of decimal places (default: 2)
  * @returns Formatted string representation of the number
  */
-export function formatNumber(value: number, formatType: NumberFormatType = 'number', precision: number = 2): string {
+export function formatNumber(
+  value: number,
+  formatType: NumberFormatType = 'number',
+  precision = 2
+): string {
   switch (formatType) {
     case 'currency':
       return new Intl.NumberFormat('en-US', {
@@ -24,7 +28,7 @@ export function formatNumber(value: number, formatType: NumberFormatType = 'numb
     case 'percentage':
       return `${value.toFixed(precision)}%`;
 
-    case 'abbreviated':
+    case 'abbreviated': {
       // Abbreviate large numbers (e.g., 1.2M, 3.4B)
       const absValue = Math.abs(value);
       if (absValue >= 1_000_000_000) {
@@ -35,6 +39,7 @@ export function formatNumber(value: number, formatType: NumberFormatType = 'numb
         return `${(value / 1_000).toFixed(precision)}K`;
       }
       return value.toFixed(precision);
+    }
 
     case 'number':
     default:
@@ -52,7 +57,11 @@ export function formatNumber(value: number, formatType: NumberFormatType = 'numb
  * @param precision - Number of decimal places (default: 1 for abbreviations)
  * @returns Abbreviated string representation of the number
  */
-function abbreviateNumber(value: number, formatType: NumberFormatType = 'number', precision: number = 1): string {
+function abbreviateNumber(
+  value: number,
+  formatType: NumberFormatType = 'number',
+  precision = 1
+): string {
   // Handle non-numeric values (e.g., category labels)
   if (typeof value !== 'number' || isNaN(value)) {
     return String(value);
@@ -102,7 +111,7 @@ function abbreviateNumber(value: number, formatType: NumberFormatType = 'number'
  */
 export function createChartValueFormatter(
   formatType: NumberFormatType = 'number',
-  precision: number = 1
+  precision = 1
 ): (value: number) => string {
   return (value: number) => abbreviateNumber(value, formatType, precision);
 }

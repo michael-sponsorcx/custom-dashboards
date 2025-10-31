@@ -7,20 +7,26 @@
  * - Configures series with appropriate colors
  */
 
-import { ChartSpecificTransformOptions, TransformationResult, MAX_BAR_DIMENSION_VALUES } from '../types';
+import {
+  ChartSpecificTransformOptions,
+  TransformationResult,
+  MAX_BAR_DIMENSION_VALUES,
+} from '../types';
 import { extractFields, selectDimension, selectMeasure } from '../core/fieldExtraction';
 import { aggregateDimensionValues, createAggregatedData } from '../core/aggregation';
 import { getTopDimensionValues, filterToTopValues } from '../core/filtering';
 import { buildSeriesConfig } from '../core/seriesConfig';
 
-export function barChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function barChartTransformation(
+  options: ChartSpecificTransformOptions
+): TransformationResult {
   const {
     chartData,
     primaryColor = '#3b82f6',
     getColorFn,
     primaryDimension,
     selectedMeasure,
-    maxDataPoints
+    maxDataPoints,
   } = options;
 
   // 1. Extract and select fields

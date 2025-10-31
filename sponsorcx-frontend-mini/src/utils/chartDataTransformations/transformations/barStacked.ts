@@ -8,13 +8,19 @@
  * - Creates series configuration for each segment
  */
 
-import { ChartSpecificTransformOptions, TransformationResult, MAX_BAR_DIMENSION_VALUES } from '../types';
-import { extractFields, selectDimension, selectMeasure } from '../core/fieldExtraction';
+import {
+  ChartSpecificTransformOptions,
+  TransformationResult,
+  MAX_BAR_DIMENSION_VALUES,
+} from '../types';
+import { extractFields, selectMeasure } from '../core/fieldExtraction';
 import { aggregateDualDimensions, pivotStackedData } from '../core/aggregation';
 import { getTopDualDimensionValues } from '../core/filtering';
 import { buildStackedSeriesConfig } from '../core/seriesConfig';
 
-export function barStackedTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function barStackedTransformation(
+  options: ChartSpecificTransformOptions
+): TransformationResult {
   const {
     chartData,
     primaryColor = '#3b82f6',
@@ -22,7 +28,7 @@ export function barStackedTransformation(options: ChartSpecificTransformOptions)
     primaryDimension: userPrimaryDimension,
     secondaryDimension: userSecondaryDimension,
     selectedMeasure,
-    maxDataPoints
+    maxDataPoints,
   } = options;
 
   // 1. Extract and validate fields
@@ -34,13 +40,15 @@ export function barStackedTransformation(options: ChartSpecificTransformOptions)
 
   // 2. Select dimensions and measure
   // Primary dimension is the x-axis, secondary becomes the series (stacked segments)
-  const primaryDimension = userPrimaryDimension && dimensionFields.includes(userPrimaryDimension)
-    ? userPrimaryDimension
-    : dimensionFields[0]; // Default to first dimension for x-axis
+  const primaryDimension =
+    userPrimaryDimension && dimensionFields.includes(userPrimaryDimension)
+      ? userPrimaryDimension
+      : dimensionFields[0]; // Default to first dimension for x-axis
 
-  const secondaryDimension = userSecondaryDimension && dimensionFields.includes(userSecondaryDimension)
-    ? userSecondaryDimension
-    : dimensionFields[1]; // Default to second dimension for series
+  const secondaryDimension =
+    userSecondaryDimension && dimensionFields.includes(userSecondaryDimension)
+      ? userSecondaryDimension
+      : dimensionFields[1]; // Default to second dimension for series
 
   const measure = selectMeasure(measureFields, selectedMeasure);
 

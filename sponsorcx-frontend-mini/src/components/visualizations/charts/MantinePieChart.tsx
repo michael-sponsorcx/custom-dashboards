@@ -44,16 +44,17 @@ export const MantinePieChart = memo(function MantinePieChart({
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
   // Memoize to prevent unnecessary re-transformations
-  const transformationResult = useMemo(() =>
-    transformChartData({
-      chartType: 'pie',
-      cubeData: queryResult,
-      primaryColor,
-      getColorFn,
-      primaryDimension,
-      selectedMeasure,
-      maxDataPoints,
-    }),
+  const transformationResult = useMemo(
+    () =>
+      transformChartData({
+        chartType: 'pie',
+        cubeData: queryResult,
+        primaryColor,
+        getColorFn,
+        primaryDimension,
+        selectedMeasure,
+        maxDataPoints,
+      }),
     [queryResult, primaryColor, getColorFn, primaryDimension, selectedMeasure, maxDataPoints]
   );
 
@@ -74,9 +75,11 @@ export const MantinePieChart = memo(function MantinePieChart({
     // Series names in pie charts are the dimension values (slices), not measures
     // Find the measure field by looking at the data structure
     const sampleItem = transformedData[0];
-    const measureKey = selectedMeasure || Object.keys(sampleItem).find(
-      key => key !== dimensionField && typeof sampleItem[key] === 'number'
-    );
+    const measureKey =
+      selectedMeasure ||
+      Object.keys(sampleItem).find(
+        (key) => key !== dimensionField && typeof sampleItem[key] === 'number'
+      );
 
     if (!measureKey) {
       return [];

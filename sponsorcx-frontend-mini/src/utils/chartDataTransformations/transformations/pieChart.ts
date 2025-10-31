@@ -8,13 +8,19 @@
  * - Configures colors for each slice
  */
 
-import { ChartSpecificTransformOptions, TransformationResult, MAX_PIE_CHART_DIMENSION_VALUES } from '../types';
+import {
+  ChartSpecificTransformOptions,
+  TransformationResult,
+  MAX_PIE_CHART_DIMENSION_VALUES,
+} from '../types';
 import { extractFields } from '../core/fieldExtraction';
 import { aggregateDimensionValues } from '../core/aggregation';
 import { groupIntoOther } from '../core/filtering';
 import { buildPieSeriesConfig } from '../core/seriesConfig';
 
-export function pieChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function pieChartTransformation(
+  options: ChartSpecificTransformOptions
+): TransformationResult {
   const { chartData, getColorFn, maxDataPoints } = options;
 
   // 1. Extract fields
@@ -39,12 +45,7 @@ export function pieChartTransformation(options: ChartSpecificTransformOptions): 
 
   // 4. Limit to top N dimension values and group rest into "Other"
   if (uniqueDimensionValues.length > limit) {
-    const { topData, otherTotal } = groupIntoOther(
-      dimensionTotals,
-      limit,
-      dimensionField,
-      measure
-    );
+    const { topData, otherTotal } = groupIntoOther(dimensionTotals, limit, dimensionField, measure);
 
     finalChartData = [...topData];
 
@@ -57,7 +58,7 @@ export function pieChartTransformation(options: ChartSpecificTransformOptions): 
     }
 
     // Create series for top 10 + "Other"
-    const topDimensionValues = topData.map(item => item[dimensionField]);
+    const topDimensionValues = topData.map((item) => item[dimensionField]);
     finalSeries = buildPieSeriesConfig(topDimensionValues, getColorFn);
 
     if (otherTotal > 0) {

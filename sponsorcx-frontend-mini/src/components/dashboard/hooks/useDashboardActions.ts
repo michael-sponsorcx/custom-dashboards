@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { deleteGraphTemplate, getGraphTemplate } from '../../../utils/storage';
-import { deleteGridLayout, removeGraphFromDashboard, saveGridLayout, DASHBOARD_ITEMS_KEY } from '../../../utils/storage';
+import { deleteGridLayout, removeGraphFromDashboard, saveGridLayout } from '../../../utils/storage';
 import { DashboardItem } from '../../../types/dashboard';
 
 interface UseDashboardActionsOptions {
@@ -12,11 +12,17 @@ interface UseDashboardActionsOptions {
 /**
  * Hook to manage dashboard actions (delete, edit, resize, move)
  */
-export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize }: UseDashboardActionsOptions) {
+export function useDashboardActions({
+  onRefresh,
+  onUpdatePosition,
+  onUpdateSize,
+}: UseDashboardActionsOptions) {
   const navigate = useNavigate();
 
   const handleDeleteGraph = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this graph? This action cannot be undone.')) {
+    if (
+      window.confirm('Are you sure you want to delete this graph? This action cannot be undone.')
+    ) {
       deleteGraphTemplate(id);
       deleteGridLayout(id);
       removeGraphFromDashboard(id);
@@ -56,7 +62,7 @@ export function useDashboardActions({ onRefresh, onUpdatePosition, onUpdateSize 
     // Just persist to localStorage
     // React-grid-layout already updated the visual positions
     // No need to call setGraphs - it would cause redundant re-renders
-    items.forEach(item => {
+    items.forEach((item) => {
       const layoutToSave = {
         gridColumn: item.gridColumn,
         gridRow: item.gridRow,

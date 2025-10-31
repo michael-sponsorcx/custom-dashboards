@@ -1,5 +1,16 @@
 import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
-import { Stack, Tabs, TextInput, Group, Button, Text, Checkbox, Loader, Alert, Center } from '@mantine/core';
+import {
+  Stack,
+  Tabs,
+  TextInput,
+  Group,
+  Button,
+  Text,
+  Checkbox,
+  Loader,
+  Alert,
+  Center,
+} from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 
 interface DimensionFilterContentProps {
@@ -15,20 +26,22 @@ interface DimensionFilterContentProps {
 }
 
 // Memoized row component for performance
-const DimensionValueRow = memo(({
-  value,
-  checked,
-  onToggle
-}: {
-  value: string;
-  checked: boolean;
-  onToggle: (value: string) => void;
-}) => (
-  <Group key={value} gap="sm">
-    <Checkbox checked={checked} onChange={() => onToggle(value)} />
-    <Text size="sm">{value}</Text>
-  </Group>
-));
+const DimensionValueRow = memo(
+  ({
+    value,
+    checked,
+    onToggle,
+  }: {
+    value: string;
+    checked: boolean;
+    onToggle: (value: string) => void;
+  }) => (
+    <Group key={value} gap="sm">
+      <Checkbox checked={checked} onChange={() => onToggle(value)} />
+      <Text size="sm">{value}</Text>
+    </Group>
+  )
+);
 
 DimensionValueRow.displayName = 'DimensionValueRow';
 
@@ -41,7 +54,7 @@ export function DimensionFilterContent({
   onModeChange,
   onToggleValue,
   onSelectAll,
-  onDeselectAll
+  onDeselectAll,
 }: DimensionFilterContentProps) {
   // Lazy loading state - only render a subset at a time
   const [displayLimit, setDisplayLimit] = useState(50); // Show 50 initially
@@ -58,9 +71,7 @@ export function DimensionFilterContent({
   const filteredDimensionValues = useMemo(() => {
     if (!searchQuery.trim()) return dimensionValues;
     const lowerQuery = searchQuery.toLowerCase();
-    return dimensionValues.filter(value =>
-      value.toLowerCase().includes(lowerQuery)
-    );
+    return dimensionValues.filter((value) => value.toLowerCase().includes(lowerQuery));
   }, [dimensionValues, searchQuery]);
 
   // Reset display limit when search changes or dimension values change
@@ -72,21 +83,22 @@ export function DimensionFilterContent({
   const hasMore = displayLimit < filteredDimensionValues.length;
 
   // Handle scroll event to load more items
-  const handleScroll = useCallback((e: Event) => {
-    const container = e.target as HTMLDivElement;
-    if (!container || !hasMore) {
+  const handleScroll = useCallback(
+    (e: Event) => {
+      const container = e.target as HTMLDivElement;
+      if (!container || !hasMore) {
+        return;
+      }
 
-      return;
-    }
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
 
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
-
-    if (scrolledToBottom) {
-
-      setDisplayLimit(prev => Math.min(prev + LOAD_INCREMENT, filteredDimensionValues.length));
-    }
-  }, [hasMore, displayLimit, filteredDimensionValues.length, LOAD_INCREMENT]);
+      if (scrolledToBottom) {
+        setDisplayLimit((prev) => Math.min(prev + LOAD_INCREMENT, filteredDimensionValues.length));
+      }
+    },
+    [hasMore, displayLimit, filteredDimensionValues.length, LOAD_INCREMENT]
+  );
 
   // Attach scroll listener to both containers
   useEffect(() => {
@@ -112,9 +124,12 @@ export function DimensionFilterContent({
   }, [handleScroll]);
 
   // Memoized handlers
-  const handleToggleValue = useCallback((value: string) => {
-    onToggleValue(value);
-  }, [onToggleValue]);
+  const handleToggleValue = useCallback(
+    (value: string) => {
+      onToggleValue(value);
+    },
+    [onToggleValue]
+  );
 
   // Memoized list rendering
   const dimensionValuesList = useMemo(() => {
@@ -133,7 +148,9 @@ export function DimensionFilterContent({
     return (
       <Stack align="center" gap="md" py="xl">
         <Loader size="md" />
-        <Text size="sm" c="dimmed">Loading filter options...</Text>
+        <Text size="sm" c="dimmed">
+          Loading filter options...
+        </Text>
       </Stack>
     );
   }
@@ -147,7 +164,10 @@ export function DimensionFilterContent({
   }
 
   return (
-    <Tabs value={dimensionMode} onChange={(value) => value && onModeChange(value as 'include' | 'exclude')}>
+    <Tabs
+      value={dimensionMode}
+      onChange={(value) => value && onModeChange(value as 'include' | 'exclude')}
+    >
       <Tabs.List grow>
         <Tabs.Tab value="include">Include</Tabs.Tab>
         <Tabs.Tab value="exclude">Exclude</Tabs.Tab>
@@ -169,7 +189,8 @@ export function DimensionFilterContent({
               Deselect All
             </Button>
             <Text size="xs" c="dimmed">
-              Showing {Math.min(displayLimit, filteredDimensionValues.length)} of {filteredDimensionValues.length}
+              Showing {Math.min(displayLimit, filteredDimensionValues.length)} of{' '}
+              {filteredDimensionValues.length}
             </Text>
           </Group>
           <div
@@ -180,7 +201,7 @@ export function DimensionFilterContent({
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
-              padding: '4px'
+              padding: '4px',
             }}
           >
             {dimensionValuesList}
@@ -191,7 +212,9 @@ export function DimensionFilterContent({
             )}
             {!hasMore && filteredDimensionValues.length > 50 && (
               <Center py="xs">
-                <Text size="xs" c="dimmed">All values loaded</Text>
+                <Text size="xs" c="dimmed">
+                  All values loaded
+                </Text>
               </Center>
             )}
           </div>
@@ -214,7 +237,8 @@ export function DimensionFilterContent({
               Deselect All
             </Button>
             <Text size="xs" c="dimmed">
-              Showing {Math.min(displayLimit, filteredDimensionValues.length)} of {filteredDimensionValues.length}
+              Showing {Math.min(displayLimit, filteredDimensionValues.length)} of{' '}
+              {filteredDimensionValues.length}
             </Text>
           </Group>
           <div
@@ -225,7 +249,7 @@ export function DimensionFilterContent({
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
-              padding: '4px'
+              padding: '4px',
             }}
           >
             {dimensionValuesList}
@@ -236,7 +260,9 @@ export function DimensionFilterContent({
             )}
             {!hasMore && filteredDimensionValues.length > 50 && (
               <Center py="xs">
-                <Text size="xs" c="dimmed">All values loaded</Text>
+                <Text size="xs" c="dimmed">
+                  All values loaded
+                </Text>
               </Center>
             )}
           </div>

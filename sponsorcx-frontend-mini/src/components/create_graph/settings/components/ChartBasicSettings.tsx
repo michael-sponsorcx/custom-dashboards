@@ -10,10 +10,7 @@ interface ChartBasicSettingsProps {
  *
  * Handles basic chart configuration like title
  */
-export function ChartBasicSettings({
-  chartTitle,
-  onChartTitleChange,
-}: ChartBasicSettingsProps) {
+export function ChartBasicSettings({ chartTitle, onChartTitleChange }: ChartBasicSettingsProps) {
   return (
     <TextInput
       label="Chart Title"

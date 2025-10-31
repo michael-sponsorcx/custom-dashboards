@@ -42,7 +42,6 @@ export function DataFieldSelector({
   onSecondaryDimensionChange,
   onMeasureChange,
 }: DataFieldSelectorProps) {
-
   // Only show secondary dimension if:
   // 1. There are 2+ dimensions available AND
   // 2. The current chart type supports secondary dimension (e.g., stacked charts)
@@ -63,19 +62,19 @@ export function DataFieldSelector({
   };
 
   // Create options for dropdowns
-  const dimensionOptions = dimensions.map(dim => ({
+  const dimensionOptions = dimensions.map((dim) => ({
     value: dim,
     label: formatFieldName(dim),
   }));
 
-  const measureOptions = measures.map(measure => ({
+  const measureOptions = measures.map((measure) => ({
     value: measure,
     label: formatFieldName(measure),
   }));
 
   // For secondary dimension, exclude the currently selected primary dimension
-  const availableSecondaryDimensions = dimensions.filter(dim => dim !== primaryDimension);
-  const secondaryDimensionOptions = availableSecondaryDimensions.map(dim => ({
+  const availableSecondaryDimensions = dimensions.filter((dim) => dim !== primaryDimension);
+  const secondaryDimensionOptions = availableSecondaryDimensions.map((dim) => ({
     value: dim,
     label: formatFieldName(dim),
   }));
@@ -89,11 +88,19 @@ export function DataFieldSelector({
         onSecondaryDimensionChange?.(availableSecondaryDimensions[0]);
       }
     }
-  }, [primaryDimension, secondaryDimension, showSecondaryDimension, availableSecondaryDimensions, onSecondaryDimensionChange]);
+  }, [
+    primaryDimension,
+    secondaryDimension,
+    showSecondaryDimension,
+    availableSecondaryDimensions,
+    onSecondaryDimensionChange,
+  ]);
 
   return (
     <Stack gap="md">
-      <Text size="sm" fw={500}>Data Configuration</Text>
+      <Text size="sm" fw={500}>
+        Data Configuration
+      </Text>
 
       {/* Primary Dimension */}
       {dimensions.length > 0 && (

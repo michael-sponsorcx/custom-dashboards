@@ -1,6 +1,6 @@
-import { Modal, Stack, Title, Text, Button, Group, Stepper } from '@mantine/core';
+import { Modal, Stack, Title, Button, Group, Stepper } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { useDashboardFilters } from './hooks/useDashboardFilters';
+import { useDashboardFilterContext } from './context';
 import { DataSourceSelection } from './filter_config/DataSourceSelection';
 import { CommonFieldsSelection } from './filter_config/CommonFieldsSelection';
 
@@ -19,7 +19,11 @@ interface DashboardFilterModalProps {
 export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalProps) {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedViews, setSelectedViews] = useState<string[]>([]);
-  const { selectedViews: savedSelectedViews, setSelectedViews: saveSelectedViews, setAvailableFields } = useDashboardFilters();
+  const {
+    selectedViews: savedSelectedViews,
+    setSelectedViews: saveSelectedViews,
+    setAvailableFields,
+  } = useDashboardFilterContext();
 
   // Reset to step 0 when modal opens
   useEffect(() => {
@@ -40,7 +44,13 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
     setActiveStep(activeStep - 1);
   };
 
-  const handleSave = (selectedFields: Array<{ fieldName: string; fieldTitle: string; fieldType: 'measure' | 'dimension' | 'date' }>) => {
+  const handleSave = (
+    selectedFields: Array<{
+      fieldName: string;
+      fieldTitle: string;
+      fieldType: 'measure' | 'dimension' | 'date';
+    }>
+  ) => {
     // Save the selected views and available fields
     saveSelectedViews(selectedViews);
     setAvailableFields(selectedFields);
@@ -64,17 +74,11 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
       <Stack gap="md">
         <Stepper active={activeStep} size="sm">
           <Stepper.Step label="Select Data Sources" description="Choose views to filter">
-            <DataSourceSelection
-              selectedViews={selectedViews}
-              onViewsChange={setSelectedViews}
-            />
+            <DataSourceSelection selectedViews={selectedViews} onViewsChange={setSelectedViews} />
           </Stepper.Step>
 
           <Stepper.Step label="Select Fields" description="Choose common fields">
-            <CommonFieldsSelection
-              selectedViews={selectedViews}
-              onSave={handleSave}
-            />
+            <CommonFieldsSelection selectedViews={selectedViews} onSave={handleSave} />
           </Stepper.Step>
         </Stepper>
 
@@ -91,10 +95,7 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
             )}
 
             {activeStep === 0 && (
-              <Button
-                onClick={handleNext}
-                disabled={selectedViews.length === 0}
-              >
+              <Button onClick={handleNext} disabled={selectedViews.length === 0}>
                 Next
               </Button>
             )}

@@ -8,20 +8,26 @@
  * - Configures series for line rendering
  */
 
-import { ChartSpecificTransformOptions, TransformationResult, MAX_LINE_CHART_DIMENSION_VALUES } from '../types';
+import {
+  ChartSpecificTransformOptions,
+  TransformationResult,
+  MAX_LINE_CHART_DIMENSION_VALUES,
+} from '../types';
 import { extractFields, selectDimension, selectMeasure } from '../core/fieldExtraction';
 import { aggregateDimensionValues, createAggregatedData } from '../core/aggregation';
 import { getTopDimensionValues, filterToTopValues } from '../core/filtering';
 import { buildSeriesConfig } from '../core/seriesConfig';
 
-export function lineChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function lineChartTransformation(
+  options: ChartSpecificTransformOptions
+): TransformationResult {
   const {
     chartData,
     primaryColor = '#3b82f6',
     getColorFn,
     primaryDimension,
     selectedMeasure,
-    maxDataPoints
+    maxDataPoints,
   } = options;
 
   // 1. Extract and select fields
@@ -64,6 +70,8 @@ export function lineChartTransformation(options: ChartSpecificTransformOptions):
  * Handles transformation for area charts.
  * Uses the same logic as line charts (just different rendering style).
  */
-export function areaChartTransformation(options: ChartSpecificTransformOptions): TransformationResult {
+export function areaChartTransformation(
+  options: ChartSpecificTransformOptions
+): TransformationResult {
   return lineChartTransformation(options);
 }

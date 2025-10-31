@@ -20,7 +20,7 @@ export function flattenTimeDimensions(data: any): any {
 
   // Handle array of results
   if (Array.isArray(data)) {
-    return data.map(item => flattenTimeDimensions(item));
+    return data.map((item) => flattenTimeDimensions(item));
   }
 
   // Handle object
@@ -31,7 +31,12 @@ export function flattenTimeDimensions(data: any): any {
       const value = data[key];
 
       // If it's an object with only a 'value' property, extract the value
-      if (value && typeof value === 'object' && 'value' in value && Object.keys(value).length === 1) {
+      if (
+        value &&
+        typeof value === 'object' &&
+        'value' in value &&
+        Object.keys(value).length === 1
+      ) {
         flattened[key] = value.value;
       } else {
         // Recursively flatten nested objects/arrays

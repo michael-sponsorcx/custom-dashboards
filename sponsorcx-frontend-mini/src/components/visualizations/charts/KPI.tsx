@@ -79,7 +79,8 @@ export function KPI({
       // Calculate available space (accounting for padding and label)
       const availableWidth = containerWidth - 64; // 2rem padding on each side
       const labelHeight = label ? 40 : 0; // Approximate label height
-      const trendHeight = (showTrend && trendPercentage !== undefined) || secondaryValue !== undefined ? 50 : 0;
+      const trendHeight =
+        (showTrend && trendPercentage !== undefined) || secondaryValue !== undefined ? 50 : 0;
       const availableHeight = containerHeight - 64 - labelHeight - trendHeight; // Account for padding and other elements
 
       // Make the font as large as possible while fitting the content

@@ -15,7 +15,17 @@ const VALID_CUBE_ARGS = ['limit', 'offset', 'timezone', 'renewQuery', 'ungrouped
 /**
  * Valid time dimension granularities
  */
-const VALID_GRANULARITIES = ['second', 'minute', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'value'];
+const VALID_GRANULARITIES = [
+  'second',
+  'minute',
+  'hour',
+  'day',
+  'week',
+  'month',
+  'quarter',
+  'year',
+  'value',
+];
 
 /**
  * Validate Cube.js-specific rules (async version with schema validation)
@@ -35,7 +45,7 @@ export async function validateCubeRules(queryString: string): Promise<{
   if (!/\bcube\s*[({]/.test(queryString)) {
     errors.push({
       type: 'cube',
-      message: 'Cube queries must include the "cube" root field'
+      message: 'Cube queries must include the "cube" root field',
     });
   }
 
@@ -50,7 +60,7 @@ export async function validateCubeRules(queryString: string): Promise<{
     if (!cubeNameMatches || cubeNameMatches.length === 0) {
       errors.push({
         type: 'cube',
-        message: 'No cube names found. Specify at least one cube (e.g., "orders", "products")'
+        message: 'No cube names found. Specify at least one cube (e.g., "orders", "products")',
       });
     }
   }
@@ -73,11 +83,11 @@ export async function validateCubeRules(queryString: string): Promise<{
 /**
  * Validate Cube query arguments
  */
-function validateCubeArguments(queryString: string, warnings: ValidationWarning[]): void {
+function validateCubeArguments(queryString: string, _warnings: ValidationWarning[]): void {
   const cubeArgMatches = queryString.match(/cube\s*\(([^)]+)\)/);
   if (cubeArgMatches) {
     const args = cubeArgMatches[1];
-    VALID_CUBE_ARGS.forEach(arg => {
+    VALID_CUBE_ARGS.forEach((arg) => {
       if (new RegExp(`\\b${arg}\\s*:`).test(args)) {
         // Argument is present - could add more specific validation here
       }
@@ -88,7 +98,10 @@ function validateCubeArguments(queryString: string, warnings: ValidationWarning[
 /**
  * Validate where clause using schema-based operators
  */
-async function validateWhereClause(queryString: string, warnings: ValidationWarning[]): Promise<void> {
+async function validateWhereClause(
+  queryString: string,
+  warnings: ValidationWarning[]
+): Promise<void> {
   if (!/where\s*:\s*{/.test(queryString)) {
     return;
   }
@@ -97,14 +110,16 @@ async function validateWhereClause(queryString: string, warnings: ValidationWarn
   const validFilters = await getValidOperators();
 
   // This is a simplified check - a full implementation would parse the AST
-  const hasValidFilter = validFilters.some(filter =>
+  const hasValidFilter = validFilters.some((filter) =>
     new RegExp(`\\b${filter}\\s*:`).test(queryString)
   );
 
   if (!hasValidFilter && /where\s*:\s*{[^}]+}/.test(queryString)) {
     warnings.push({
       type: 'cube',
-      message: `where clause may contain invalid filter operators. Valid operators from schema: ${validFilters.join(', ')}`
+      message: `where clause may contain invalid filter operators. Valid operators from schema: ${validFilters.join(
+        ', '
+      )}`,
     });
   }
 }
@@ -121,7 +136,9 @@ function validateTimeDimensions(queryString: string, warnings: ValidationWarning
     if (!VALID_GRANULARITIES.includes(granularity) && !/^[a-z_]+$/.test(granularity)) {
       warnings.push({
         type: 'cube',
-        message: `"${granularity}" may be an invalid time granularity. Valid: ${VALID_GRANULARITIES.join(', ')}`
+        message: `"${granularity}" may be an invalid time granularity. Valid: ${VALID_GRANULARITIES.join(
+          ', '
+        )}`,
       });
     }
   }
@@ -138,7 +155,7 @@ function validateOrderBy(queryString: string, warnings: ValidationWarning[]): vo
   if (!/orderBy\s*:\s*{\s*\w+\s*:\s*(asc|desc)/.test(queryString)) {
     warnings.push({
       type: 'cube',
-      message: 'orderBy should use format: orderBy: { field: asc } or orderBy: { field: desc }'
+      message: 'orderBy should use format: orderBy: { field: asc } or orderBy: { field: desc }',
     });
   }
 }

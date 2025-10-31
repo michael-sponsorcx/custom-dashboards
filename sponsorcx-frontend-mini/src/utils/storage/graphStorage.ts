@@ -7,7 +7,7 @@ const GRAPHS_KEY = 'sponsorcx_saved_graphs';
  */
 export function saveGraphTemplate(template: GraphTemplate): void {
   const existing = getAllGraphTemplates();
-  const index = existing.findIndex(t => t.id === template.id);
+  const index = existing.findIndex((t) => t.id === template.id);
 
   if (index >= 0) {
     existing[index] = template;
@@ -37,7 +37,7 @@ export function getAllGraphTemplates(): GraphTemplate[] {
  */
 export function getGraphTemplate(id: string): GraphTemplate | null {
   const all = getAllGraphTemplates();
-  return all.find(t => t.id === id) || null;
+  return all.find((t) => t.id === id) || null;
 }
 
 /**
@@ -45,7 +45,7 @@ export function getGraphTemplate(id: string): GraphTemplate | null {
  */
 export function deleteGraphTemplate(id: string): void {
   const existing = getAllGraphTemplates();
-  const filtered = existing.filter(t => t.id !== id);
+  const filtered = existing.filter((t) => t.id !== id);
   localStorage.setItem(GRAPHS_KEY, JSON.stringify(filtered));
 }
 

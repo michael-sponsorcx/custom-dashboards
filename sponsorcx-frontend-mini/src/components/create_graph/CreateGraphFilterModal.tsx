@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FilterRule, FieldType, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../types/filters';
-import { fetchDistinctDimensionValues } from '../../services/cube';
+import {
+  FilterRule,
+  FieldType,
+  ComparisonOperator,
+  MeasureFilterRule,
+  DimensionFilterRule,
+  DateFilterRule,
+} from '../../types/filters';
+import { fetchDistinctDimensionValues } from '../../services/backendCube';
 import { SharedFilterModalUI } from '../shared/filters/SharedFilterModalUI';
 
 interface CreateGraphFilterModalProps {
@@ -45,7 +52,6 @@ export function CreateGraphFilterModal({
   dimensionValuesCache = {},
   onUpdateCache,
 }: CreateGraphFilterModalProps) {
-
   // Measure filter state
   const [measureOperator, setMeasureOperator] = useState<ComparisonOperator>('=');
   const [measureValue, setMeasureValue] = useState<number | string>('');
@@ -132,7 +138,8 @@ export function CreateGraphFilterModal({
     let filter: FilterRule | null = null;
 
     if (fieldType === 'measure') {
-      const numValue = typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
+      const numValue =
+        typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
       if (!isNaN(numValue)) {
         filter = {
           fieldName,
@@ -174,7 +181,7 @@ export function CreateGraphFilterModal({
   };
 
   const handleToggleValue = (value: string) => {
-    setSelectedValues(prev => {
+    setSelectedValues((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(value)) {
         newSet.delete(value);
@@ -195,7 +202,8 @@ export function CreateGraphFilterModal({
 
   const isValidFilter = () => {
     if (fieldType === 'measure') {
-      const numValue = typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
+      const numValue =
+        typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
       return !isNaN(numValue);
     } else if (fieldType === 'dimension') {
       return selectedValues.size > 0;

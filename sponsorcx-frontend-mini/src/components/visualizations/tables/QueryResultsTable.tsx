@@ -42,7 +42,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
     const { scrollTop, scrollHeight, clientHeight } = container;
     const scrolledToBottom = scrollHeight - scrollTop - clientHeight < SCROLL_THRESHOLD;
     if (scrolledToBottom) {
-      setDisplayLimit(prev => {
+      setDisplayLimit((prev) => {
         const total = totalRowsRef.current;
         if (prev >= total) return prev;
         return Math.min(prev + LOAD_INCREMENT, total);
@@ -117,7 +117,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
   const cubeName = Object.keys(firstItem)[0];
 
   // Extract the actual data objects
-  const rows = cubeArray.map(item => item[cubeName]);
+  const rows = cubeArray.map((item) => item[cubeName]);
 
   // Update ref
   totalRowsRef.current = rows.length;
@@ -150,9 +150,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
             <Table.Tr key={idx}>
               {columns.map((col) => (
                 <Table.Td key={col}>
-                  {row[col] !== null && row[col] !== undefined
-                    ? String(row[col])
-                    : '-'}
+                  {row[col] !== null && row[col] !== undefined ? String(row[col]) : '-'}
                 </Table.Td>
               ))}
             </Table.Tr>
@@ -166,11 +164,11 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
       )}
       {!hasMore && rows.length > 50 && (
         <Center py="xs">
-          <Text size="xs" c="dimmed">All {rows.length} rows loaded</Text>
+          <Text size="xs" c="dimmed">
+            All {rows.length} rows loaded
+          </Text>
         </Center>
       )}
     </Table.ScrollContainer>
   );
 }
-
-

@@ -5,7 +5,12 @@
  */
 
 // Export types
-export type { QueryBuilderParams, ValidationResult, ValidationError, ValidationWarning } from './types';
+export type {
+  QueryBuilderParams,
+  ValidationResult,
+  ValidationError,
+  ValidationWarning,
+} from './types';
 
 // Export query builder
 export { buildCubeQuery, buildSimpleCubeQuery } from './builder';

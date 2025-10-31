@@ -38,9 +38,6 @@ export async function fetchDistinctDimensionValues(
   viewName: string,
   dimensionName: string
 ): Promise<string[]> {
-  // Strip 'Cube.' prefix from the dimension name for Cube.js
-  const cleanDimensionName = stripCubePrefix(dimensionName);
-
   // Strip cube prefix if present
   const fieldNameStripped = stripCubePrefix(dimensionName);
   const lowercaseViewName = viewName.toLowerCase();
@@ -76,7 +73,6 @@ export async function fetchDistinctDimensionValues(
         }
       });
     }
-
 
     // Return sorted array of distinct values
     return Array.from(values).sort();
