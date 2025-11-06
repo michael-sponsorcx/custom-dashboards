@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useDashboardFilters } from './hooks/useDashboardFilters';
-import { FilterRule, ComparisonOperator, MeasureFilterRule, DimensionFilterRule, DateFilterRule } from '../../types/filters';
-import { fetchDistinctDimensionValues } from '../../services/cube';
+import { useDashboardFilterContext } from './context';
+import {
+  FilterRule,
+  ComparisonOperator,
+  MeasureFilterRule,
+  DimensionFilterRule,
+  DateFilterRule,
+} from '../../types/filters';
+import { fetchDistinctDimensionValues } from '../../services/backendCube';
 import { SharedFilterModalUI } from '../shared/filters/SharedFilterModalUI';
 
 interface DashboardAvailableFiltersModalProps {
@@ -16,12 +22,17 @@ interface DashboardAvailableFiltersModalProps {
  * Modal for configuring the value/criteria for a dashboard filter field.
  * Handles in-memory filter state, delegates UI to SharedFilterModalUI.
  */
-export function DashboardAvailableFiltersModal({ opened, onClose, fieldName }: DashboardAvailableFiltersModalProps) {
-  const { availableFields, activeFilters, selectedViews, addFilter, updateFilter, removeFilter } = useDashboardFilters();
+export function DashboardAvailableFiltersModal({
+  opened,
+  onClose,
+  fieldName,
+}: DashboardAvailableFiltersModalProps) {
+  const { availableFields, activeFilters, selectedViews, addFilter, updateFilter, removeFilter } =
+    useDashboardFilterContext();
 
   // Find the field config and existing filter
-  const fieldConfig = availableFields.find(f => f.fieldName === fieldName);
-  const existingFilterIndex = activeFilters.findIndex(f => f.fieldName === fieldName);
+  const fieldConfig = availableFields.find((f) => f.fieldName === fieldName);
+  const existingFilterIndex = activeFilters.findIndex((f) => f.fieldName === fieldName);
   const existingFilter = existingFilterIndex >= 0 ? activeFilters[existingFilterIndex] : null;
 
   // Measure filter state
@@ -75,12 +86,17 @@ export function DashboardAvailableFiltersModal({ opened, onClose, fieldName }: D
       return;
     }
 
+    /**
+     * Fetches distinct values for the dimension filter from all selected dashboard views.
+     * Combines results, removes duplicates, and sorts for display.
+     * Sets loading and error states accordingly.
+     */
     const fetchValuesFromAllViews = async () => {
       setLoadingValues(true);
       setLoadError(null);
       try {
         // Fetch values from each view and combine them
-        const allValuesPromises = selectedViews.map(viewName =>
+        const allValuesPromises = selectedViews.map((viewName) =>
           fetchDistinctDimensionValues(viewName, fieldName)
         );
 
@@ -107,7 +123,8 @@ export function DashboardAvailableFiltersModal({ opened, onClose, fieldName }: D
     let filter: FilterRule | null = null;
 
     if (fieldConfig.fieldType === 'measure') {
-      const numValue = typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
+      const numValue =
+        typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
       if (!isNaN(numValue)) {
         filter = {
           fieldName,
@@ -159,7 +176,7 @@ export function DashboardAvailableFiltersModal({ opened, onClose, fieldName }: D
   };
 
   const handleToggleValue = (value: string) => {
-    setSelectedValues(prev => {
+    setSelectedValues((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(value)) {
         newSet.delete(value);
@@ -182,7 +199,8 @@ export function DashboardAvailableFiltersModal({ opened, onClose, fieldName }: D
     if (!fieldConfig) return false;
 
     if (fieldConfig.fieldType === 'measure') {
-      const numValue = typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
+      const numValue =
+        typeof measureValue === 'number' ? measureValue : parseFloat(measureValue as string);
       return !isNaN(numValue);
     } else if (fieldConfig.fieldType === 'dimension') {
       return selectedValues.size > 0;

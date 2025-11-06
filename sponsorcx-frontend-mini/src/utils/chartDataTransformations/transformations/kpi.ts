@@ -7,7 +7,7 @@
  */
 
 import { ChartSpecificTransformOptions, TransformationResult } from '../types';
-import { extractFields } from '../core/fieldExtraction';
+import { extractDimensionsAndMeasureFields } from '../core/fieldExtraction';
 
 export function kpiChartTransformation(
   options: ChartSpecificTransformOptions
@@ -15,7 +15,7 @@ export function kpiChartTransformation(
   const { chartData } = options;
 
   // Extract fields
-  const { measureFields } = extractFields(chartData);
+  const { measureFields } = extractDimensionsAndMeasureFields(chartData);
 
   if (measureFields.length === 0) {
     return { data: [] };
@@ -23,7 +23,10 @@ export function kpiChartTransformation(
 
   // Aggregate all rows for the first measure
   const measure = measureFields[0];
-  const total = chartData.reduce((sum, row) => sum + (row[measure] || 0), 0);
+  const total = chartData.reduce((sum, row) => {
+    const value = row[measure];
+    return sum + (typeof value === 'number' ? value : 0);
+  }, 0);
 
   return {
     data: [{ value: total, label: measure }],

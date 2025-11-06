@@ -23,6 +23,7 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
     selectedViews: savedSelectedViews,
     setSelectedViews: saveSelectedViews,
     setAvailableFields,
+    reset,
   } = useDashboardFilterContext();
 
   // Reset to step 0 when modal opens
@@ -63,6 +64,12 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
     onClose();
   };
 
+  const handleClearFilters = () => {
+    reset();
+    setSelectedViews([]);
+    onClose();
+  };
+
   return (
     <Modal
       opened={opened}
@@ -95,9 +102,14 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
             )}
 
             {activeStep === 0 && (
-              <Button onClick={handleNext} disabled={selectedViews.length === 0}>
-                Next
-              </Button>
+              <>
+                <Button color="red" variant="light" onClick={handleClearFilters}>
+                  Clear Filters
+                </Button>
+                <Button onClick={handleNext} disabled={selectedViews.length === 0}>
+                  Next
+                </Button>
+              </>
             )}
           </Group>
         </Group>

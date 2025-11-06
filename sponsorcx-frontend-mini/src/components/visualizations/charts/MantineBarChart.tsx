@@ -2,16 +2,21 @@ import { useMemo, memo } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
-import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
-import { createChartValueFormatter, createAxisTickFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import { NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/graph';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { ColorPalette } from '../../../constants/colorPalettes';
-import { createPaletteColorFunction } from '../../../constants/colorPalettes';
+import type { ChartDataPoint } from '../../../utils/chartDataTransformations/types';
+import type { CubeQueryResult } from '../../../services/backendCube';
+import { createChartColorFunction } from './utils/colorPaletteHelpers';
+import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
+import { createChartFormatters } from './utils/chartFormatterHelpers';
+import { useDrillDown } from './drilldown/useDrillDown';
+import { DrillDownPanel } from './drilldown/DrillDownPanel';
 
 interface MantineBarChartProps {
-  queryResult: any;
+  queryResult: CubeQueryResult;
   primaryColor?: string;
   colorPalette?: ColorPalette;
   orientation?: 'vertical' | 'horizontal';
@@ -21,6 +26,10 @@ interface MantineBarChartProps {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Available dimensions for drill-down
+  availableDimensions?: string[];
+  // Callback when user selects a dimension to drill down
+  onDrillDown?: (dimension: string, dataPoint: ChartDataPoint) => void;
   // Number formatting
   numberFormat?: NumberFormatType;
   numberPrecision?: number;
@@ -48,6 +57,8 @@ export const MantineBarChart = memo(function MantineBarChart({
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
+  availableDimensions = [],
+  onDrillDown,
   numberFormat = 'number',
   numberPrecision = 2,
   xAxisLabel,
@@ -57,17 +68,29 @@ export const MantineBarChart = memo(function MantineBarChart({
   maxDataPoints,
   legendPosition = 'bottom',
 }: MantineBarChartProps) {
+  // Use drill-down hook to manage state and available dimensions
+  const {
+    drillDownDimensions,
+    canDrillDown,
+    clickedBar,
+    showDrillDown,
+    setClickedBar,
+    setShowDrillDown,
+    handleDrillDown,
+  } = useDrillDown(availableDimensions, primaryDimension, onDrillDown);
+
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
-    return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
+    return createChartColorFunction(colorPalette);
   }, [colorPalette]);
 
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
   // Memoize to prevent unnecessary re-transformations
   const chartType = type === 'stacked' ? 'bar_stacked' : 'bar';
-  const transformationResult = useMemo(() =>
-    transformChartData({
+
+  const transformationResult = useMemo(() => {
+    return transformChartData({
       chartType,
       cubeData: queryResult,
       primaryColor,
@@ -76,9 +99,17 @@ export const MantineBarChart = memo(function MantineBarChart({
       secondaryDimension,
       selectedMeasure,
       maxDataPoints,
-    }),
-    [chartType, queryResult, primaryColor, getColorFn, primaryDimension, secondaryDimension, selectedMeasure, maxDataPoints]
-  );
+    });
+  }, [
+    chartType,
+    queryResult,
+    primaryColor,
+    getColorFn,
+    primaryDimension,
+    secondaryDimension,
+    selectedMeasure,
+    maxDataPoints,
+  ]);
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
@@ -90,67 +121,76 @@ export const MantineBarChart = memo(function MantineBarChart({
   // Apply sorting using useMemo hook inside useSortedChartData
   const finalChartData = useSortedChartData(transformedData, dimensionField, sortOrder);
 
-  // Create value formatter for the chart (tooltips)
-  const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
-
-  // Create axis tick formatter (abbreviated for large numbers)
-  const axisTickFormatter = createAxisTickFormatter(numberFormat);
+  // Create formatters for chart values and axis ticks
+  const { valueFormatter, axisTickFormatter } = createChartFormatters(numberFormat, numberPrecision);
 
   const showLegend = shouldShowLegend(legendPosition);
   const legendPropsValue = getLegendProps(legendPosition);
 
-  // Determine which gridlines to show based on individual settings
-  // Note: In Mantine/Recharts, gridAxis refers to which axis the gridlines extend FROM
-  // - 'x' means horizontal gridlines extending from X-axis (which are Y-axis gridlines visually)
-  // - 'y' means vertical gridlines extending from Y-axis (which are X-axis gridlines visually)
-  // So we need to swap the logic to match user expectations
-  const getGridAxis = (): 'x' | 'y' | 'xy' | 'none' => {
-    const showX = showXAxisGridLines; // User wants vertical gridlines
-    const showY = showYAxisGridLines; // User wants horizontal gridlines
-
-    let result: 'x' | 'y' | 'xy' | 'none';
-    if (showX && showY) {
-      result = 'xy';
-    } else if (showX) {
-      result = 'y'; // Vertical gridlines = gridAxis 'y'
-    } else if (showY) {
-      result = 'x'; // Horizontal gridlines = gridAxis 'x'
-    } else {
-      result = 'none';
-    }
-
-    return result;
-  };
-
-  const gridAxisValue = getGridAxis();
-
-  // Build gridProps based on individual grid line settings
-  const gridProps = gridAxisValue !== 'none' ? {
-    strokeDasharray: '3 3',
-    stroke: 'var(--mantine-color-gray-3)',
-  } : undefined;
+  // Determine which gridlines to show based on user settings
+  const gridAxisValue = getGridAxisValue(showXAxisGridLines, showYAxisGridLines);
+  const gridProps = getGridProps(gridAxisValue);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>
-      <BarChart
-        h="100%"
-        data={finalChartData}
-        dataKey={dimensionField}
-        valueFormatter={valueFormatter}
-        withBarValueLabel={type !== 'stacked'}
-        series={series}
-        type={type}
-        orientation={orientation}
-        withLegend={showLegend}
-        {...(showLegend && legendPropsValue ? { legendProps: legendPropsValue } : {})}
-        gridAxis={gridAxisValue}
-        {...(gridProps ? { gridProps } : {})}
-        tickLine={'xy'}
-        xAxisLabel={xAxisLabel}
-        yAxisLabel={yAxisLabel}
-        xAxisProps={orientation === 'horizontal' ? { tickFormatter: axisTickFormatter } : undefined}
-        yAxisProps={orientation === 'horizontal' ? { width: 80, tickFormatter: axisTickFormatter } : { width: 80 }}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <BarChart
+            h="100%"
+            data={finalChartData}
+            dataKey={dimensionField}
+            valueFormatter={valueFormatter}
+            withBarValueLabel={type !== 'stacked'}
+            series={series}
+            type={type}
+            orientation={orientation}
+            withLegend={showLegend}
+            {...(showLegend && legendPropsValue ? { legendProps: legendPropsValue } : {})}
+            gridAxis={gridAxisValue}
+            {...(gridProps ? { gridProps } : {})}
+            tickLine={'xy'}
+            xAxisLabel={xAxisLabel}
+            yAxisLabel={yAxisLabel}
+            xAxisProps={
+              orientation === 'horizontal' ? { tickFormatter: axisTickFormatter } : undefined
+            }
+            yAxisProps={
+              orientation === 'horizontal'
+                ? { width: 80, tickFormatter: axisTickFormatter }
+                : { width: 80 }
+            }
+            barProps={(seriesData) => ({
+              onClick: (data: ChartDataPoint, _index: number, event: React.MouseEvent) => {
+                setClickedBar({
+                  data: { ...data, series: seriesData.name },
+                  position: {
+                    x: event?.clientX || 0,
+                    y: event?.clientY || 0,
+                  },
+                });
+                setShowDrillDown(false); // Reset drill down view
+              },
+              cursor: 'pointer',
+              style: { transition: 'opacity 0.2s' },
+            })}
+          />
+        </div>
+
+        {/* Drill-down panel below chart */}
+        {clickedBar && (
+          <DrillDownPanel
+            clickedBar={clickedBar}
+            dimensionField={dimensionField}
+            drillDownDimensions={drillDownDimensions}
+            canDrillDown={canDrillDown}
+            showDrillDown={showDrillDown}
+            onDrillDownClick={() => setShowDrillDown(true)}
+            onDimensionSelect={(dimension) => handleDrillDown(dimension, clickedBar.data)}
+            onBack={() => setShowDrillDown(false)}
+            onClose={() => setClickedBar(null)}
+          />
+        )}
+      </div>
     </SeriesLimitWrapper>
   );
 });

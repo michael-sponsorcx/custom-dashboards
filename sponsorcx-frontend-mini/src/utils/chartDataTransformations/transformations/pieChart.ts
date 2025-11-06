@@ -13,7 +13,7 @@ import {
   TransformationResult,
   MAX_PIE_CHART_DIMENSION_VALUES,
 } from '../types';
-import { extractFields } from '../core/fieldExtraction';
+import { extractDimensionsAndMeasureFields } from '../core/fieldExtraction';
 import { aggregateDimensionValues } from '../core/aggregation';
 import { groupIntoOther } from '../core/filtering';
 import { buildPieSeriesConfig } from '../core/seriesConfig';
@@ -24,7 +24,7 @@ export function pieChartTransformation(
   const { chartData, getColorFn, maxDataPoints } = options;
 
   // 1. Extract fields
-  const { dimensionFields, measureFields } = extractFields(chartData);
+  const { dimensionFields, measureFields } = extractDimensionsAndMeasureFields(chartData);
 
   if (dimensionFields.length === 0 || measureFields.length === 0) {
     return { data: [] };

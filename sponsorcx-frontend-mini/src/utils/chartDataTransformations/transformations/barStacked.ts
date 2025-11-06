@@ -13,7 +13,7 @@ import {
   TransformationResult,
   MAX_BAR_DIMENSION_VALUES,
 } from '../types';
-import { extractFields, selectMeasure } from '../core/fieldExtraction';
+import { extractDimensionsAndMeasureFields, selectMeasure } from '../core/fieldExtraction';
 import { aggregateDualDimensions, pivotStackedData } from '../core/aggregation';
 import { getTopDualDimensionValues } from '../core/filtering';
 import { buildStackedSeriesConfig } from '../core/seriesConfig';
@@ -32,7 +32,7 @@ export function barStackedTransformation(
   } = options;
 
   // 1. Extract and validate fields
-  const { dimensionFields, measureFields } = extractFields(chartData);
+  const { dimensionFields, measureFields } = extractDimensionsAndMeasureFields(chartData);
 
   if (dimensionFields.length < 2 || measureFields.length !== 1) {
     return { data: [] };

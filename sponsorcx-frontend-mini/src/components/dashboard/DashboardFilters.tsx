@@ -17,7 +17,7 @@ export function DashboardFilters({ onOpenFilters }: DashboardFiltersProps) {
       onClick={onOpenFilters}
       variant="outline"
       leftSection={<IconFilter size={18} />}
-      size="md"
+      size="lg"
     >
       Dashboard Filters
     </Button>

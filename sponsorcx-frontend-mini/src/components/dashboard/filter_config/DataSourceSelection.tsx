@@ -1,5 +1,4 @@
 import { Stack, Text, Group, ScrollArea, Alert } from '@mantine/core';
-import { useState } from 'react';
 import { ModelSelector } from '../../shared/ModelSelector';
 import { CubeMeasure, CubeDimension } from '../../../types/cube';
 
@@ -22,34 +21,19 @@ interface ViewFields {
  * Reuses the ModelSelector component from CreateGraph.
  */
 export function DataSourceSelection({ selectedViews, onViewsChange }: DataSourceSelectionProps) {
-  const [currentView, setCurrentView] = useState<string | null>(null);
-  const [viewFieldsMap, setViewFieldsMap] = useState<Record<string, ViewFields>>({});
-
   const handleViewSelect = (viewName: string | null) => {
     if (viewName && !selectedViews.includes(viewName)) {
       // Add the view to selected list
       onViewsChange([...selectedViews, viewName]);
-      setCurrentView(null); // Reset search
     }
   };
 
-  const handleViewFieldsChange = (fields: ViewFields) => {
-    if (currentView) {
-      setViewFieldsMap(prev => ({
-        ...prev,
-        [currentView]: fields,
-      }));
-    }
+  const handleViewFieldsChange = (_fields: ViewFields) => {
+    // Fields are tracked but not used in this component
   };
 
   const handleRemoveView = (viewName: string) => {
-    onViewsChange(selectedViews.filter(v => v !== viewName));
-    // Remove from fields map
-    setViewFieldsMap(prev => {
-      const newMap = { ...prev };
-      delete newMap[viewName];
-      return newMap;
-    });
+    onViewsChange(selectedViews.filter((v) => v !== viewName));
   };
 
   return (
@@ -63,7 +47,7 @@ export function DataSourceSelection({ selectedViews, onViewsChange }: DataSource
         initialViewName={undefined}
         onViewSelect={handleViewSelect}
         onViewFieldsChange={handleViewFieldsChange}
-        onClearSelections={() => setCurrentView(null)}
+        onClearSelections={() => undefined}
       />
 
       {/* List of selected views */}
@@ -74,12 +58,17 @@ export function DataSourceSelection({ selectedViews, onViewsChange }: DataSource
           </Text>
           <ScrollArea h={200}>
             <Stack gap="xs">
-              {selectedViews.map(viewName => (
-                <Group key={viewName} justify="space-between" p="sm" style={{
-                  border: '1px solid #dee2e6',
-                  borderRadius: '4px',
-                  backgroundColor: '#f8f9fa'
-                }}>
+              {selectedViews.map((viewName) => (
+                <Group
+                  key={viewName}
+                  justify="space-between"
+                  p="sm"
+                  style={{
+                    border: '1px solid #dee2e6',
+                    borderRadius: '4px',
+                    backgroundColor: '#f8f9fa',
+                  }}
+                >
                   <Text size="sm">{viewName}</Text>
                   <Text
                     size="sm"

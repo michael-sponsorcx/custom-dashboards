@@ -2,18 +2,18 @@ import { useMemo, memo } from 'react';
 import { LineChart } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
-import { getChartColor } from '../../../constants/chartColors';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
-import {
-  createChartValueFormatter,
-  createAxisTickFormatter,
-  NumberFormatType,
-} from '../../../utils/numberFormatter';
+import { NumberFormatType } from '../../../utils/numberFormatter';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { LegendPosition } from '../../../types/graph';
 import type { ColorPalette } from '../../../constants/colorPalettes';
-import { createPaletteColorFunction } from '../../../constants/colorPalettes';
-import { addRegressionLineToData } from '../../../utils/regressionCalculator';
+import { createChartColorFunction } from './utils/colorPaletteHelpers';
+import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
+import { createChartFormatters } from './utils/chartFormatterHelpers';
+import {
+  processRegressionData,
+  mergeRegressionSeries,
+} from './utils/regressionHelpers';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -59,7 +59,7 @@ export const MantineLineChart = memo(function MantineLineChart({
 }: MantineLineChartProps) {
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
-    return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
+    return createChartColorFunction(colorPalette);
   }, [colorPalette]);
 
   // Use the transformation utility to handle all data transformation
@@ -91,81 +91,29 @@ export const MantineLineChart = memo(function MantineLineChart({
 
   // Add regression line if enabled
   const chartData = useMemo(() => {
-    if (!showRegressionLine || !series || series.length === 0) {
+    if (!series || series.length === 0) {
       return sortedData;
     }
 
     // For line charts, we'll add a regression line for the first series
     const firstSeriesKey = series[0].name;
-
-    // Check if X values are numeric
-    const firstXValue = sortedData[0]?.[dimensionField];
-    const isNumericX = typeof firstXValue === 'number';
-
-    if (!isNumericX) {
-      // For non-numeric X (dates, categories), add index-based regression
-      const dataWithIndices = sortedData.map((point, index) => ({
-        ...point,
-        _index: index,
-      }));
-      return addRegressionLineToData(dataWithIndices, '_index', firstSeriesKey, '_regressionLine');
-    }
-
-    return addRegressionLineToData(sortedData, dimensionField, firstSeriesKey, '_regressionLine');
+    return processRegressionData(sortedData, dimensionField, firstSeriesKey, showRegressionLine);
   }, [showRegressionLine, sortedData, dimensionField, series]);
 
   // Create updated series list with regression line if enabled
   const finalSeries = useMemo(() => {
-    if (!showRegressionLine) {
-      return series;
-    }
-
-    // Add regression line as a new series
-    return [
-      ...series,
-      {
-        name: '_regressionLine',
-        color: '#FF6B6B',
-        label: 'Trend Line',
-        strokeDasharray: '5 5', // Make it dashed
-      },
-    ];
+    return mergeRegressionSeries(series, showRegressionLine);
   }, [showRegressionLine, series]);
 
-  // Create value formatter for the chart (tooltips)
-  const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
-
-  // Create axis tick formatter (abbreviated for large numbers)
-  const axisTickFormatter = createAxisTickFormatter(numberFormat);
+  // Create formatters for chart values and axis ticks
+  const { valueFormatter, axisTickFormatter } = createChartFormatters(numberFormat, numberPrecision);
 
   const showLegend = shouldShowLegend(legendPosition);
   const legendPropsValue = getLegendProps(legendPosition);
 
-  // Determine which gridlines to show based on individual settings
-  // Note: In Mantine/Recharts, gridAxis refers to which axis the gridlines extend FROM
-  // - 'x' means horizontal gridlines extending from X-axis (which are Y-axis gridlines visually)
-  // - 'y' means vertical gridlines extending from Y-axis (which are X-axis gridlines visually)
-  // So we need to swap the logic to match user expectations
-  const getGridAxis = (): 'x' | 'y' | 'xy' | 'none' => {
-    const showX = showXAxisGridLines; // User wants vertical gridlines
-    const showY = showYAxisGridLines; // User wants horizontal gridlines
-
-    if (showX && showY) return 'xy';
-    if (showX) return 'y'; // Vertical gridlines = gridAxis 'y'
-    if (showY) return 'x'; // Horizontal gridlines = gridAxis 'x'
-    return 'none';
-  };
-
-  const gridAxisValue = getGridAxis();
-
-  // Build gridProps based on individual grid line settings
-  const gridProps =
-    gridAxisValue !== 'none'
-      ? {
-          strokeDasharray: '3 3',
-          stroke: 'var(--mantine-color-gray-3)',
-        }
-      : undefined;
+  // Determine which gridlines to show based on user settings
+  const gridAxisValue = getGridAxisValue(showXAxisGridLines, showYAxisGridLines);
+  const gridProps = getGridProps(gridAxisValue);
 
   return (
     <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>

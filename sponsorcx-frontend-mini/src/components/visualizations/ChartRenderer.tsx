@@ -20,6 +20,10 @@ interface ChartRendererProps {
   primaryDimension?: string;
   secondaryDimension?: string;
   selectedMeasure?: string;
+  // Available dimensions for drill-down
+  availableDimensions?: string[];
+  // Callback when user selects a dimension to drill down
+  onDrillDown?: (dimension: string, dataPoint: any) => void;
   // Axis labels
   xAxisLabel?: string;
   yAxisLabel?: string;
@@ -56,6 +60,8 @@ export function ChartRenderer({
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
+  availableDimensions,
+  onDrillDown,
   xAxisLabel,
   yAxisLabel,
   showXAxisGridLines = true,
@@ -69,8 +75,7 @@ export function ChartRenderer({
   kpiSecondaryLabel,
   kpiShowTrend,
   kpiTrendPercentage,
-  }: ChartRendererProps) {
-
+}: ChartRendererProps) {
   switch (selectedChartType) {
     case 'kpi':
       return (
@@ -121,6 +126,8 @@ export function ChartRenderer({
           primaryDimension={primaryDimension}
           secondaryDimension={secondaryDimension}
           selectedMeasure={selectedMeasure}
+          availableDimensions={availableDimensions}
+          onDrillDown={onDrillDown}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
@@ -144,6 +151,8 @@ export function ChartRenderer({
           primaryDimension={primaryDimension}
           secondaryDimension={secondaryDimension}
           selectedMeasure={selectedMeasure}
+          availableDimensions={availableDimensions}
+          onDrillDown={onDrillDown}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
@@ -167,6 +176,8 @@ export function ChartRenderer({
           primaryDimension={primaryDimension}
           secondaryDimension={secondaryDimension}
           selectedMeasure={selectedMeasure}
+          availableDimensions={availableDimensions}
+          onDrillDown={onDrillDown}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}
@@ -190,6 +201,8 @@ export function ChartRenderer({
           primaryDimension={primaryDimension}
           secondaryDimension={secondaryDimension}
           selectedMeasure={selectedMeasure}
+          availableDimensions={availableDimensions}
+          onDrillDown={onDrillDown}
           numberFormat={numberFormat}
           numberPrecision={numberPrecision}
           xAxisLabel={xAxisLabel}

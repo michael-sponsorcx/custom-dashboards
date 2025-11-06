@@ -1,11 +1,11 @@
 import { useMemo, memo } from 'react';
 import { PieChart } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
-import { getChartColor } from '../../../constants/chartColors';
-import { createChartValueFormatter, NumberFormatType } from '../../../utils/numberFormatter';
+import { NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/graph';
 import type { ColorPalette } from '../../../constants/colorPalettes';
-import { createPaletteColorFunction } from '../../../constants/colorPalettes';
+import { createChartColorFunction } from './utils/colorPaletteHelpers';
+import { createChartFormatters } from './utils/chartFormatterHelpers';
 
 interface MantinePieChartProps {
   queryResult: any;
@@ -38,7 +38,7 @@ export const MantinePieChart = memo(function MantinePieChart({
 }: MantinePieChartProps) {
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
-    return colorPalette === 'custom' ? getChartColor : createPaletteColorFunction(colorPalette);
+    return createChartColorFunction(colorPalette);
   }, [colorPalette]);
 
   // Use the transformation utility to handle all data transformation
@@ -66,7 +66,7 @@ export const MantinePieChart = memo(function MantinePieChart({
   }
 
   // Create value formatter for tooltips
-  const valueFormatter = createChartValueFormatter(numberFormat, numberPrecision);
+  const { valueFormatter } = createChartFormatters(numberFormat, numberPrecision);
 
   // Transform data into Mantine PieChart format
   // Mantine expects: { name: string, value: number, color: string }[]

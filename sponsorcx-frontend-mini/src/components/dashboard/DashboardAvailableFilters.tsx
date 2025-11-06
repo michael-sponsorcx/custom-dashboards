@@ -1,5 +1,5 @@
 import { Group, Badge, Text, Stack, Paper } from '@mantine/core';
-import { useDashboardFilterState } from './hooks/useDashboardFilters';
+import { useDashboardFilterContext } from './context';
 
 interface DashboardAvailableFiltersProps {
   onFilterClick: (fieldName: string) => void;
@@ -12,7 +12,7 @@ interface DashboardAvailableFiltersProps {
  * When clicked, opens a modal to configure filter values.
  */
 export function DashboardAvailableFilters({ onFilterClick }: DashboardAvailableFiltersProps) {
-  const { availableFields, activeFilters } = useDashboardFilterState();
+  const { availableFields, activeFilters } = useDashboardFilterContext();
 
   if (availableFields.length === 0) {
     return null;
@@ -21,17 +21,22 @@ export function DashboardAvailableFilters({ onFilterClick }: DashboardAvailableF
   return (
     <Paper p="md" withBorder>
       <Stack gap="sm">
-        <Text size="sm" fw={500}>Active Filter Fields:</Text>
+        <Text size="sm" fw={500}>
+          Active Filter Fields:
+        </Text>
         <Group gap="xs">
-          {availableFields.map(field => {
+          {availableFields.map((field) => {
             // Determine badge color based on field type
-            const color = field.fieldType === 'measure' ? 'blue' :
-                         field.fieldType === 'dimension' ? 'green' :
-                         'orange';
+            const color =
+              field.fieldType === 'measure'
+                ? 'blue'
+                : field.fieldType === 'dimension'
+                ? 'green'
+                : 'orange';
 
             // Check if this field has an active filter
             const hasActiveFilter = activeFilters.some(
-              filter => filter.fieldName === field.fieldName
+              (filter) => filter.fieldName === field.fieldName
             );
 
             return (

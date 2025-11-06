@@ -4,8 +4,10 @@
 
 export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'kpi';
 
+export type ChartDataPoint = Record<string, string | number>;
+
 export interface TransformationResult {
-  data: any[];
+  data: ChartDataPoint[];
   dimensionField?: string;
   series?: Array<{ name: string; color?: string }>;
 }
@@ -24,7 +26,7 @@ export interface TransformChartDataOptions {
 }
 
 export interface ChartSpecificTransformOptions {
-  chartData: any[];
+  chartData: ChartDataPoint[];
   primaryColor?: string;
   getColorFn?: (index: number) => string;
   // User-selected fields (optional - will auto-detect if not provided)

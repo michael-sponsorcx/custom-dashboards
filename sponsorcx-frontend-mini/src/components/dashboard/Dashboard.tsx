@@ -1,5 +1,6 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
 import { useState } from 'react';
+import { notifications } from '@mantine/notifications';
 import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
 import { GraphFilterModal } from './GraphFilterModal';
@@ -10,6 +11,7 @@ import { DashboardAvailableFiltersModal } from './DashboardAvailableFiltersModal
 import { Present } from './present';
 import { DownloadPDF } from './download_pdf';
 import { DashboardFilterProvider } from './context';
+import { DashboardActionsMenu } from './DashboardActionsMenu';
 
 /**
  * Dashboard Component - Refactored
@@ -50,6 +52,10 @@ export function Dashboard() {
 
   // PDF generation state
   const [pdfGenerationMode, setPdfGenerationMode] = useState(false);
+
+  // Refresh state - used to force all graphs to re-fetch data
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Find the selected graph for the modal
   const selectedGraph = graphs.find((g) => g.id === selectedGraphId);
@@ -98,6 +104,30 @@ export function Dashboard() {
     setPdfGenerationMode(false);
   };
 
+  const handleRefreshAll = () => {
+    setIsRefreshing(true);
+    // Increment refresh key to force all GraphCards to re-fetch
+    setRefreshKey((prev) => prev + 1);
+
+    notifications.show({
+      title: 'Refreshing Dashboard',
+      message: 'All graphs are being refreshed...',
+      color: 'blue',
+      autoClose: 2000,
+    });
+
+    // Reset refreshing state after a short delay
+    setTimeout(() => {
+      setIsRefreshing(false);
+      notifications.show({
+        title: 'Refresh Complete',
+        message: 'All graphs have been updated',
+        color: 'green',
+        autoClose: 3000,
+      });
+    }, 1500);
+  };
+
   // If in presentation mode, render the Present component
   if (presentationMode) {
     return (
@@ -124,22 +154,13 @@ export function Dashboard() {
             <Title order={1}>Dashboard</Title>
             <Group gap="md">
               <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
-              <Button
-                onClick={handleStartPresentation}
-                color="blue"
-                size="lg"
+              <DashboardActionsMenu
+                onPresent={handleStartPresentation}
+                onDownloadPDF={handleDownloadPDF}
+                onRefresh={handleRefreshAll}
                 disabled={graphs.length === 0}
-              >
-                Present
-              </Button>
-              <Button
-                onClick={handleDownloadPDF}
-                color="green"
-                size="lg"
-                disabled={graphs.length === 0}
-              >
-                Download PDF
-              </Button>
+                refreshing={isRefreshing}
+              />
               <Button onClick={handleCreateGraph} color="red" size="lg">
                 Add Graph
               </Button>
@@ -168,6 +189,7 @@ export function Dashboard() {
               onResize={handleResizeGraph}
               onMove={handleMoveGraph}
               onBatchMove={handleBatchMoveGraph}
+              refreshKey={refreshKey}
             />
           )}
         </Stack>

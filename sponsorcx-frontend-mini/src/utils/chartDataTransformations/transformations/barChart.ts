@@ -12,7 +12,7 @@ import {
   TransformationResult,
   MAX_BAR_DIMENSION_VALUES,
 } from '../types';
-import { extractFields, selectDimension, selectMeasure } from '../core/fieldExtraction';
+import { extractDimensionsAndMeasureFields, selectDimension, selectMeasure } from '../core/fieldExtraction';
 import { aggregateDimensionValues, createAggregatedData } from '../core/aggregation';
 import { getTopDimensionValues, filterToTopValues } from '../core/filtering';
 import { buildSeriesConfig } from '../core/seriesConfig';
@@ -30,7 +30,7 @@ export function barChartTransformation(
   } = options;
 
   // 1. Extract and select fields
-  const { dimensionFields, measureFields } = extractFields(chartData);
+  const { dimensionFields, measureFields } = extractDimensionsAndMeasureFields(chartData);
 
   if (dimensionFields.length === 0 || measureFields.length === 0) {
     return { data: [] };

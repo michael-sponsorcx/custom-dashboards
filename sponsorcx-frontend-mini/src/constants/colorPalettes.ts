@@ -14,6 +14,9 @@ export type ColorPalette =
   | 'green'
   | 'purple'
   | 'monochrome'
+  | 'professionalMinimalist'
+  | 'vibrantDynamic'
+  | 'accessibleCalming'
   | 'custom';
 
 export interface PaletteDefinition {
@@ -135,6 +138,43 @@ export const COLOR_PALETTES: Record<Exclude<ColorPalette, 'custom'>, PaletteDefi
     ],
     preview: ['#2D3E50', '#516F90', '#7594B0', '#99B9D0', '#ADC9E8'],
   },
+  "professionalMinimalist": {
+    "name": "Professional & Minimalist",
+    "colors": [
+      "#F4F4F8",
+      "#202020",
+      "#7E909A",
+      "#0091D5",
+      "#F39C12",
+      "#E74C3C"
+    ],
+    "preview": ["#F4F4F8", "#202020", "#0091D5", "#F39C12", "#E74C3C"]
+  },
+  "vibrantDynamic": {
+    "name": "Vibrant & Dynamic (Dark Theme)",
+    "colors": [
+      "#1E1F26",
+      "#FFFFFF",
+      "#0E9AA7",
+      "#F6CD61",
+      "#FE8A71",
+      "#7ccc63"
+    ],
+    "preview": ["#1E1F26", "#FFFFFF", "#0E9AA7", "#F6CD61", "#FE8A71"]
+  },
+  "accessibleCalming": {
+    "name": "Accessible & Calming",
+    "colors": [
+      "#FFFFFF",
+      "#011F4B",
+      "#03396C",
+      "#005B96",
+      "#6497B1",
+      "#B3CDE0",
+      "#EB5757"
+    ],
+    "preview": ["#FFFFFF", "#011F4B", "#005B96", "#6497B1", "#B3CDE0"]
+  },
 };
 
 /**
@@ -195,14 +235,7 @@ export function getPalettePrimaryColor(paletteName: ColorPalette): string {
  */
 export function getAllPalettes(): ColorPalette[] {
   return [
-    'hubspot-orange',
-    'professional',
-    'vibrant',
-    'cool',
-    'warm',
-    'green',
-    'purple',
-    'monochrome',
+    ...(Object.keys(COLOR_PALETTES) as ColorPalette[]),
     'custom',
   ];
 }

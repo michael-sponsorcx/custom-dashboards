@@ -3,7 +3,7 @@ import RGL, { Layout, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { DashboardItem } from '../../../types/dashboard';
-import { GraphCard } from './GraphCard';
+import { GraphCard } from './graph_card';
 
 const GridLayout = WidthProvider(RGL);
 
@@ -15,6 +15,7 @@ interface DashboardGridProps {
   onResize?: (id: string, width: number, height: number) => void;
   onMove?: (id: string, column: number, row: number) => void;
   onBatchMove?: (items: DashboardItem[]) => void;
+  refreshKey?: number;
 }
 
 /**
@@ -33,6 +34,7 @@ export function DashboardGrid({
   onFilter,
   onResize,
   onBatchMove,
+  refreshKey,
 }: DashboardGridProps) {
   // Convert DashboardItem[] to react-grid-layout Layout[]
   const layout: Layout[] = useMemo(() => {
@@ -97,7 +99,13 @@ export function DashboardGrid({
     >
       {graphs.map((graph: DashboardItem) => (
         <div key={graph.id}>
-          <GraphCard template={graph} onDelete={onDelete} onEdit={onEdit} onFilter={onFilter} />
+          <GraphCard
+            template={graph}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            onFilter={onFilter}
+            refreshKey={refreshKey}
+          />
         </div>
       ))}
     </GridLayout>
