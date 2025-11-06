@@ -10,7 +10,7 @@ import {
     GraphQLNonNull,
     GraphQLEnumType,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-scalars';
 
 // Enums
 export const ChartTypeEnum = new GraphQLEnumType({

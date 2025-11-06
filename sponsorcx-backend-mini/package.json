@@ -19,6 +19,7 @@
         "start:prod": "tsc && cross-env NODE_ENV=production node dist/server.js",
         "migrate": "ts-node src/db/migrate.ts",
         "codegen": "graphql-codegen --config codegen.ts",
+        "codegen:sync": "yarn codegen && cp src/generated/graphql.ts ../sponsorcx-frontend-mini/src/types/backend-graphql.ts",
         "test": "jest --no-cache --detectOpenHandles --forceExit",
         "lint": "tsc --noEmit && eslint --ignore-path .gitignore --ext .js,.ts .",
         "lint:quiet": "tsc --noEmit && eslint --ignore-path .gitignore --ext .js,.ts . --quiet"
@@ -34,9 +35,9 @@
         "express-graphql": "^0.12.0",
         "graphql": "^16.8.1",
         "graphql-playground-middleware-express": "^1.7.22",
+        "graphql-scalars": "^1.25.0",
         "graphql-server-express": "^1.0.0",
         "graphql-subscriptions": "^1.2.1",
-        "graphql-type-json": "^0.3.2",
         "lodash": "4.17.21",
         "pg": "^8.11.3",
         "snowflake-sdk": "^1.9.3",

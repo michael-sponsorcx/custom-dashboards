@@ -73,7 +73,7 @@ export async function executeCubeGraphQL(query: string): Promise<CubeQueryResult
   try {
     const result = await cubeApiRequest<CubeQueryResult>('/graphql', {
       method: 'POST',
-      body: JSON.stringify({ query }),
+      data: { query },
     });
 
     // Flatten time dimension values in the response data

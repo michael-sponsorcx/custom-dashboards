@@ -5136,6 +5136,13 @@ graphql-playground-middleware-express@^1.7.22:
   dependencies:
     graphql-playground-html "^1.6.30"
 
+graphql-scalars@^1.25.0:
+  version "1.25.0"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.25.0.tgz#88f2891d60942c420286a2e76a29abfe645ac899"
+  integrity sha512-b0xyXZeRFkne4Eq7NAnL400gStGqG/Sx9VqX0A05nHyEbv57UJnWKsjNnrpVqv5e/8N1MUxkt0wwcRXbiyKcFg==
+  dependencies:
+    tslib "^2.5.0"
+
 graphql-server-express@^1.0.0:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/graphql-server-express/-/graphql-server-express-1.4.1.tgz#b096743fb8e3380a3e93cefbe635d0f18f7a57f5"
@@ -5156,11 +5163,6 @@ graphql-tag@^2.11.0:
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
   dependencies:
     tslib "^2.1.0"
-
-graphql-type-json@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
-  integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
 graphql-ws@^6.0.6:
   version "6.0.6"
