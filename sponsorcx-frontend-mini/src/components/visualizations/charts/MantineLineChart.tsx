@@ -116,7 +116,7 @@ export const MantineLineChart = memo(function MantineLineChart({
   const gridProps = getGridProps(gridAxisValue);
 
   return (
-    <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>
+    <SeriesLimitWrapper seriesCount={series.length}>
       <LineChart
         h="100%"
         data={chartData}

@@ -4,7 +4,7 @@
  * Manages graph template creation and saving:
  * - Determines if editing or creating
  * - Builds template from current state
- * - Saves template to storage
+ * - Saves template to backend
  * - Shows notifications
  * - Navigates after save
  */
@@ -13,7 +13,12 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { GraphTemplate } from '../../../types/graph';
-import { saveGraphTemplate, generateGraphId, addGraphToDashboard } from '../../../utils/storage';
+import {
+  createGraph,
+  updateGraph,
+  addGraphToDashboard,
+} from '../../../services/backendCube';
+import { useOrganizationStore } from '../../../store';
 import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
@@ -30,18 +35,19 @@ interface SaveGraphParams {
   filters: FilterRule[];
   orderByField?: string;
   orderByDirection?: 'asc' | 'desc';
-  queryResult: any;
+  queryResult: unknown;
   chartConfig: ChartConfig;
 }
 
 export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
   const { editingTemplate } = options;
   const navigate = useNavigate();
+  const { organizationId, dashboardId } = useOrganizationStore();
   const isEditing = !!editingTemplate;
 
   // Create template from current state
-  const createTemplate = useCallback(
-    (params: SaveGraphParams): GraphTemplate => {
+  const createTemplateData = useCallback(
+    (params: SaveGraphParams): Omit<GraphTemplate, 'id' | 'createdAt' | 'updatedAt'> => {
       const {
         selectedView,
         selectedMeasures,
@@ -53,12 +59,8 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
         chartConfig,
       } = params;
 
-      const graphId = isEditing ? editingTemplate.id : generateGraphId();
-
       return {
-        id: graphId,
         name: chartConfig.chartTitle || 'Untitled Graph',
-        createdAt: isEditing ? editingTemplate.createdAt : new Date().toISOString(),
         viewName: selectedView!,
         measures: Array.from(selectedMeasures),
         dimensions: Array.from(selectedDimensions),
@@ -93,12 +95,12 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
         selectedMeasure: chartConfig.selectedMeasure,
       };
     },
-    [isEditing, editingTemplate]
+    []
   );
 
   // Save template
   const saveTemplate = useCallback(
-    (params: SaveGraphParams) => {
+    async (params: SaveGraphParams) => {
       const { selectedView, queryResult, chartConfig } = params;
 
       // Validate required fields
@@ -111,30 +113,46 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
         return;
       }
 
-      // Create template
-      const template = createTemplate(params);
+      try {
+        // Create template data
+        const templateData = createTemplateData(params);
 
-      // Save to storage
-      saveGraphTemplate(template);
+        let savedGraph: GraphTemplate;
 
-      // Only add to dashboard if creating new graph (not editing)
-      if (!isEditing) {
-        addGraphToDashboard(template.id);
+        if (isEditing && editingTemplate) {
+          // Update existing graph
+          savedGraph = await updateGraph(editingTemplate.id, templateData);
+        } else {
+          // Create new graph
+          savedGraph = await createGraph(templateData, organizationId);
+
+          // Add to dashboard if we have a dashboard ID
+          if (dashboardId) {
+            await addGraphToDashboard(dashboardId, savedGraph.id);
+          }
+        }
+
+        // Show success notification
+        notifications.show({
+          title: isEditing ? 'Graph Updated!' : 'Graph Saved!',
+          message: isEditing
+            ? `"${savedGraph.name}" has been updated.`
+            : `"${savedGraph.name}" has been added to your dashboard.`,
+          color: 'green',
+        });
+
+        // Navigate to dashboard
+        setTimeout(() => navigate('/'), 500);
+      } catch (error) {
+        console.error('Failed to save graph:', error);
+        notifications.show({
+          title: 'Error Saving Graph',
+          message: error instanceof Error ? error.message : 'Failed to save graph. Please try again.',
+          color: 'red',
+        });
       }
-
-      // Show success notification
-      notifications.show({
-        title: isEditing ? 'Graph Updated!' : 'Graph Saved!',
-        message: isEditing
-          ? `"${template.name}" has been updated.`
-          : `"${template.name}" has been added to your dashboard.`,
-        color: 'green',
-      });
-
-      // Navigate to dashboard
-      setTimeout(() => navigate('/'), 500);
     },
-    [isEditing, createTemplate, navigate]
+    [isEditing, editingTemplate, createTemplateData, navigate, organizationId, dashboardId]
   );
 
   return {

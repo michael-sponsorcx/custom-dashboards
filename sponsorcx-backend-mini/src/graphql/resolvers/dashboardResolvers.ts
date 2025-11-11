@@ -74,24 +74,11 @@ export const dashboardQueries = {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
         resolve: async (_: any, { dashboardId }: any) => {
-            const sql = `
-                SELECT di.*,
-                       g.id as graph_id, g.name as graph_name, g.chart_type, g.chart_title
-                FROM dashboard_grid_items di
-                LEFT JOIN graphs g ON di.graph_id = g.id
-                WHERE di.dashboard_id = $1
-                ORDER BY di.display_order, di.created_at
-            `;
+            // Get all grid items for this dashboard
+            // The graph field will be resolved by the field resolver in DashboardGridItemType
+            const sql = 'SELECT * FROM dashboard_grid_items WHERE dashboard_id = $1 ORDER BY display_order, created_at';
             const result = await query(sql, [dashboardId]);
-            return result.rows.map(row => ({
-                ...dashboardGridItemToCamelCase(row),
-                graph: row.graph_id ? {
-                    id: row.graph_id,
-                    name: row.graph_name,
-                    chartType: row.chart_type,
-                    chartTitle: row.chart_title,
-                } : null,
-            }));
+            return result.rows.map(dashboardGridItemToCamelCase);
         },
     },
     dashboardFilter: {

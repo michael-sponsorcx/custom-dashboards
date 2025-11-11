@@ -5,6 +5,7 @@
  */
 
 import { executeBackendGraphQL } from '../core/backendClient';
+import { type CubeDimensionValues } from '../../../types/backend-graphql';
 
 /**
  * Strip cube prefix from field name
@@ -52,7 +53,7 @@ export async function fetchDistinctDimensionValues(
 
     // Execute the query through the backend
     const response = await executeBackendGraphQL<{
-      cubeDimensionValues: { values: string[] };
+      cubeDimensionValues: CubeDimensionValues;
     }>(backendQuery);
 
     // Extract the values from the backend wrapper
@@ -62,8 +63,10 @@ export async function fetchDistinctDimensionValues(
       return [];
     }
 
-    // Return sorted array
-    return values.sort();
+    // Filter out null values from Maybe<string>[] type and sort
+    return values
+      .filter((v): v is string => v !== null && v !== undefined)
+      .sort();
   } catch (error) {
     // Re-throw with context
     if (error instanceof Error) {

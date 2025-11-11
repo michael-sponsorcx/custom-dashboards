@@ -6,6 +6,7 @@
  */
 
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
+import { setupAxiosCache } from '../../config/axiosCacheInterceptor';
 
 interface GraphQLResponse<T = unknown> {
   data?: T;
@@ -23,6 +24,9 @@ function createBackendGraphQLClient(): AxiosInstance {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   if (!apiUrl) {
+    if (import.meta.env.DEV) {
+      console.error('VITE_API_URL is not configured in environment variables');
+    }
     throw new Error('VITE_API_URL is not configured in environment variables');
   }
 
@@ -32,6 +36,16 @@ function createBackendGraphQLClient(): AxiosInstance {
     headers: {
       'Content-Type': 'application/json',
     },
+  });
+
+  // Set up localStorage caching for GraphQL requests FIRST
+  // Note: GraphQL uses POST requests, so we configure the cache to handle POST
+  // IMPORTANT: Cache interceptor must be added before other interceptors
+  setupAxiosCache(client, {
+    defaultTTL: 30000, // 5 second default cache
+    enabled: true,
+    methods: ['post'], // Cache POST requests (GraphQL uses POST)
+    debug: import.meta.env.DEV, // Enable debug logs in development (built-in Vite variable)
   });
 
   // Request interceptor - log requests in development
@@ -116,6 +130,6 @@ export async function executeBackendGraphQL<T = unknown>(
     const errorMessage = result.errors.map((e) => e.message).join(', ');
     throw new Error(`GraphQL error: ${errorMessage}`);
   }
-
+  
   return result;
 }

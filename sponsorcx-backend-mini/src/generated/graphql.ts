@@ -22,10 +22,13 @@ export enum ChartType {
   Area = 'AREA',
   Bar = 'BAR',
   Heatmap = 'HEATMAP',
+  HorizontalBar = 'HORIZONTAL_BAR',
+  HorizontalStackedBar = 'HORIZONTAL_STACKED_BAR',
   Kpi = 'KPI',
   Line = 'LINE',
   Pie = 'PIE',
   Scatter = 'SCATTER',
+  StackedBar = 'STACKED_BAR',
   Table = 'TABLE'
 }
 

@@ -132,7 +132,7 @@ export const MantineBarChart = memo(function MantineBarChart({
   const gridProps = getGridProps(gridAxisValue);
 
   return (
-    <SeriesLimitWrapper seriesCount={series.length} maxSeries={maxDataPoints}>
+    <SeriesLimitWrapper seriesCount={series.length}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div style={{ flex: 1, minHeight: 0 }}>
           <BarChart

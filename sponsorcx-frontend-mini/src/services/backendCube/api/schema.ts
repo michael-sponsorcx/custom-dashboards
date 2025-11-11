@@ -6,6 +6,7 @@
 
 import { executeBackendGraphQL } from '../core/backendClient';
 import { getCached, clearCache } from '../core/cache';
+import { type CubeSchema } from '../../../types/backend-graphql';
 
 /**
  * Fetch available filter operators from backend via Cube schema
@@ -32,7 +33,7 @@ export async function getValidFilterOperators(): Promise<string[]> {
 
         // Execute the query through the backend
         const response = await executeBackendGraphQL<{
-          cubeSchema: { operators: string[] };
+          cubeSchema: CubeSchema;
         }>(backendQuery);
 
         // Extract the operators from the backend wrapper
@@ -60,7 +61,8 @@ export async function getValidFilterOperators(): Promise<string[]> {
           ];
         }
 
-        return operators;
+        // Filter out null values from Maybe<string>[] type
+        return operators.filter((op): op is string => op !== null && op !== undefined);
       },
       ttl
     );

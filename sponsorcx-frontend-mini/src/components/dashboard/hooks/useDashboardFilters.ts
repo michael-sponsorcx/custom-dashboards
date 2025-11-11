@@ -1,71 +1,76 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  loadDashboardFilters,
-  saveDashboardFilters,
-} from '../../../services/dashboardFilterPersistence';
+  fetchDashboardFilter,
+  saveDashboardFilter,
+  type DashboardFilterState,
+  type DashboardFilterField,
+} from '../../../services/backendCube';
+import { useOrganizationStore } from '../../../store';
 import { FilterRule } from '../../../types/filters';
 
-export interface DashboardFilterField {
-  fieldName: string;
-  fieldTitle: string;
-  fieldType: 'measure' | 'dimension' | 'date';
-}
-
-export interface DashboardFilterState {
-  // Selected data sources (views) for filtering
-  selectedViews: string[];
-  // Available filter fields (common across selected views)
-  availableFields: DashboardFilterField[];
-  // Active filter rules
-  activeFilters: FilterRule[];
-}
+// Re-export types for backward compatibility
+export type { DashboardFilterField, DashboardFilterState };
 
 /**
  * Hook to manage dashboard filters with persistence
  *
- * This hook manages dashboard filter state with automatic persistence.
- * - Loads filter config from localStorage on mount
- * - Saves filter config to localStorage on state changes
- * - Will be updated to use backend API calls instead of localStorage
+ * This hook manages dashboard filter state with automatic persistence to backend.
+ * - Loads filter config from backend on mount
+ * - Saves filter config to backend on state changes
  */
 export function useDashboardFilters() {
   const [selectedViews, setSelectedViews] = useState<string[]>([]);
   const [availableFields, setAvailableFields] = useState<DashboardFilterField[]>([]);
   const [activeFilters, setActiveFilters] = useState<FilterRule[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { dashboardId } = useOrganizationStore();
 
-  // Load filter config on mount
+  // Load filter config on mount and when dashboard changes
   useEffect(() => {
     const loadConfig = async () => {
-      const config = await loadDashboardFilters();
-      if (config) {
-        setSelectedViews(config.selectedViews);
-        setAvailableFields(config.availableFields);
-        setActiveFilters(config.activeFilters);
+      if (!dashboardId) {
+        setIsLoaded(true);
+        return;
       }
-      setIsLoaded(true);
+
+      try {
+        const config = await fetchDashboardFilter(dashboardId);
+        if (config) {
+          setSelectedViews(config.selectedViews);
+          setAvailableFields(config.availableFields);
+          setActiveFilters(config.activeFilters);
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard filters:', error);
+      } finally {
+        setIsLoaded(true);
+      }
     };
 
     loadConfig();
-  }, []);
+  }, [dashboardId]);
 
-  // Save to persistence whenever state changes (after initial load)
+  // Save to backend whenever state changes (after initial load)
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !dashboardId) return;
 
     const saveConfig = async () => {
-      await saveDashboardFilters({
-        selectedViews,
-        availableFields,
-        activeFilters,
-      });
+      try {
+        await saveDashboardFilter(dashboardId, {
+          selectedViews,
+          availableFields,
+          activeFilters,
+        });
+      } catch (error) {
+        console.error('Failed to save dashboard filters:', error);
+      }
     };
 
     // Don't save on initial mount (when everything is empty)
     if (selectedViews.length > 0 || availableFields.length > 0 || activeFilters.length > 0) {
       saveConfig();
     }
-  }, [selectedViews, availableFields, activeFilters, isLoaded]);
+  }, [selectedViews, availableFields, activeFilters, isLoaded, dashboardId]);
 
   // Filter management actions
   const addFilter = useCallback((filter: FilterRule) => {
@@ -128,17 +133,24 @@ export function useDashboardFilterState() {
     availableFields: [],
     activeFilters: [],
   });
+  const { dashboardId } = useOrganizationStore();
 
   useEffect(() => {
     const loadConfig = async () => {
-      const config = await loadDashboardFilters();
-      if (config) {
-        setState(config);
+      if (!dashboardId) return;
+
+      try {
+        const config = await fetchDashboardFilter(dashboardId);
+        if (config) {
+          setState(config);
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard filters:', error);
       }
     };
 
     loadConfig();
-  }, []);
+  }, [dashboardId]);
 
   return state;
 }

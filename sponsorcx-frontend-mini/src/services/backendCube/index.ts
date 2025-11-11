@@ -16,6 +16,38 @@ export { fetchCubeMetadata } from './api/metadata';
 export { fetchDistinctDimensionValues } from './api/dimensions';
 export { getValidFilterOperators, clearSchemaCache } from './api/schema';
 
+// Graph API
+export {
+  fetchGraphs,
+  fetchGraph,
+  createGraph,
+  updateGraph,
+  deleteGraph,
+} from './api/graphs';
+
+// Dashboard API
+export {
+  fetchDashboards,
+  fetchDashboard,
+  createDashboard,
+  updateDashboard,
+  deleteDashboard,
+  fetchDashboardGridItems,
+  fetchDashboardItems,
+  addGraphToDashboard,
+  updateDashboardGridItem,
+  removeGraphFromDashboard,
+  getOrCreateDefaultDashboard,
+} from './api/dashboards';
+
+// Dashboard Filter API
+export {
+  fetchDashboardFilter,
+  saveDashboardFilter,
+  clearDashboardFilter,
+} from './api/filters';
+export type { DashboardFilterField, DashboardFilterState } from './api/filters';
+
 // Types
 export type {
   CubeConfig,
