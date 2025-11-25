@@ -9,9 +9,26 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
-// Middleware
+// Parse CORS origins (supports comma-separated list)
+const allowedOrigins = CORS_ORIGIN.split(',').map(origin => origin.trim());
+
+console.log('Allowed CORS origins:', allowedOrigins);
+
+// Middleware - Use function to return single origin based on request
 app.use(cors({
-    origin: CORS_ORIGIN,
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, Postman)
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.warn(`CORS: Blocked origin ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }));
 app.use(bodyParser.json());
