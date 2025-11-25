@@ -1,0 +1,15 @@
+{
+  "name": "sponsorcx-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "cd sponsorcx-backend-mini && yarn install && cd ../sponsorcx-frontend-mini && yarn install",
+    "build:frontend": "cd sponsorcx-frontend-mini && yarn build",
+    "build:backend": "cd sponsorcx-backend-mini && yarn build",
+    "build:all": "yarn build:backend && yarn build:frontend",
+    "dev:frontend": "cd sponsorcx-frontend-mini && yarn dev",
+    "dev:backend": "cd sponsorcx-backend-mini && yarn start",
+    "deploy:frontend": "cd sponsorcx-frontend-mini && vercel --prod",
+    "deploy:backend": "cd sponsorcx-backend-mini && vercel --prod"
+  }
+}
