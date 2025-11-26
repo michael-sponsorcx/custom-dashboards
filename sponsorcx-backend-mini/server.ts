@@ -40,6 +40,11 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Handle preflight OPTIONS requests for GraphQL
+app.options('/graphql', (req: Request, res: Response) => {
+    res.status(200).end();
+});
+
 // GraphQL endpoint
 app.use('/graphql', graphqlHTTP({
     schema: graphqlSchema,
