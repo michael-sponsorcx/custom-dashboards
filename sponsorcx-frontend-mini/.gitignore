@@ -39,3 +39,4 @@ test/
 *.test.*
 *.spec.*
 src/tests/
+.vercel

@@ -22,12 +22,18 @@ app.use(cors({
             return callback(null, true);
         }
 
+        // Check if origin is in allowed list
         if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            console.warn(`CORS: Blocked origin ${origin}`);
-            callback(new Error('Not allowed by CORS'));
+            return callback(null, true);
         }
+
+        // Allow all *.vercel.app domains for preview deployments
+        if (origin.endsWith('.vercel.app')) {
+            return callback(null, true);
+        }
+
+        console.warn(`CORS: Blocked origin ${origin}`);
+        callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
 }));
