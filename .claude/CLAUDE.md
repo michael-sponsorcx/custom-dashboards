@@ -31,5 +31,14 @@
   - `Dashboard`, `DashboardInput`
   - `Graph`, `GraphInput`
   - `DashboardGridItem`, `DashboardGridItemInput`
-  - `ChartType`, `LayoutType`, `SortOrder` (enums)
+  - `ChartType`, `LayoutType`, `SortOrder`, `NumberFormat`, `LegendPosition` (enums)
   - `Query`, `Mutation` (GraphQL operations)
+
+### Enum Mapping
+
+The backend uses uppercase GraphQL enum values (e.g., `ChartType.Bar`, `SortOrder.Asc`) while the frontend may use lowercase values for better developer experience. When sending data to the backend:
+
+- **Use the mapper**: Import `toGraphInput` from `sponsorcx-frontend-mini/src/services/backendCube/utils/graphInputMapper.ts`
+- The mapper automatically converts frontend enum values to backend enum values
+- Example: `'asc'` → `SortOrder.Asc`, `'bar'` → `ChartType.Bar`, `'horizontalStackedBar'` → `ChartType.Bar`
+- The graph API services already use this mapper, so you don't need to worry about enum conversion when using those services

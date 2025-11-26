@@ -475,4 +475,5 @@ Before removing files, verify:
 - **Pattern**: Using Approach 1 (Single Store File) for scalability
 
 
-refeactor dashbaord cub backend 
+refeactor dashbaord cube backend 
+operator cache and other caches can have a separate caching strategy
