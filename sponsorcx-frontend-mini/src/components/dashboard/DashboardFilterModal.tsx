@@ -1,6 +1,6 @@
 import { Modal, Stack, Title, Button, Group, Stepper } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { useDashboardFilterContext } from './context';
+import { useDashboardFilterStore } from '../../store';
 import { DataSourceSelection } from './filter_config/DataSourceSelection';
 import { CommonFieldsSelection } from './filter_config/CommonFieldsSelection';
 
@@ -24,7 +24,7 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
     setSelectedViews: saveSelectedViews,
     setAvailableFields,
     reset,
-  } = useDashboardFilterContext();
+  } = useDashboardFilterStore();
 
   // Reset to step 0 when modal opens
   useEffect(() => {

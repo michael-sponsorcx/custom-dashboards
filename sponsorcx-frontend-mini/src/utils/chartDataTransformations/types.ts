@@ -2,7 +2,7 @@
  * Shared types for chart data transformations
  */
 
-export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'kpi';
+export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'kpi' | 'table';
 
 export type ChartDataPoint = Record<string, string | number>;
 

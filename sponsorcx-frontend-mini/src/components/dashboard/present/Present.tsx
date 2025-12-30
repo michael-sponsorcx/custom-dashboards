@@ -1,6 +1,6 @@
 import { Box } from '@mantine/core';
 import { DashboardItem } from '@/types/dashboard';
-import { useDashboardFilterState } from '../hooks/useDashboardFilters';
+import { useDashboardFilterStore } from '@/store';
 import { useFullscreenMode, useSlideNavigation } from './hooks';
 import { PresentationControls } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
@@ -16,7 +16,7 @@ interface PresentProps {
  * Displays graphs in fullscreen mode with keyboard navigation
  */
 export function Present({ graphs, dashboardName, onClose }: PresentProps) {
-  const { activeFilters: dashboardFilters } = useDashboardFilterState();
+  const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Custom hooks handle fullscreen and navigation logic
   const containerRef = useFullscreenMode(onClose);

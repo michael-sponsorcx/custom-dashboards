@@ -6,9 +6,10 @@ import type { LegendPosition } from '../../../types/graph';
 import type { ColorPalette } from '../../../constants/colorPalettes';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';
+import { EmptyState } from '../utils/EmptyState';
 
 interface MantinePieChartProps {
-  queryResult: any;
+  queryResult: unknown;
   primaryColor?: string;
   colorPalette?: ColorPalette;
   // User-selected dimension and measure
@@ -60,9 +61,9 @@ export const MantinePieChart = memo(function MantinePieChart({
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
-  // Handle case where transformation failed
+  // Handle empty or invalid data
   if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
-    return <div>No data available for chart</div>;
+    return <EmptyState data={transformedData} queryResult={queryResult} />;
   }
 
   // Create value formatter for tooltips

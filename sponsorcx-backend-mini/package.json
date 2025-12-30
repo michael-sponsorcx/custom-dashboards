@@ -18,6 +18,8 @@
         "start": "nodemon",
         "start:prod": "tsc && cross-env NODE_ENV=production node dist/server.js",
         "migrate": "ts-node src/db/migrate.ts",
+        "migrate:rollback": "ts-node src/db/rollback.ts",
+        "migrate:rollback:all": "ts-node src/db/rollback.ts --count=999",
         "codegen": "graphql-codegen --config codegen.ts",
         "codegen:sync": "yarn codegen && cp src/generated/graphql.ts ../sponsorcx-frontend-mini/src/types/backend-graphql.ts",
         "test": "jest --no-cache --detectOpenHandles --forceExit",

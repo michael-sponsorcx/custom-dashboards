@@ -9,3 +9,8 @@
  */
 
 export { useOrganizationStore } from './organizationStore';
+export {
+  useDashboardFilterStore,
+  type DashboardFilterField,
+  type DashboardFilterState,
+} from './dashboardFilterStore';

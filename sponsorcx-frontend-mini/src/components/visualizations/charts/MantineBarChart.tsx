@@ -14,6 +14,7 @@ import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';
 import { useDrillDown } from './drilldown/useDrillDown';
 import { DrillDownPanel } from './drilldown/DrillDownPanel';
+import { EmptyState } from '../utils/EmptyState';
 
 interface MantineBarChartProps {
   queryResult: CubeQueryResult;
@@ -113,9 +114,9 @@ export const MantineBarChart = memo(function MantineBarChart({
 
   const { data: transformedData, dimensionField, series } = transformationResult;
 
-  // Handle case where transformation failed
+  // Handle empty or invalid data
   if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
-    return <div>No data available for chart</div>;
+    return <EmptyState data={transformedData} queryResult={queryResult} />;
   }
 
   // Apply sorting using useMemo hook inside useSortedChartData

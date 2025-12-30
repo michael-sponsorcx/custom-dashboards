@@ -1,17 +1,18 @@
 import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
 import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
-import { GraphFilterModal } from './GraphFilterModal';
+// import { GraphFilterModal } from './GraphFilterModal';
+import { KPIAlertModal } from './KPIAlertModal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
 import { DashboardAvailableFiltersModal } from './DashboardAvailableFiltersModal';
 import { Present } from './present';
 import { DownloadPDF } from './download_pdf';
-import { DashboardFilterProvider } from './context';
 import { DashboardActionsMenu } from './DashboardActionsMenu';
+import { useOrganizationStore, useDashboardFilterStore } from '../../store';
 
 /**
  * Dashboard Component - Refactored
@@ -20,6 +21,16 @@ import { DashboardActionsMenu } from './DashboardActionsMenu';
  * Uses modular custom hooks for clean separation of concerns.
  */
 export function Dashboard() {
+  // Load dashboard filters when dashboardId changes
+  const { dashboardId } = useOrganizationStore();
+  const { loadFilters } = useDashboardFilterStore();
+
+  useEffect(() => {
+    if (dashboardId) {
+      loadFilters(dashboardId);
+    }
+  }, [dashboardId, loadFilters]);
+
   // Use custom hooks to manage state and actions
   const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
     useDashboardState();
@@ -36,9 +47,13 @@ export function Dashboard() {
     onUpdateSize: updateGraphSize,
   });
 
-  // Graph filter modal state
-  const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [selectedGraphId, setSelectedGraphId] = useState<string | null>(null);
+  // Graph filter modal state (for configuring permanent graph-level filters)
+  // const [filterModalOpen, setFilterModalOpen] = useState(false);
+  // const [selectedGraphId, setSelectedGraphId] = useState<string | null>(null);
+
+  // KPI alert modal state
+  const [kpiAlertModalOpen, setKpiAlertModalOpen] = useState(false);
+  const [selectedKPIAlertGraphId, setSelectedKPIAlertGraphId] = useState<string | null>(null);
 
   // Dashboard filter modal state
   const [dashboardFilterModalOpen, setDashboardFilterModalOpen] = useState(false);
@@ -58,16 +73,31 @@ export function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Find the selected graph for the modal
-  const selectedGraph = graphs.find((g) => g.id === selectedGraphId);
+  // const selectedGraph = graphs.find((g) => g.id === selectedGraphId);
+  const selectedKPIAlertGraph = graphs.find((g) => g.id === selectedKPIAlertGraphId);
 
-  const handleFilterGraph = (id: string) => {
-    setSelectedGraphId(id);
-    setFilterModalOpen(true);
+  // Handler to open graph-level filter modal for a specific graph
+  const handleOpenGraphFilterModal = (id: string) => {
+    // TODO: Implement graph filter modal
+    console.log('Open graph filter modal for graph:', id);
+    // setSelectedGraphId(id);
+    // setFilterModalOpen(true);
   };
 
-  const handleCloseFilterModal = () => {
-    setFilterModalOpen(false);
-    setSelectedGraphId(null);
+  // const handleCloseGraphFilterModal = () => {
+  //   setFilterModalOpen(false);
+  //   setSelectedGraphId(null);
+  // };
+
+  // Handler to open KPI alert modal for a specific graph
+  const handleOpenKPIAlertModal = (id: string) => {
+    setSelectedKPIAlertGraphId(id);
+    setKpiAlertModalOpen(true);
+  };
+
+  const handleCloseKPIAlertModal = () => {
+    setKpiAlertModalOpen(false);
+    setSelectedKPIAlertGraphId(null);
   };
 
   const handleOpenDashboardFilters = () => {
@@ -130,11 +160,7 @@ export function Dashboard() {
 
   // If in presentation mode, render the Present component
   if (presentationMode) {
-    return (
-      <DashboardFilterProvider>
-        <Present graphs={graphs} dashboardName="Dashboard" onClose={handleClosePresentation} />
-      </DashboardFilterProvider>
-    );
+    return <Present graphs={graphs} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
   if (loading) {
@@ -146,84 +172,91 @@ export function Dashboard() {
   }
 
   return (
-    <DashboardFilterProvider>
-      <Container size="xl" py="xl">
-        <Stack gap="xl">
-          {/* Header */}
-          <Group justify="space-between" align="center">
-            <Title order={1}>Dashboard</Title>
-            <Group gap="md">
-              <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
-              <DashboardActionsMenu
-                onPresent={handleStartPresentation}
-                onDownloadPDF={handleDownloadPDF}
-                onRefresh={handleRefreshAll}
-                disabled={graphs.length === 0}
-                refreshing={isRefreshing}
-              />
-              <Button onClick={handleCreateGraph} color="red" size="lg">
-                Add Graph
-              </Button>
-            </Group>
-          </Group>
-
-          {/* Available Filter Fields */}
-          <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
-
-          {/* Empty State or Grid */}
-          {graphs.length === 0 ? (
-            <Stack align="center" gap="md" py="xl">
-              <Text size="lg" c="dimmed">
-                No graphs yet. Create your first graph to get started!
-              </Text>
-              <Button onClick={handleCreateGraph} size="lg">
-                Create Graph
-              </Button>
-            </Stack>
-          ) : (
-            <DashboardGrid
-              graphs={graphs}
-              onDelete={handleDeleteGraph}
-              onEdit={handleEditGraph}
-              onFilter={handleFilterGraph}
-              onResize={handleResizeGraph}
-              onMove={handleMoveGraph}
-              onBatchMove={handleBatchMoveGraph}
-              refreshKey={refreshKey}
+    <Container size="xl" py="xl">
+      <Stack gap="xl">
+        {/* Header */}
+        <Group justify="space-between" align="center">
+          <Title order={1}>Dashboard</Title>
+          <Group gap="md">
+            <DashboardFilters onOpenFilters={handleOpenDashboardFilters} />
+            <DashboardActionsMenu
+              onPresent={handleStartPresentation}
+              onDownloadPDF={handleDownloadPDF}
+              onRefresh={handleRefreshAll}
+              disabled={graphs.length === 0}
+              refreshing={isRefreshing}
             />
-          )}
-        </Stack>
+            <Button onClick={handleCreateGraph} color="red" size="lg">
+              Add Graph
+            </Button>
+          </Group>
+        </Group>
 
-        {/* Graph Filter Modal */}
-        <GraphFilterModal
-          opened={filterModalOpen}
-          onClose={handleCloseFilterModal}
-          graphId={selectedGraphId}
-          graphName={selectedGraph?.name || 'Untitled Graph'}
-        />
+        {/* Available Filter Fields */}
+        <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
 
-        {/* Dashboard Filter Modal */}
-        <DashboardFilterModal
-          opened={dashboardFilterModalOpen}
-          onClose={handleCloseDashboardFilters}
-        />
-
-        {/* Dashboard Available Filters Modal */}
-        <DashboardAvailableFiltersModal
-          opened={filterValueModalOpen}
-          onClose={handleCloseFilterValue}
-          fieldName={selectedFilterField}
-        />
-
-        {/* PDF Generation (non-blocking, renders off-screen) */}
-        {pdfGenerationMode && (
-          <DownloadPDF
+        {/* Empty State or Grid */}
+        {graphs.length === 0 ? (
+          <Stack align="center" gap="md" py="xl">
+            <Text size="lg" c="dimmed">
+              No graphs yet. Create your first graph to get started!
+            </Text>
+            <Button onClick={handleCreateGraph} size="lg">
+              Create Graph
+            </Button>
+          </Stack>
+        ) : (
+          <DashboardGrid
             graphs={graphs}
-            dashboardName="Dashboard"
-            onComplete={handleClosePDFGeneration}
+            onDelete={handleDeleteGraph}
+            onEdit={handleEditGraph}
+            onOpenGraphFilterModal={handleOpenGraphFilterModal}
+            onOpenKPIAlertModal={handleOpenKPIAlertModal}
+            onResize={handleResizeGraph}
+            onMove={handleMoveGraph}
+            onBatchMove={handleBatchMoveGraph}
+            refreshKey={refreshKey}
           />
         )}
-      </Container>
-    </DashboardFilterProvider>
+      </Stack>
+
+      {/* Graph Filter Modal - Configures permanent graph-level filters (GraphTemplate.filters) */}
+      {/* <GraphFilterModal
+        opened={filterModalOpen}
+        onClose={handleCloseGraphFilterModal}
+        graphId={selectedGraphId}
+        graphName={selectedGraph?.name || 'Untitled Graph'}
+      /> */}
+
+      {/* KPI Alert Modal */}
+      <KPIAlertModal
+        opened={kpiAlertModalOpen}
+        onClose={handleCloseKPIAlertModal}
+        graphId={selectedKPIAlertGraphId}
+        graphName={selectedKPIAlertGraph?.name || 'Untitled Graph'}
+      />
+
+      {/* Dashboard Filter Modal */}
+      <DashboardFilterModal
+        opened={dashboardFilterModalOpen}
+        onClose={handleCloseDashboardFilters}
+      />
+
+      {/* Dashboard Available Filters Modal */}
+      <DashboardAvailableFiltersModal
+        opened={filterValueModalOpen}
+        onClose={handleCloseFilterValue}
+        fieldName={selectedFilterField}
+      />
+
+      {/* PDF Generation (non-blocking, renders off-screen) */}
+      {pdfGenerationMode && (
+        <DownloadPDF
+          graphs={graphs}
+          dashboardName="Dashboard"
+          onComplete={handleClosePDFGeneration}
+        />
+      )}
+    </Container>
   );
 }

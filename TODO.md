@@ -475,5 +475,142 @@ Before removing files, verify:
 - **Pattern**: Using Approach 1 (Single Store File) for scalability
 
 
-refeactor dashbaord cube backend 
+refeactor dashbaord cube backend
 operator cache and other caches can have a separate caching strategy
+
+---
+
+## Proxy Error Handling: RFC 9209 Compliance
+
+### Context
+The backend acts as a proxy between the frontend and Cube.js GraphQL API. Currently, all errors (both proxy infrastructure errors and upstream Cube API errors) return HTTP 200 with GraphQL errors, making it impossible to distinguish between different error types for proper retry logic, monitoring, and debugging.
+
+### Key Insight: Two Communication Layers
+
+1. **Proxy ↔ Cube GraphQL Server**: Governed by GraphQL over HTTP spec
+2. **Client ↔ Backend Proxy**: Our design choice (should follow RFC 9209)
+
+### RFC 9209: The Proxy-Status Header Standard
+
+RFC 9209 defines standard headers for proxies to communicate error sources:
+- **`Proxy-Status: backend; error=<type>`** - For proxy infrastructure errors (network, timeout, DNS)
+- **`Proxy-Status: backend; received-status=<code>`** - For upstream errors (Cube returns 4xx/5xx)
+
+### Current Problem
+
+**File**: `sponsorcx-backend-mini/src/services/cubeApiClient.ts:75-96`
+
+All errors are treated the same:
+- Network timeout → Returns HTTP 200 + GraphQL error ❌
+- Cube API 500 → Returns HTTP 200 + GraphQL error ❌
+- Connection refused → Returns HTTP 200 + GraphQL error ❌
+
+This prevents the frontend from:
+- Implementing smart retry logic (504 timeout = retry, 500 upstream = don't retry)
+- Proper error monitoring (proxy team vs. Cube team)
+- Debugging (is the proxy broken or is Cube broken?)
+
+### Error Scenarios Coverage
+
+| Scenario | Current | Should Be | RFC 9209 Header |
+|----------|---------|-----------|-----------------|
+| **Upstream Success** | HTTP 200 ✅ | HTTP 200 ✅ | *(none)* |
+| **Upstream GraphQL Error** | HTTP 200 ✅ | HTTP 200 ✅ | `received-status=200` |
+| **Upstream 400/401/403** | HTTP 200 ❌ | HTTP 200 ✅ | `received-status=4xx` |
+| **Upstream 500/503** | HTTP 200 ❌ | HTTP 200 ✅ | `received-status=5xx` |
+| **Connection Timeout** | HTTP 200 ❌ | HTTP 504 | `error=connection_timeout` |
+| **Connection Refused** | HTTP 200 ❌ | HTTP 502 | `error=connection_refused` |
+| **Connection Terminated** | HTTP 200 ❌ | HTTP 502 | `error=connection_terminated` |
+| **DNS Error** | HTTP 200 ❌ | HTTP 502 | `error=dns_error` |
+| **Network Failure** | HTTP 200 ❌ | HTTP 502 | `error=destination_unavailable` |
+| **Proxy Internal Error** | HTTP 200 ❌ | HTTP 500 | `error=proxy_internal_error` |
+| **Proxy Config Error** | HTTP 200 ❌ | HTTP 500 | `error=proxy_configuration_error` |
+
+### Implementation Tasks
+
+#### 1. Backend: Enhanced Error Types
+**File**: `sponsorcx-backend-mini/src/services/cubeApiClient.ts`
+
+- [ ] Update `CubeApiError` class to include:
+  - `errorType?: string` - RFC 9209 error type
+  - `source?: 'proxy' | 'upstream'` - Error source
+- [ ] Update axios error interceptor (lines 75-96) to classify errors:
+  - `error.response` → upstream error (source: 'upstream')
+  - `ETIMEDOUT/ECONNABORTED` → connection_timeout (source: 'proxy', status: 504)
+  - `ECONNREFUSED` → connection_refused (source: 'proxy', status: 502)
+  - `ECONNRESET` → connection_terminated (source: 'proxy', status: 502)
+  - `ENOTFOUND` → dns_error (source: 'proxy', status: 502)
+  - `error.request` → destination_unavailable (source: 'proxy', status: 502)
+  - Other → proxy_internal_error (source: 'proxy', status: 500)
+
+#### 2. Backend: GraphQL Response Handler
+**File**: `sponsorcx-backend-mini/src/graphql/resolvers/cubeProxyResolvers.ts`
+
+- [ ] Add error handling in resolvers (currently missing at lines 35-43)
+- [ ] Wrap `executeCubeGraphQL()` in try-catch
+- [ ] For proxy errors: Set HTTP status code (502/504/500)
+- [ ] For upstream errors: Keep HTTP 200 (GraphQL convention)
+- [ ] Add `Proxy-Status` header to response
+
+#### 3. Backend: Express Middleware
+**File**: `sponsorcx-backend-mini/src/index.ts` (or create middleware file)
+
+- [ ] Add response middleware to inject `Proxy-Status` headers
+- [ ] For proxy errors: `Proxy-Status: backend; error=<type>`
+- [ ] For upstream errors: `Proxy-Status: backend; received-status=<code>`
+
+#### 4. Frontend: Enhanced Error Handling
+**File**: `sponsorcx-frontend-mini/src/services/backendCube/core/backendClient.ts`
+
+- [ ] Create `BackendGraphQLError` class with:
+  - `errors: Array<GraphQLError>` - GraphQL errors
+  - `proxyStatus?: string` - Raw Proxy-Status header
+  - `receivedStatus?: number` - Parsed upstream status
+  - `errorType?: string` - Parsed RFC 9209 error type
+- [ ] Update `executeBackendGraphQL()` (lines 116-136) to:
+  - Parse `Proxy-Status` header from response
+  - Extract `received-status` or `error` parameter
+  - Throw enhanced error with parsed metadata
+- [ ] Update axios error interceptor (lines 73-89) to:
+  - Check for `Proxy-Status` header on HTTP errors
+  - Include header info in thrown error
+
+#### 5. Frontend: Smart Retry Logic
+**Files**: Create `sponsorcx-frontend-mini/src/services/backendCube/utils/retryStrategy.ts`
+
+- [ ] Implement retry logic based on error type:
+  - `connection_timeout` → Retry with exponential backoff
+  - `connection_refused` → Don't retry, show maintenance mode
+  - `destination_unavailable` → Retry once
+  - `received-status=503` → Retry with backoff (upstream overloaded)
+  - `received-status=500` → Don't retry (upstream server error)
+  - `received-status=401` → Don't retry, redirect to login
+- [ ] Add to existing API service wrappers
+
+#### 6. Documentation
+- [ ] Document error handling architecture in README
+- [ ] Add examples of error scenarios and frontend handling
+- [ ] Document RFC 9209 compliance
+
+### Benefits
+
+1. **Smart Retry Logic**: Client can distinguish retryable errors
+2. **Better Monitoring**: Separate alerts for proxy vs upstream failures
+3. **Improved Debugging**: Clear error source in logs and headers
+4. **Standards Compliance**: Follows RFC 9209 and GraphQL over HTTP spec
+5. **Team Routing**: Proxy errors → backend team, upstream errors → data/Cube team
+
+### References
+
+- [RFC 9209: The Proxy-Status HTTP Response Header Field](https://www.rfc-editor.org/rfc/rfc9209.html)
+- [GraphQL over HTTP Specification](https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md)
+- [IANA HTTP Proxy-Status Registry](https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml)
+
+### Related Files
+
+- Backend error handling: `sponsorcx-backend-mini/src/services/cubeApiClient.ts:75-96`
+- Backend resolvers: `sponsorcx-backend-mini/src/graphql/resolvers/cubeProxyResolvers.ts:35-43`
+- Frontend client: `sponsorcx-frontend-mini/src/services/backendCube/core/backendClient.ts`
+- Frontend error check: `sponsorcx-frontend-mini/src/services/backendCube/core/backendClient.ts:130-133`
+
+---

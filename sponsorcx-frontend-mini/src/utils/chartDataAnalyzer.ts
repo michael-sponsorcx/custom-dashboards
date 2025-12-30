@@ -5,7 +5,8 @@ export type ChartType =
   | 'stackedBar'
   | 'horizontalBar'
   | 'horizontalStackedBar'
-  | 'pie';
+  | 'pie'
+  | 'table';
 
 export interface ChartCompatibility {
   compatibleCharts: ChartType[];
@@ -72,6 +73,9 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   // Determine compatible chart types based on data structure
   const compatibleCharts: ChartType[] = [];
 
+  // Rule 0: Table is always available (can display any data structure)
+  compatibleCharts.push('table');
+
   // Rule 1: KPI is always available if there's at least one measure
   if (measureCount >= 1) {
     compatibleCharts.push('kpi');
@@ -116,53 +120,4 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
     },
     recommendation,
   };
-}
-
-/**
- * Extracts a numeric value from query results for number tiles
- * - For single-row results: returns the first measure value
- * - For multi-row results: sums all values of the first measure
- * @param data - The GraphQL response data object
- * @returns The numeric value or null if not found
- */
-export function extractSingleValue(data: any): number | null {
-  if (!data?.data?.cube || !Array.isArray(data.data.cube) || data.data.cube.length === 0) {
-    return null;
-  }
-
-  const cubeData = data.data.cube;
-  const firstRow = cubeData[0];
-  const viewName = Object.keys(firstRow)[0];
-  const firstRowData = firstRow[viewName];
-
-  // Find first numeric field (measure)
-  let measureKey: string | null = null;
-  for (const key of Object.keys(firstRowData)) {
-    const value = firstRowData[key];
-    if (typeof value === 'number') {
-      measureKey = key;
-      break;
-    }
-  }
-
-  if (!measureKey) {
-    return null;
-  }
-
-  // If single row, return the value
-  if (cubeData.length === 1) {
-    return firstRowData[measureKey];
-  }
-
-  // If multiple rows, sum all values of the first measure
-  let total = 0;
-  for (const row of cubeData) {
-    const rowData = row[viewName];
-    const value = rowData[measureKey];
-    if (typeof value === 'number') {
-      total += value;
-    }
-  }
-
-  return total;
 }

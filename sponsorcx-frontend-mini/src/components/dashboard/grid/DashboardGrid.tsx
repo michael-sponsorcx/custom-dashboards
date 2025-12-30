@@ -11,7 +11,10 @@ interface DashboardGridProps {
   graphs: DashboardItem[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
-  onFilter: (id: string) => void;
+  /** Handler to open the graph-level filter modal for a specific graph */
+  onOpenGraphFilterModal: (id: string) => void;
+  /** Handler to open the KPI alert modal for a specific graph */
+  onOpenKPIAlertModal: (id: string) => void;
   onResize?: (id: string, width: number, height: number) => void;
   onMove?: (id: string, column: number, row: number) => void;
   onBatchMove?: (items: DashboardItem[]) => void;
@@ -26,12 +29,17 @@ interface DashboardGridProps {
  * - Resizable items
  * - Automatic compaction
  * - 6-column responsive grid
+ *
+ * Note: This component does NOT handle filter application logic.
+ * - Dashboard-level filters are applied via DashboardFilterContext
+ * - Graph-level filters are configured per-graph via the filter modal (onOpenGraphFilterModal)
  */
 export function DashboardGrid({
   graphs,
   onDelete,
   onEdit,
-  onFilter,
+  onOpenGraphFilterModal,
+  onOpenKPIAlertModal,
   onResize,
   onBatchMove,
   refreshKey,
@@ -103,7 +111,8 @@ export function DashboardGrid({
             template={graph}
             onDelete={onDelete}
             onEdit={onEdit}
-            onFilter={onFilter}
+            onOpenGraphFilterModal={onOpenGraphFilterModal}
+            onOpenKPIAlertModal={onOpenKPIAlertModal}
             refreshKey={refreshKey}
           />
         </div>

@@ -4,6 +4,7 @@ import { KPI } from './charts/KPI';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
 import { MantinePieChart } from './charts/MantinePieChart';
+import { ReportTable } from './tables/ReportTable';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
 import type { LegendPosition } from '../../types/graph';
 import type { ColorPalette } from '../../constants/colorPalettes';
@@ -80,7 +81,7 @@ export function ChartRenderer({
     case 'kpi':
       return (
         <KPI
-          value={kpiValue}
+          userDefinedValue={kpiValue}
           queryResult={kpiValue === undefined ? queryResult : undefined}
           label={kpiLabel}
           formatType={numberFormat}
@@ -226,6 +227,17 @@ export function ChartRenderer({
           numberPrecision={numberPrecision}
           legendPosition={legendPosition}
           maxDataPoints={maxDataPoints}
+        />
+      );
+
+    case 'table':
+      return (
+        <ReportTable
+          queryResult={queryResult}
+          numberFormat={numberFormat}
+          numberPrecision={numberPrecision}
+          height={600}
+          minWidth={500}
         />
       );
 

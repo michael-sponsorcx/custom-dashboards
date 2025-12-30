@@ -1,11 +1,11 @@
 /**
  * Chart Data Transformation Utilities
  *
- * This module contains all data transformation logic for different chart types.
- * Each transformation is clearly labeled and designed to handle specific chart requirements.
+ * This module contains all data transformation logic for different visualization types.
+ * Each transformation is clearly labeled and designed to handle specific requirements.
  *
- * IMPORTANT: This is the ONLY place where Cube GraphQL data should be transformed to chart format.
- * All chart components should pass raw Cube data to these functions.
+ * IMPORTANT: This is the SINGLE SOURCE OF TRUTH for transforming Cube GraphQL data.
+ * All visualization components (charts, tables, KPIs) should use transformChartData().
  */
 
 import {
@@ -23,42 +23,53 @@ import { kpiChartTransformation } from './transformations/kpi';
 export type { ChartType, TransformationResult, TransformChartDataOptions } from './types';
 
 /**
- * Transforms Cube GraphQL response to flat chart data format
- * INTERNAL USE ONLY - not exported
+ * Transforms Cube GraphQL response to the appropriate format for any visualization type.
+ * This is the ONLY function that should parse Cube API responses.
  *
- * @param cubeResponse - Raw Cube GraphQL response
- * @returns Flattened array of data points
- */
-function transformCubeDataToChartData(cubeResponse: any): any[] {
-  if (!cubeResponse?.data?.cube || !Array.isArray(cubeResponse.data.cube)) {
-    return [];
-  }
-
-  return cubeResponse.data.cube.map((item: any) => {
-    const viewName = Object.keys(item)[0];
-    return item[viewName];
-  });
-}
-
-/**
- * Main entry point for chart data transformations.
- * Automatically routes to the appropriate transformation based on chart type.
- * Accepts raw Cube GraphQL data and handles the transformation internally.
+ * Cube returns data in the format:
+ * { data: { cube: [{ viewName: { field1: value1, ... } }, ...] } }
+ *
+ * This function:
+ * 1. Parses the Cube response to extract raw data
+ * 2. Routes to the appropriate transformation based on chart type
+ * 3. Returns data ready for the specific visualization component
  *
  * @param options - Configuration object containing chart type and raw Cube data
- * @returns Transformed data ready for chart rendering
+ * @returns Transformed data ready for rendering
  */
 export function transformChartData(options: TransformChartDataOptions): TransformationResult {
   const { chartType, cubeData } = options;
 
-  // Transform Cube data to flat chart format (this is the only place this should happen)
-  const chartData = transformCubeDataToChartData(cubeData);
-
-  if (!chartData || chartData.length === 0) {
+  // Step 1: Parse Cube GraphQL response to flat data format
+  // This is the ONLY place where Cube response parsing should happen
+  if (!cubeData?.data?.cube || !Array.isArray(cubeData.data.cube)) {
     return { data: [] };
   }
 
-  // Prepare common options for all transformations
+  const cubeArray = cubeData.data.cube;
+  if (cubeArray.length === 0) {
+    return { data: [] };
+  }
+
+  const chartData = cubeArray.map((item: unknown) => {
+    if (!item || typeof item !== 'object') {
+      return {};
+    }
+    const viewName = Object.keys(item)[0];
+    const viewData = (item as Record<string, unknown>)[viewName];
+    return viewData as Record<string, unknown>;
+  });
+
+  // Step 2: For 'table' type, return raw parsed data without further transformation
+  if (chartType === 'table') {
+    return {
+      data: chartData,
+      dimensionField: undefined,
+      series: [],
+    };
+  }
+
+  // Step 3: Route to chart-specific transformations for all other types
   const transformOptions: ChartSpecificTransformOptions = {
     chartData,
     primaryColor: options.primaryColor,
@@ -69,7 +80,6 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
     maxDataPoints: options.maxDataPoints,
   };
 
-  // Route to appropriate transformation based on chart type
   switch (chartType) {
     case 'bar':
       return barChartTransformation(transformOptions);
@@ -84,11 +94,11 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
     case 'kpi':
       return kpiChartTransformation(transformOptions);
     default:
-      // Unknown chart type - return raw data
+      // Unknown chart type - return raw parsed data
       return {
         data: chartData,
         dimensionField: options.primaryDimension,
-        series: [], // No specific series config for raw data
+        series: [],
       };
   }
 }

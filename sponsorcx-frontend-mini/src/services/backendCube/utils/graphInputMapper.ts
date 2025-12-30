@@ -28,6 +28,7 @@ function mapChartType(frontendType: FrontendChartType): BackendChartType {
     'horizontalBar': BackendChartType.HorizontalBar,
     'horizontalStackedBar': BackendChartType.HorizontalStackedBar,
     'pie': BackendChartType.Pie,
+    'table': BackendChartType.Table,
   };
   return mapping[frontendType];
 }
@@ -114,10 +115,10 @@ export function mapBackendChartType(backendType: BackendChartType): FrontendChar
     'LINE': 'line',
     'PIE': 'pie',
     'KPI': 'kpi',
+    'TABLE': 'table',
     'AREA': 'line', // Fallback to line
     'SCATTER': 'line', // Fallback to line
     'HEATMAP': 'bar', // Fallback to bar
-    'TABLE': 'bar', // Fallback to bar
   };
 
   return mapping[backendType] || 'bar';

@@ -2,7 +2,7 @@ import { Paper, Group, Loader, Text, Center } from '@mantine/core';
 import { ChartRenderer } from '../../../visualizations/ChartRenderer';
 import { useDownloadCSV } from '../../../../hooks/useDownloadCSV';
 import type { DashboardItem } from '../../../../types/dashboard';
-import { useDashboardFilterContext } from '../../context';
+import { useDashboardFilterStore } from '../../../../store';
 import { useGraphData } from './hooks/useGraphData';
 import { useGraphDrillDown } from './hooks/useGraphDrillDown';
 import { useGraphQuery } from './hooks/useGraphQuery';
@@ -19,8 +19,10 @@ interface GraphCardProps {
   onDelete: (id: string) => void;
   /** Handler for edit action */
   onEdit: (id: string) => void;
-  /** Handler for filter action */
-  onFilter: (id: string) => void;
+  /** Handler to open the graph-level filter modal (configures permanent filters for this specific graph) */
+  onOpenGraphFilterModal: (id: string) => void;
+  /** Handler to open the KPI alert modal */
+  onOpenKPIAlertModal: (id: string) => void;
   /** Optional refresh trigger key */
   refreshKey?: number;
 }
@@ -34,9 +36,14 @@ interface GraphCardProps {
  * **Key Features:**
  * - Auto-fetches data on mount and when filters change
  * - Supports drill-down with dimension swapping
- * - Combines graph, dashboard, and drill-down filters
+ * - Combines graph-level, dashboard-level, and drill-down filters
  * - CSV export functionality
  * - Individual refresh capability
+ *
+ * **Filter Architecture:**
+ * - Graph-level filters (GraphTemplate.filters): Permanent filters configured via modal
+ * - Dashboard-level filters (DashboardFilterContext): Temporary filters applied to ALL graphs
+ * - Drill-down filters: Ephemeral filters from clicking chart elements
  *
  * @input template: DashboardItem, handlers, refreshKey
  * @output Rendered graph card with all controls
@@ -46,13 +53,12 @@ interface GraphCardProps {
  *   template={graphTemplate}
  *   onDelete={handleDelete}
  *   onEdit={handleEdit}
- *   onFilter={handleFilter}
+ *   onOpenGraphFilterModal={handleOpenFilterModal}
  *   refreshKey={refreshCounter}
  * />
  */
-export function GraphCard({ template, onDelete, onEdit, onFilter, refreshKey }: GraphCardProps) {
-  // Get dashboard-level filters from context
-  const { activeFilters: dashboardFilters } = useDashboardFilterContext();
+export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, onOpenKPIAlertModal, refreshKey }: GraphCardProps) {
+  const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Drill-down state management
   const {
@@ -84,7 +90,8 @@ export function GraphCard({ template, onDelete, onEdit, onFilter, refreshKey }: 
 
   // Wrapper handlers for actions
   const handleRefresh = () => refresh(true); // Show notification on manual refresh
-  const handleFilter = () => onFilter(template.id);
+  const handleOpenFilterModal = () => onOpenGraphFilterModal(template.id);
+  const handleOpenKPIAlertModalWrapper = () => onOpenKPIAlertModal(template.id);
   const handleEdit = () => onEdit(template.id);
   const handleDelete = () => onDelete(template.id);
 
@@ -114,7 +121,8 @@ export function GraphCard({ template, onDelete, onEdit, onFilter, refreshKey }: 
           hasData={!!queryResult}
           onReset={resetDrillDown}
           onRefresh={handleRefresh}
-          onFilter={handleFilter}
+          onOpenFilterModal={handleOpenFilterModal}
+          onOpenKPIAlertModal={handleOpenKPIAlertModalWrapper}
           onDownload={downloadCSV}
           onEdit={handleEdit}
           onDelete={handleDelete}

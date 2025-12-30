@@ -1,4 +1,4 @@
-import { DashboardFilterState } from '../components/dashboard/hooks/useDashboardFilters';
+import { DashboardFilterState } from '../store/dashboardFilterStore';
 
 const DASHBOARD_FILTERS_KEY = 'sponsorcx_dashboard_filters';
 

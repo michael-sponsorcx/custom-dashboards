@@ -6,16 +6,22 @@ export type NumberFormatType = 'currency' | 'percentage' | 'number' | 'abbreviat
 
 /**
  * Formats a number based on the specified format type
- * @param value - The number to format
+ * @param value - The number to format (strings are coerced to numbers)
  * @param formatType - The format type to use
  * @param precision - Number of decimal places (default: 2)
  * @returns Formatted string representation of the number
  */
 export function formatNumber(
-  value: number,
+  value: unknown,
   formatType: NumberFormatType = 'number',
   precision = 2
 ): string {
+  const num = typeof value === 'string' ? parseFloat(value) : Number(value);
+
+  if (isNaN(num)) {
+    return String(value);
+  }
+
   switch (formatType) {
     case 'currency':
       return new Intl.NumberFormat('en-US', {
@@ -23,22 +29,21 @@ export function formatNumber(
         currency: 'USD',
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
-      }).format(value);
+      }).format(num);
 
     case 'percentage':
-      return `${value.toFixed(precision)}%`;
+      return `${num.toFixed(precision)}%`;
 
     case 'abbreviated': {
-      // Abbreviate large numbers (e.g., 1.2M, 3.4B)
-      const absValue = Math.abs(value);
+      const absValue = Math.abs(num);
       if (absValue >= 1_000_000_000) {
-        return `${(value / 1_000_000_000).toFixed(precision)}B`;
+        return `${(num / 1_000_000_000).toFixed(precision)}B`;
       } else if (absValue >= 1_000_000) {
-        return `${(value / 1_000_000).toFixed(precision)}M`;
+        return `${(num / 1_000_000).toFixed(precision)}M`;
       } else if (absValue >= 1_000) {
-        return `${(value / 1_000).toFixed(precision)}K`;
+        return `${(num / 1_000).toFixed(precision)}K`;
       }
-      return value.toFixed(precision);
+      return num.toFixed(precision);
     }
 
     case 'number':
@@ -46,7 +51,7 @@ export function formatNumber(
       return new Intl.NumberFormat('en-US', {
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
-      }).format(value);
+      }).format(num);
   }
 }
 

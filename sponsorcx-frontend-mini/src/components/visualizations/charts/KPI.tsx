@@ -1,12 +1,13 @@
-import { Box, Text, Group, Stack, Alert } from '@mantine/core';
+import { Box, Text, Group, Stack } from '@mantine/core';
 import { formatNumber, NumberFormatType } from '../../../utils/numberFormatter';
-import { extractSingleValue } from '../../../utils/chartDataAnalyzer';
-import { useEffect, useRef, useState } from 'react';
+import { transformChartData } from '../../../utils/chartDataTransformations';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { EmptyState } from '../utils/EmptyState';
 
 interface KPIProps {
   // Either provide a direct value OR query result to extract from
-  value?: number;
-  queryResult?: any;
+  userDefinedValue?: number;
+  queryResult?: unknown;
   label?: string;
   formatType?: NumberFormatType;
   precision?: number;
@@ -25,9 +26,11 @@ interface KPIProps {
  * - Optional secondary comparison metric
  * - Clean, minimal design
  * - Fills container like other chart types
+ *
+ * Uses the centralized transformChartData utility to extract KPI values.
  */
 export function KPI({
-  value: directValue,
+  userDefinedValue,
   queryResult,
   label,
   formatType = 'number',
@@ -41,32 +44,24 @@ export function KPI({
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState('4rem');
 
-  // Extract value from query result if provided, otherwise use direct value
-  let value: number | undefined = directValue;
+  // Use centralized transformation utility to extract KPI value
+  const transformationResult = useMemo(
+    () =>
+      transformChartData({
+        chartType: 'kpi',
+        cubeData: queryResult,
+      }),
+    [queryResult]
+  );
 
-  if (queryResult !== undefined) {
-    const extractedValue = extractSingleValue(queryResult);
+  const { data: transformedData } = transformationResult;
 
-    if (extractedValue === null) {
-      return (
-        <Alert color="red" variant="light">
-          <Text size="sm">Unable to extract numeric value from query result.</Text>
-        </Alert>
-      );
-    }
-
-    value = extractedValue;
+  // Extract value or show empty state
+  if (!transformedData || transformedData.length === 0) {
+    return <EmptyState data={transformedData} queryResult={queryResult} />;
   }
 
-  if (value === undefined) {
-    return (
-      <Alert color="red" variant="light">
-        <Text size="sm">No value provided to KPI component.</Text>
-      </Alert>
-    );
-  }
-
-  const formattedValue = formatNumber(value, formatType, precision);
+  const formattedValue = formatNumber(userDefinedValue ?? transformedData[0].value, formatType, precision);
 
   // Calculate optimal font size based on container dimensions
   useEffect(() => {

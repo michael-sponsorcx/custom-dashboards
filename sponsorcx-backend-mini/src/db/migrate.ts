@@ -78,10 +78,82 @@ export const runMigrations = async () => {
     }
 };
 
-// Rollback last migration (for development only)
+// Execute a rollback migration file
+const executeRollback = async (filename: string) => {
+    const downFilename = filename.replace('.sql', '.down.sql');
+    const filepath = path.join(MIGRATIONS_DIR, downFilename);
+
+    if (!fs.existsSync(filepath)) {
+        throw new Error(`Rollback file not found: ${downFilename}`);
+    }
+
+    const sql = fs.readFileSync(filepath, 'utf8');
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(sql);
+        await client.query('DELETE FROM migrations WHERE name = $1', [filename]);
+        await client.query('COMMIT');
+        console.log(`✅ Rollback executed: ${filename} -> ${downFilename}`);
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error(`❌ Rollback failed: ${downFilename}`, error);
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
+// Rollback last migration
 export const rollbackLastMigration = async () => {
-    console.warn('⚠️  Rollback functionality not implemented. Please handle rollbacks manually.');
-    console.warn('⚠️  In production, consider using a migration tool like node-pg-migrate or Flyway.');
+    try {
+        console.log('🔄 Rolling back last migration...');
+
+        const executedMigrations = await getExecutedMigrations();
+
+        if (executedMigrations.length === 0) {
+            console.log('ℹ️  No migrations to rollback');
+            return;
+        }
+
+        const lastMigration = executedMigrations[executedMigrations.length - 1];
+        console.log(`📝 Rolling back: ${lastMigration}`);
+
+        await executeRollback(lastMigration);
+
+        console.log('✅ Rollback completed successfully');
+    } catch (error) {
+        console.error('❌ Rollback error:', error);
+        throw error;
+    }
+};
+
+// Rollback multiple migrations
+export const rollbackMigrations = async (count: number = 1) => {
+    try {
+        console.log(`🔄 Rolling back ${count} migration(s)...`);
+
+        const executedMigrations = await getExecutedMigrations();
+
+        if (executedMigrations.length === 0) {
+            console.log('ℹ️  No migrations to rollback');
+            return;
+        }
+
+        const migrationsToRollback = executedMigrations.slice(-count).reverse();
+
+        console.log(`📝 Found ${migrationsToRollback.length} migration(s) to rollback`);
+
+        for (const migration of migrationsToRollback) {
+            await executeRollback(migration);
+        }
+
+        console.log('✅ All rollbacks completed successfully');
+    } catch (error) {
+        console.error('❌ Rollback error:', error);
+        throw error;
+    }
 };
 
 // Run migrations if this file is executed directly

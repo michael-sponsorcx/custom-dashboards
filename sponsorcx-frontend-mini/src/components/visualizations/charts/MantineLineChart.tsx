@@ -14,6 +14,7 @@ import {
   processRegressionData,
   mergeRegressionSeries,
 } from './utils/regressionHelpers';
+import { EmptyState } from '../utils/EmptyState';
 
 interface MantineLineChartProps {
   queryResult: any;
@@ -80,10 +81,10 @@ export const MantineLineChart = memo(function MantineLineChart({
   );
 
   const { data: transformedData, dimensionField, series } = transformationResult;
-
-  // Handle case where transformation failed
+  
+  // Early return for empty state in the render
   if (!transformedData || transformedData.length === 0 || !dimensionField || !series) {
-    return <div>No data available for chart</div>;
+    return <EmptyState data={transformedData} queryResult={queryResult} />;
   }
 
   // Apply sorting using useMemo hook inside useSortedChartData

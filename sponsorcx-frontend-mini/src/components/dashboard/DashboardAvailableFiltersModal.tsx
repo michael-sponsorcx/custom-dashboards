@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDashboardFilterContext } from './context';
+import { useDashboardFilterStore } from '../../store';
 import {
   FilterRule,
   ComparisonOperator,
@@ -28,7 +28,7 @@ export function DashboardAvailableFiltersModal({
   fieldName,
 }: DashboardAvailableFiltersModalProps) {
   const { availableFields, activeFilters, selectedViews, addFilter, updateFilter, removeFilter } =
-    useDashboardFilterContext();
+    useDashboardFilterStore();
 
   // Find the field config and existing filter
   const fieldConfig = availableFields.find((f) => f.fieldName === fieldName);

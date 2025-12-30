@@ -6,6 +6,7 @@ import {
   IconFilter,
   IconRefresh,
   IconZoomReset,
+  IconBell,
 } from '@tabler/icons-react';
 import type { DrillDownState } from '../hooks/useGraphDrillDown';
 
@@ -27,8 +28,10 @@ interface GraphCardActionsProps {
   onReset: () => void;
   /** Handler for refresh */
   onRefresh: () => void;
-  /** Handler for filter */
-  onFilter: () => void;
+  /** Handler to open graph-level filter modal (configures permanent filters for this specific graph) */
+  onOpenFilterModal: () => void;
+  /** Handler to open KPI alert modal */
+  onOpenKPIAlertModal: () => void;
   /** Handler for CSV download */
   onDownload: () => void;
   /** Handler for edit */
@@ -43,6 +46,9 @@ interface GraphCardActionsProps {
  * **Purpose:** All action buttons (reset, refresh, filter, download, edit, delete)
  * **Pattern:** Group of icon buttons with tooltips and conditional visibility
  *
+ * **Filter Button:** Opens a modal to configure graph-level permanent filters (GraphTemplate.filters).
+ * This is separate from dashboard-level filters which apply to ALL graphs.
+ *
  * @input drillDownState, various handlers
  * @output Toolbar with 6 action buttons
  *
@@ -55,7 +61,7 @@ interface GraphCardActionsProps {
  *   hasData={true}
  *   onReset={resetDrillDown}
  *   onRefresh={handleRefresh}
- *   onFilter={() => onFilter(id)}
+ *   onOpenFilterModal={handleOpenFilterModal}
  *   onDownload={downloadCSV}
  *   onEdit={() => onEdit(id)}
  *   onDelete={() => onDelete(id)}
@@ -69,7 +75,8 @@ export function GraphCardActions({
   hasData,
   onReset,
   onRefresh,
-  onFilter,
+  onOpenFilterModal,
+  onOpenKPIAlertModal,
   onDownload,
   onEdit,
   onDelete,
@@ -112,15 +119,27 @@ export function GraphCardActions({
         </ActionIcon>
       </Tooltip>
 
-      {/* Filter button */}
-      <Tooltip label="Filter graph">
+      {/* Filter button - Opens modal to configure graph-level permanent filters */}
+      <Tooltip label="Configure graph filters">
         <ActionIcon
           color="violet"
           variant="subtle"
-          onClick={onFilter}
-          aria-label="Filter graph"
+          onClick={onOpenFilterModal}
+          aria-label="Configure graph filters"
         >
           <IconFilter size={18} />
+        </ActionIcon>
+      </Tooltip>
+
+      {/* KPI Alert button - Opens modal to create/manage KPI alerts */}
+      <Tooltip label="Create KPI alert">
+        <ActionIcon
+          color="yellow"
+          variant="subtle"
+          onClick={onOpenKPIAlertModal}
+          aria-label="Create KPI alert"
+        >
+          <IconBell size={18} />
         </ActionIcon>
       </Tooltip>
 

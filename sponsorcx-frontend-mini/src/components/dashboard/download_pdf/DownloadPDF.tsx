@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { DashboardItem } from '@/types/dashboard';
-import { useDashboardFilterState } from '../hooks/useDashboardFilters';
+import { useDashboardFilterStore } from '@/store';
 import { usePDFGeneration } from './hooks';
 import { PDFGenerationProgress } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
@@ -18,7 +18,7 @@ interface DownloadPDFProps {
  * Renders slides off-screen, captures them as images, and combines into PDF
  */
 export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFProps) {
-  const { activeFilters: dashboardFilters } = useDashboardFilterState();
+  const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Refs for slide elements to capture
   const titleSlideRef = useRef<HTMLDivElement>(null);

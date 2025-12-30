@@ -1,5 +1,5 @@
 import { Group, Badge, Text, Stack, Paper } from '@mantine/core';
-import { useDashboardFilterContext } from './context';
+import { useDashboardFilterStore } from '../../store';
 
 interface DashboardAvailableFiltersProps {
   onFilterClick: (fieldName: string) => void;
@@ -12,7 +12,7 @@ interface DashboardAvailableFiltersProps {
  * When clicked, opens a modal to configure filter values.
  */
 export function DashboardAvailableFilters({ onFilterClick }: DashboardAvailableFiltersProps) {
-  const { availableFields, activeFilters } = useDashboardFilterContext();
+  const { availableFields, activeFilters } = useDashboardFilterStore();
 
   if (availableFields.length === 0) {
     return null;
