@@ -19,6 +19,30 @@
 - Define explicit interfaces and types for all data structures
 - If you must work with dynamic data, use type guards or assertions
 
+**IMPORTANT:** Always use arrow functions for all function declarations.
+
+- Use arrow functions for component definitions: `export const MyComponent = () => { ... }`
+- Use arrow functions for helper functions and utilities
+- Use arrow functions for event handlers and callbacks
+- Example:
+  ```typescript
+  // Good
+  export const MyComponent = () => {
+    const handleClick = () => {
+      console.log('clicked');
+    };
+    return <button onClick={handleClick}>Click me</button>;
+  };
+
+  // Avoid
+  export function MyComponent() {
+    function handleClick() {
+      console.log('clicked');
+    }
+    return <button onClick={handleClick}>Click me</button>;
+  }
+  ```
+
 ## Backend Types
 
 **IMPORTANT:** Use the auto-generated GraphQL types from the backend for all API-related type definitions.
