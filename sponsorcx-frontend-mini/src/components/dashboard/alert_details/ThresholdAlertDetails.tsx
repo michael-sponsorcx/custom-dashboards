@@ -80,6 +80,7 @@ export const ThresholdAlertDetails = ({ setKpiFormData }: ThresholdAlertDetailsP
           Threshold Value
         </Text>
         <TextInput
+          type="number"
           placeholder="Enter threshold value"
           value={thresholdValue}
           onChange={(event) => handleThresholdValueChange(event.currentTarget.value)}

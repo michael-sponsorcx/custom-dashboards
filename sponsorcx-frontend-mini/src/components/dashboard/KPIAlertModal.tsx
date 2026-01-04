@@ -80,6 +80,11 @@ export const KPIAlertModal = ({ opened, onClose, graphId, graphName: _graphName 
   const handleNext = () => {
     if (selectedAlertType) {
       setActiveTab('configure');
+      // Set the alertType in the KPI form data to the selected alert type's id
+      setKpiFormData((prev) => ({
+        ...prev,
+        alertType: selectedAlertType.id,
+      }));
       // console.log('Moving to configure tab with alert type:', selectedAlertType);
     }
   };
@@ -90,19 +95,7 @@ export const KPIAlertModal = ({ opened, onClose, graphId, graphName: _graphName 
         throw new Error('Missing required alert information');
       }
 
-      // Construct the alert object based on the selected alert type
-      const alertObject = {
-        type: selectedAlertType.id,
-        graphId: graphId,
-        alertDetails: kpiFormData.alertDetails || {},
-        alertBodyContent: kpiFormData.alertBodyContent || '',
-        recipients: kpiFormData.recipients || [],
-        kpiDetails: kpiFormData.kpiDetails || [],
-      };
-
       // Log the alert object
-      console.log('Creating alert with object:', alertObject);
-      console.log('Alert Type:', selectedAlertType);
       console.log('KPI Form Data:', kpiFormData);
 
       // TODO: Implement actual API call here
