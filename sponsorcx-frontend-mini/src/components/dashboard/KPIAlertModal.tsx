@@ -1,38 +1,14 @@
 import { Modal, Stack, Title, Text, Button, Divider, Group, SimpleGrid, Tabs } from '@mantine/core';
 import { useState } from 'react';
+import { notifications } from '@mantine/notifications';
 import { KPIAlertTile } from './KPIAlertTile';
 import { KPIAlertModalConfigureTab } from './KPIAlertModalConfigureTab';
-
-interface KPIAlertModalProps {
-  opened: boolean;
-  onClose: () => void;
-  graphId: string | null;
-  graphName: string;
-}
-
-/**
- * Type of all possible KPI Alert IDs
- */
-export type KPIAlertTypeId =
-  | 'threshold'
-  | 'scheduled'
-  | 'attribute-threshold'
-  | 'attribute-scheduled'
-  | 'anomaly';
-
-/**
- * KPI Alert Type Definition
- */
-interface KPIAlertType {
-  id: KPIAlertTypeId;
-  title: string;
-  example: string;
-}
+import type { KPIAlertModalProps, KPIAlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
 
 /**
  * Fixed list of KPI alert types available to users
  */
-const KPI_ALERT_TYPES: KPIAlertType[] = [
+const KPI_ALERT_TYPES: KPIAlertTypeDefinition[] = [
   {
     id: 'threshold',
     title: 'KPI crosses a set limit',
@@ -43,21 +19,21 @@ const KPI_ALERT_TYPES: KPIAlertType[] = [
     title: 'Regular KPI updates',
     example: 'Receive a weekly update from monthly sales every Monday at 9 a.m.',
   },
-  {
-    id: 'attribute-threshold',
-    title: 'Values of an attribute crosses a set limit',
-    example: 'Receive an alert if monthly sales for any product decreases by 10%',
-  },
-  {
-    id: 'attribute-scheduled',
-    title: 'Regular updates on values of an attribute',
-    example: 'Receive a daily update monthly sales for any product at 9am',
-  },
-  {
-    id: 'anomaly',
-    title: 'Unexpected changes in KPI',
-    example: 'Receive an alert if monthly sales is outside the expected range',
-  },
+  // {
+  //   id: 'attribute-threshold',
+  //   title: 'Values of an attribute crosses a set limit',
+  //   example: 'Receive an alert if monthly sales for any product decreases by 10%',
+  // },
+  // {
+  //   id: 'attribute-scheduled',
+  //   title: 'Regular updates on values of an attribute',
+  //   example: 'Receive a daily update monthly sales for any product at 9am',
+  // },
+  // {
+  //   id: 'anomaly',
+  //   title: 'Unexpected changes in KPI',
+  //   example: 'Receive an alert if monthly sales is outside the expected range',
+  // },
 ];
 
 /**
@@ -71,13 +47,15 @@ const KPI_ALERT_TYPES: KPIAlertType[] = [
  * - Body: Alert configuration content
  * - Footer: Cancel and Next buttons
  */
-export function KPIAlertModal({ opened, onClose, graphId: _graphId, graphName: _graphName }: KPIAlertModalProps) {
-  const [selectedAlertType, setSelectedAlertType] = useState<KPIAlertType | null>(null);
+export const KPIAlertModal = ({ opened, onClose, graphId, graphName: _graphName }: KPIAlertModalProps) => {
+  const [selectedAlertType, setSelectedAlertType] = useState<KPIAlertTypeDefinition | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>('select-type');
+  const [kpiFormData, setKpiFormData] = useState<KPIFormData>({});
 
   const resetModalState = () => {
     setSelectedAlertType(null);
     setActiveTab('select-type');
+    setKpiFormData({});
   };
 
   const handleCancel = () => {
@@ -93,22 +71,63 @@ export function KPIAlertModal({ opened, onClose, graphId: _graphId, graphName: _
     const alertType = KPI_ALERT_TYPES.find((type) => type.id === alertTypeId);
     if (alertType) {
       setSelectedAlertType(alertType);
-      console.log('Selected alert type:', alertType);
+      if (process.env.NODE_ENV === 'development') {
+        // console.log('Selected alert type:', alertType);
+      }
     }
   };
 
   const handleNext = () => {
     if (selectedAlertType) {
       setActiveTab('configure');
-      console.log('Moving to configure tab with alert type:', selectedAlertType);
+      // console.log('Moving to configure tab with alert type:', selectedAlertType);
     }
   };
 
-  const handleCreateAlert = () => {
-    console.log('Creating alert with type:', selectedAlertType);
-    // TODO: Implement alert creation logic
-    resetModalState();
-    onClose();
+  const handleCreateAlert = async () => {
+    try {
+      if (!selectedAlertType || !graphId) {
+        throw new Error('Missing required alert information');
+      }
+
+      // Construct the alert object based on the selected alert type
+      const alertObject = {
+        type: selectedAlertType.id,
+        graphId: graphId,
+        alertDetails: kpiFormData.alertDetails || {},
+        alertBodyContent: kpiFormData.alertBodyContent || '',
+        recipients: kpiFormData.recipients || [],
+        kpiDetails: kpiFormData.kpiDetails || [],
+      };
+
+      // Log the alert object
+      console.log('Creating alert with object:', alertObject);
+      console.log('Alert Type:', selectedAlertType);
+      console.log('KPI Form Data:', kpiFormData);
+
+      // TODO: Implement actual API call here
+      // await createKPIAlert(alertObject);
+
+      // Show success notification
+      notifications.show({
+        title: 'Alert Created',
+        message: 'Your KPI alert has been created successfully',
+        color: 'green',
+        autoClose: 3000,
+      });
+
+      resetModalState();
+      onClose();
+    } catch (error) {
+      // Show error notification
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to create KPI alert. Please try again.',
+        color: 'red',
+        autoClose: 5000,
+      });
+      console.error('Error creating alert:', error);
+    }
   };
 
   const handleModalClose = () => {
@@ -134,19 +153,10 @@ export function KPIAlertModal({ opened, onClose, graphId: _graphId, graphName: _
     >
       <Divider mb="lg" />
 
-      {/* Body Section - Tabs */}
-      <Tabs value={activeTab} mb="xl">
-        <Tabs.List style={{ pointerEvents: 'none', cursor: 'default' }}>
-          <Tabs.Tab value="select-type" style={{ flex: 1 }}>
-            {/* Empty tab - no text */}
-          </Tabs.Tab>
-          <Tabs.Tab value="configure" style={{ flex: 1 }}>
-            {/* Empty tab - no text */}
-          </Tabs.Tab>
-        </Tabs.List>
-
-        <Tabs.Panel value="select-type" pt="md">
-          <SimpleGrid cols={2} spacing="md">
+      {/* Body Section - Tab Content */}
+      <Tabs value={activeTab}>
+        <Tabs.Panel value="select-type">
+          <SimpleGrid cols={2} spacing="md" mb="xl">
             {KPI_ALERT_TYPES.map((alertType) => (
               <KPIAlertTile
                 key={alertType.id}
@@ -154,20 +164,35 @@ export function KPIAlertModal({ opened, onClose, graphId: _graphId, graphName: _
                 example={alertType.example}
                 isSelected={selectedAlertType?.id === alertType.id}
                 onClick={() => handleSelectAlertType(alertType.id)}
+                // disabled={alertType.id === 'anomaly'}
               />
             ))}
           </SimpleGrid>
         </Tabs.Panel>
 
-        <Tabs.Panel value="configure" pt="md">
+        <Tabs.Panel value="configure">
           {selectedAlertType && (
-            <KPIAlertModalConfigureTab
-              alertTypeId={selectedAlertType.id}
-              alertTypeTitle={selectedAlertType.title}
-              alertTypeExample={selectedAlertType.example}
-            />
+            <Stack mb="xl">
+              <KPIAlertModalConfigureTab
+                alertTypeId={selectedAlertType.id}
+                alertTypeTitle={selectedAlertType.title}
+                alertTypeExample={selectedAlertType.example}
+                kpiFormData={kpiFormData}
+                setKpiFormData={setKpiFormData}
+              />
+            </Stack>
           )}
         </Tabs.Panel>
+
+        {/* Tab Progress Bar - Between Body and Footer */}
+        <Tabs.List style={{ pointerEvents: 'none', cursor: 'default' }} mb="lg">
+          <Tabs.Tab value="select-type" style={{ flex: 1 }}>
+            {/* Empty tab - no text */}
+          </Tabs.Tab>
+          <Tabs.Tab value="configure" style={{ flex: 1 }}>
+            {/* Empty tab - no text */}
+          </Tabs.Tab>
+        </Tabs.List>
       </Tabs>
 
       {/* Footer Section */}
@@ -189,4 +214,4 @@ export function KPIAlertModal({ opened, onClose, graphId: _graphId, graphName: _
       </Group>
     </Modal>
   );
-}
+};

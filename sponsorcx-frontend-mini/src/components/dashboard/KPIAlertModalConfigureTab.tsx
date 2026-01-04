@@ -1,17 +1,10 @@
 import { Stack, Text, Title, Textarea, TextInput, Badge, CloseButton, Group } from '@mantine/core';
 import { useState } from 'react';
-import type { KPIAlertTypeId } from './KPIAlertModal';
+import type { KPIAlertModalConfigureTabProps, ComparisonOperator, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../types/kpi-alerts';
 import { ThresholdAlertDetails } from './alert_details/ThresholdAlertDetails';
 import { ScheduledAlertDetails } from './alert_details/ScheduledAlertDetails';
-
-interface KPIAlertModalConfigureTabProps {
-  /** ID of the selected alert type */
-  alertTypeId: KPIAlertTypeId;
-  /** Title of the selected alert type */
-  alertTypeTitle: string;
-  /** Example description of the selected alert type */
-  alertTypeExample: string;
-}
+// import { AttributeThresholdAlertDetails } from './alert_details/AttributeThresholdAlertDetails';
+// import { AttributeScheduledAlertDetails } from './alert_details/AttributeScheduledAlertDetails';
 
 /**
  * KPIAlertModalConfigureTab Component
@@ -20,21 +13,87 @@ interface KPIAlertModalConfigureTabProps {
  * This is where users will configure the details of their selected alert type.
  * The alert details section changes based on the selected alert type.
  */
-export function KPIAlertModalConfigureTab({ alertTypeId, alertTypeTitle: _alertTypeTitle, alertTypeExample: _alertTypeExample }: KPIAlertModalConfigureTabProps) {
+export const KPIAlertModalConfigureTab = ({ alertTypeId, alertTypeTitle: _alertTypeTitle, alertTypeExample: _alertTypeExample, kpiFormData: _kpiFormData, setKpiFormData }: KPIAlertModalConfigureTabProps) => {
+  const [alertName, setAlertName] = useState('');
+  const [condition, setCondition] = useState<string>('');
+  const [thresholdValue, setThresholdValue] = useState<string>('');
   const [customMessage, setCustomMessage] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [recipients, setRecipients] = useState<string[]>([]);
 
+  const handleAlertNameChange = (value: string) => {
+    setAlertName(value);
+
+    // Update KPI form data with alert details
+    setKpiFormData((prev) => ({
+      ...prev,
+      alertDetails: {
+        ...prev.alertDetails,
+        alertName: value,
+      } as ThresholdAlertDetailsType,
+    }));
+  };
+
+  const handleConditionChange = (newCondition: ComparisonOperator) => {
+    setCondition(newCondition);
+
+    // Update KPI form data with alert details
+    setKpiFormData((prev) => ({
+      ...prev,
+      alertDetails: {
+        ...prev.alertDetails,
+        condition: newCondition,
+      } as ThresholdAlertDetailsType,
+    }));
+  };
+
+  const handleThresholdValueChange = (value: string) => {
+    setThresholdValue(value);
+
+    // Update KPI form data with alert details
+    setKpiFormData((prev) => ({
+      ...prev,
+      alertDetails: {
+        ...prev.alertDetails,
+        thresholdValue: parseFloat(value) || 0,
+      } as ThresholdAlertDetailsType,
+    }));
+  };
+
   const handleEmailKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && emailInput.trim()) {
       event.preventDefault();
-      setRecipients([...recipients, emailInput.trim()]);
+      const newRecipients = [...recipients, emailInput.trim()];
+      setRecipients(newRecipients);
       setEmailInput('');
+
+      // Update KPI form data
+      setKpiFormData((prev) => ({
+        ...prev,
+        recipients: newRecipients,
+      }));
     }
   };
 
   const handleRemoveRecipient = (index: number) => {
-    setRecipients(recipients.filter((_, i) => i !== index));
+    const newRecipients = recipients.filter((_, i) => i !== index);
+    setRecipients(newRecipients);
+
+    // Update KPI form data
+    setKpiFormData((prev) => ({
+      ...prev,
+      recipients: newRecipients,
+    }));
+  };
+
+  const handleCustomMessageChange = (value: string) => {
+    setCustomMessage(value);
+
+    // Update KPI form data
+    setKpiFormData((prev) => ({
+      ...prev,
+      alertBodyContent: value,
+    }));
   };
 
   return (
@@ -47,27 +106,30 @@ export function KPIAlertModalConfigureTab({ alertTypeId, alertTypeTitle: _alertT
           <Text size="sm" fw={500}>
             Alert Name
           </Text>
-          <TextInput placeholder="e.g. 'Alert on total sign net revenue'" />
+          <TextInput
+            placeholder="e.g. 'Alert on total sign net revenue'"
+            value={alertName}
+            onChange={(event) => handleAlertNameChange(event.currentTarget.value)}
+          />
         </Stack>
 
         {/* Alert Type Specific Details */}
-        {alertTypeId === 'threshold' && <ThresholdAlertDetails />}
+        {alertTypeId === 'threshold' && (
+          <ThresholdAlertDetails
+            condition={condition}
+            thresholdValue={thresholdValue}
+            onConditionChange={handleConditionChange}
+            onThresholdValueChange={handleThresholdValueChange}
+          />
+        )}
         {alertTypeId === 'scheduled' && <ScheduledAlertDetails />}
-        {alertTypeId === 'attribute-threshold' && (
-          <Text size="sm" c="dimmed" fs="italic">
-            Attribute threshold alert details will be added here
-          </Text>
-        )}
-        {alertTypeId === 'attribute-scheduled' && (
-          <Text size="sm" c="dimmed" fs="italic">
-            Attribute scheduled alert details will be added here
-          </Text>
-        )}
+        {/* {alertTypeId === 'attribute-threshold' && <AttributeThresholdAlertDetails />}
+        {alertTypeId === 'attribute-scheduled' && <AttributeScheduledAlertDetails />}
         {alertTypeId === 'anomaly' && (
           <Text size="sm" c="dimmed" fs="italic">
             Anomaly alert details will be added here
           </Text>
-        )}
+        )} */}
       </Stack>
 
       {/* Section 2: Alert Body Content */}
@@ -79,7 +141,7 @@ export function KPIAlertModalConfigureTab({ alertTypeId, alertTypeTitle: _alertT
         <Textarea
           placeholder="Enter your custom message here..."
           value={customMessage}
-          onChange={(event) => setCustomMessage(event.currentTarget.value)}
+          onChange={(event) => handleCustomMessageChange(event.currentTarget.value)}
           minRows={4}
           autosize
         />
@@ -132,4 +194,4 @@ export function KPIAlertModalConfigureTab({ alertTypeId, alertTypeTitle: _alertT
       </Stack>
     </Stack>
   );
-}
+};

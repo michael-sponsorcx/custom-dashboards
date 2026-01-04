@@ -1,15 +1,5 @@
 import { Paper, Stack, Title, Text } from '@mantine/core';
-
-interface KPIAlertTileProps {
-  /** The type/title of the KPI alert */
-  title: string;
-  /** Example description of what this alert does */
-  example: string;
-  /** Whether this tile is currently selected */
-  isSelected?: boolean;
-  /** Optional click handler for when the tile is selected */
-  onClick?: () => void;
-}
+import type { KPIAlertTileProps } from '../../types/kpi-alerts';
 
 /**
  * KPIAlertTile Component
@@ -25,23 +15,24 @@ interface KPIAlertTileProps {
  *   onClick={() => handleSelectAlertType('threshold')}
  * />
  */
-export function KPIAlertTile({ title, example, isSelected, onClick }: KPIAlertTileProps) {
+export const KPIAlertTile = ({ title, example, isSelected, onClick, disabled }: KPIAlertTileProps) => {
   return (
     <Paper
       shadow="sm"
       p="md"
       radius="md"
       withBorder
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       style={{
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: disabled ? 'not-allowed' : onClick ? 'pointer' : 'default',
         transition: 'all 0.2s ease',
         borderColor: isSelected ? 'var(--mantine-color-blue-6)' : undefined,
         borderWidth: isSelected ? '2px' : undefined,
+        opacity: disabled ? 0.5 : 1,
       }}
       styles={{
         root: {
-          '&:hover': onClick
+          '&:hover': !disabled && onClick
             ? {
                 borderColor: 'var(--mantine-color-blue-5)',
                 backgroundColor: 'var(--mantine-color-blue-0)',
@@ -54,7 +45,9 @@ export function KPIAlertTile({ title, example, isSelected, onClick }: KPIAlertTi
     >
       <Stack gap="sm">
         {/* Header - Alert Type */}
-        <Title order={4}>{title}</Title>
+        <Title order={4} c={disabled ? 'dimmed' : undefined}>
+          {title}
+        </Title>
 
         {/* Body - Example */}
         <Text size="sm" c="dimmed">
@@ -63,4 +56,4 @@ export function KPIAlertTile({ title, example, isSelected, onClick }: KPIAlertTi
       </Stack>
     </Paper>
   );
-}
+};
