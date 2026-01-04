@@ -1,10 +1,20 @@
 import { Stack, Text, Title, Textarea, TextInput, Badge, CloseButton, Group } from '@mantine/core';
 import { useState } from 'react';
-import type { KPIAlertModalConfigureTabProps, ComparisonOperator, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../types/kpi-alerts';
+import type { KPIAlertType, KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../types/kpi-alerts';
 import { ThresholdAlertDetails } from './alert_details/ThresholdAlertDetails';
 import { ScheduledAlertDetails } from './alert_details/ScheduledAlertDetails';
 // import { AttributeThresholdAlertDetails } from './alert_details/AttributeThresholdAlertDetails';
 // import { AttributeScheduledAlertDetails } from './alert_details/AttributeScheduledAlertDetails';
+
+/**
+ * Props for KPI Alert Modal Configure Tab
+ */
+interface KPIAlertModalConfigureTabProps {
+  /** ID of the selected alert type */
+  alertTypeId: KPIAlertType;
+  /** Function to update KPI form data */
+  setKpiFormData: (data: KPIFormData | ((prev: KPIFormData) => KPIFormData)) => void;
+}
 
 /**
  * KPIAlertModalConfigureTab Component
@@ -13,10 +23,8 @@ import { ScheduledAlertDetails } from './alert_details/ScheduledAlertDetails';
  * This is where users will configure the details of their selected alert type.
  * The alert details section changes based on the selected alert type.
  */
-export const KPIAlertModalConfigureTab = ({ alertTypeId, alertTypeTitle: _alertTypeTitle, alertTypeExample: _alertTypeExample, kpiFormData: _kpiFormData, setKpiFormData }: KPIAlertModalConfigureTabProps) => {
+export const KPIAlertModalConfigureTab = ({ alertTypeId, setKpiFormData }: KPIAlertModalConfigureTabProps) => {
   const [alertName, setAlertName] = useState('');
-  const [condition, setCondition] = useState<string>('');
-  const [thresholdValue, setThresholdValue] = useState<string>('');
   const [customMessage, setCustomMessage] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [recipients, setRecipients] = useState<string[]>([]);
@@ -24,39 +32,13 @@ export const KPIAlertModalConfigureTab = ({ alertTypeId, alertTypeTitle: _alertT
   const handleAlertNameChange = (value: string) => {
     setAlertName(value);
 
-    // Update KPI form data with alert details
+    // Update KPI form data with alert details (alertName is common to all alert types)
     setKpiFormData((prev) => ({
       ...prev,
       alertDetails: {
-        ...prev.alertDetails,
+        ...(prev.alertDetails || {}),
         alertName: value,
-      } as ThresholdAlertDetailsType,
-    }));
-  };
-
-  const handleConditionChange = (newCondition: ComparisonOperator) => {
-    setCondition(newCondition);
-
-    // Update KPI form data with alert details
-    setKpiFormData((prev) => ({
-      ...prev,
-      alertDetails: {
-        ...prev.alertDetails,
-        condition: newCondition,
-      } as ThresholdAlertDetailsType,
-    }));
-  };
-
-  const handleThresholdValueChange = (value: string) => {
-    setThresholdValue(value);
-
-    // Update KPI form data with alert details
-    setKpiFormData((prev) => ({
-      ...prev,
-      alertDetails: {
-        ...prev.alertDetails,
-        thresholdValue: parseFloat(value) || 0,
-      } as ThresholdAlertDetailsType,
+      } as ThresholdAlertDetailsType | ScheduledAlertDetailsType,
     }));
   };
 
@@ -115,14 +97,9 @@ export const KPIAlertModalConfigureTab = ({ alertTypeId, alertTypeTitle: _alertT
 
         {/* Alert Type Specific Details */}
         {alertTypeId === 'threshold' && (
-          <ThresholdAlertDetails
-            condition={condition}
-            thresholdValue={thresholdValue}
-            onConditionChange={handleConditionChange}
-            onThresholdValueChange={handleThresholdValueChange}
-          />
+          <ThresholdAlertDetails setKpiFormData={setKpiFormData} />
         )}
-        {alertTypeId === 'scheduled' && <ScheduledAlertDetails />}
+        {alertTypeId === 'scheduled' && <ScheduledAlertDetails setKpiFormData={setKpiFormData} />}
         {/* {alertTypeId === 'attribute-threshold' && <AttributeThresholdAlertDetails />}
         {alertTypeId === 'attribute-scheduled' && <AttributeScheduledAlertDetails />}
         {alertTypeId === 'anomaly' && (

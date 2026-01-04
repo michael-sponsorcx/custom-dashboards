@@ -175,9 +175,6 @@ export const KPIAlertModal = ({ opened, onClose, graphId, graphName: _graphName 
             <Stack mb="xl">
               <KPIAlertModalConfigureTab
                 alertTypeId={selectedAlertType.id}
-                alertTypeTitle={selectedAlertType.title}
-                alertTypeExample={selectedAlertType.example}
-                kpiFormData={kpiFormData}
                 setKpiFormData={setKpiFormData}
               />
             </Stack>
