@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Stack, Text, Select, Flex, Checkbox } from '@mantine/core';
 import type { KPIFormData, AlertFrequency, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../../types/kpi-alerts';
 
-// Frequency options
-const FREQUENCY_OPTIONS = [
+// Frequency options derived from AlertFrequency type
+const FREQUENCY_OPTIONS: Array<{ value: AlertFrequency; label: string }> = [
   { value: 'hourly', label: 'Hourly' },
   { value: 'daily', label: 'Daily' },
   { value: 'weekly', label: 'Weekly' },
