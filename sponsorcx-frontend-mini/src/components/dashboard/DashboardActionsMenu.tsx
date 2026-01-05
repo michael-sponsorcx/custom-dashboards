@@ -1,9 +1,11 @@
 import { Menu, Button } from '@mantine/core';
-import { IconPresentation, IconFileTypePdf, IconRefresh, IconChevronDown } from '@tabler/icons-react';
+import { IconPresentation, IconFileTypePdf, IconRefresh, IconChevronDown, IconCalendar, IconChevronRight } from '@tabler/icons-react';
 
 interface DashboardActionsMenuProps {
   onPresent: () => void;
   onDownloadPDF: () => void;
+  onCreateSchedule: () => void;
+  onManageSchedules: () => void;
   onRefresh: () => void;
   disabled?: boolean;
   refreshing?: boolean;
@@ -12,6 +14,8 @@ interface DashboardActionsMenuProps {
 export function DashboardActionsMenu({
   onPresent,
   onDownloadPDF,
+  onCreateSchedule,
+  onManageSchedules,
   onRefresh,
   disabled = false,
   refreshing = false,
@@ -42,6 +46,26 @@ export function DashboardActionsMenu({
         >
           Download PDF
         </Menu.Item>
+        <Menu
+          trigger="hover"
+          position="right-start"
+          offset={2}
+          shadow="md"
+          width={200}
+        >
+          <Menu.Target>
+            <Menu.Item
+              leftSection={<IconCalendar size={16} />}
+              rightSection={<IconChevronRight size={16} />}
+            >
+              Schedule
+            </Menu.Item>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item onClick={onCreateSchedule}>Create Schedule</Menu.Item>
+            <Menu.Item onClick={onManageSchedules}>Manage Schedules</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
         <Menu.Divider />
         <Menu.Item
           leftSection={<IconRefresh size={16} />}

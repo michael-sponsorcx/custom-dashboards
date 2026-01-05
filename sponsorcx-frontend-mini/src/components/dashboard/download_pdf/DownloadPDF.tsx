@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { DashboardItem } from '@/types/dashboard';
 import { useDashboardFilterStore } from '@/store';
 import { usePDFGeneration } from './hooks';
-import { PDFGenerationProgress } from './components';
+import { DownloadPDFToast } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
 
 interface DownloadPDFProps {
@@ -132,9 +132,9 @@ export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFPr
         ))}
       </Box>
 
-      {/* Progress Modal */}
+      {/* Progress Toast */}
       {isGenerating && (
-        <PDFGenerationProgress
+        <DownloadPDFToast
           current={progress.current}
           total={progress.total}
           onCancel={handleCancel}

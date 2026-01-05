@@ -1,17 +1,17 @@
 import { Paper, Stack, Text, Progress, ActionIcon, Group } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 
-interface PDFGenerationProgressProps {
+interface DownloadPDFToastProps {
   current: number;
   total: number;
   onCancel: () => void;
 }
 
 /**
- * Progress indicator displayed during PDF generation
+ * Toast notification displayed during PDF download
  * Small non-blocking notification at bottom right of screen
  */
-export function PDFGenerationProgress({ current, total, onCancel }: PDFGenerationProgressProps) {
+export function DownloadPDFToast({ current, total, onCancel }: DownloadPDFToastProps) {
   const percentage = total > 0 ? (current / total) * 100 : 0;
 
   return (

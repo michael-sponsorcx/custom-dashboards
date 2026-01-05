@@ -1,1 +1,1 @@
-export { PDFGenerationProgress } from './PDFGenerationProgress';
+export { DownloadPDFToast } from './DownloadPDFToast';

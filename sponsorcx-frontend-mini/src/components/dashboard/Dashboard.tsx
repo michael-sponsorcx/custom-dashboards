@@ -5,6 +5,8 @@ import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
 // import { GraphFilterModal } from './GraphFilterModal';
 import { KPIAlertModal } from './KPIAlertModal';
+import { CreateScheduleModal } from './CreateScheduleModal';
+import { ManageSchedulesModal } from './ManageSchedulesModal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
@@ -54,6 +56,10 @@ export function Dashboard() {
   // KPI alert modal state
   const [kpiAlertModalOpen, setKpiAlertModalOpen] = useState(false);
   const [selectedKPIAlertGraphId, setSelectedKPIAlertGraphId] = useState<string | null>(null);
+
+  // Schedule modal states
+  const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
+  const [manageSchedulesModalOpen, setManageSchedulesModalOpen] = useState(false);
 
   // Dashboard filter modal state
   const [dashboardFilterModalOpen, setDashboardFilterModalOpen] = useState(false);
@@ -134,6 +140,22 @@ export function Dashboard() {
     setPdfGenerationMode(false);
   };
 
+  const handleCreateSchedule = () => {
+    setCreateScheduleModalOpen(true);
+  };
+
+  const handleCloseCreateSchedule = () => {
+    setCreateScheduleModalOpen(false);
+  };
+
+  const handleManageSchedules = () => {
+    setManageSchedulesModalOpen(true);
+  };
+
+  const handleCloseManageSchedules = () => {
+    setManageSchedulesModalOpen(false);
+  };
+
   const handleRefreshAll = () => {
     setIsRefreshing(true);
     // Increment refresh key to force all GraphCards to re-fetch
@@ -182,6 +204,8 @@ export function Dashboard() {
             <DashboardActionsMenu
               onPresent={handleStartPresentation}
               onDownloadPDF={handleDownloadPDF}
+              onCreateSchedule={handleCreateSchedule}
+              onManageSchedules={handleManageSchedules}
               onRefresh={handleRefreshAll}
               disabled={graphs.length === 0}
               refreshing={isRefreshing}
@@ -235,6 +259,12 @@ export function Dashboard() {
         graphId={selectedKPIAlertGraphId}
         graphName={selectedKPIAlertGraph?.name || 'Untitled Graph'}
       />
+
+      {/* Create Schedule Modal */}
+      <CreateScheduleModal opened={createScheduleModalOpen} onClose={handleCloseCreateSchedule} />
+
+      {/* Manage Schedules Modal */}
+      <ManageSchedulesModal opened={manageSchedulesModalOpen} onClose={handleCloseManageSchedules} />
 
       {/* Dashboard Filter Modal */}
       <DashboardFilterModal
