@@ -24,7 +24,7 @@ pool.on('error', (err) => {
 });
 
 // Helper function to execute queries
-export const query = async (text: string, params?: any[]) => {
+export const query = async (text: string, params?: unknown[]) => {
     const start = Date.now();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
@@ -35,6 +35,3 @@ export const query = async (text: string, params?: any[]) => {
 
     return res;
 };
-
-// Helper function to get a client from the pool
-export const getClient = () => pool.connect();

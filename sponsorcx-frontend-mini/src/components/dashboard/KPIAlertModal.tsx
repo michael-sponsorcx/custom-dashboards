@@ -47,7 +47,7 @@ const KPI_ALERT_TYPES: KPIAlertTypeDefinition[] = [
  * - Body: Alert configuration content
  * - Footer: Cancel and Next buttons
  */
-export const KPIAlertModal = ({ opened, onClose, graphId, graphName: _graphName }: KPIAlertModalProps) => {
+export const KPIAlertModal = ({ opened, onClose, graphId }: KPIAlertModalProps) => {
   const [selectedAlertType, setSelectedAlertType] = useState<KPIAlertTypeDefinition | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>('select-type');
   const [kpiFormData, setKpiFormData] = useState<KPIFormData>({});

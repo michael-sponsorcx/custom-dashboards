@@ -78,10 +78,6 @@ export function Dashboard() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Find the selected graph for the modal
-  // const selectedGraph = graphs.find((g) => g.id === selectedGraphId);
-  const selectedKPIAlertGraph = graphs.find((g) => g.id === selectedKPIAlertGraphId);
-
   // Handler to open graph-level filter modal for a specific graph
   const handleOpenGraphFilterModal = (id: string) => {
     // TODO: Implement graph filter modal
@@ -257,7 +253,6 @@ export function Dashboard() {
         opened={kpiAlertModalOpen}
         onClose={handleCloseKPIAlertModal}
         graphId={selectedKPIAlertGraphId}
-        graphName={selectedKPIAlertGraph?.name || 'Untitled Graph'}
       />
 
       {/* Create Schedule Modal */}

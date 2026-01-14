@@ -19,7 +19,7 @@ export type KPIAlertType =
 /**
  * Comparison operators for threshold-based alerts
  */
-export type ComparisonOperator =
+export type ThresholdComparisonOperator =
   | 'greater-than'
   | 'greater-than-or-equal'
   | 'less-than'
@@ -39,7 +39,7 @@ export interface ThresholdAlertDetails {
   /** User-defined name for the alert */
   alertName: string;
   /** Comparison operator */
-  condition: ComparisonOperator;
+  condition: ThresholdComparisonOperator;
   /** Threshold value to compare against */
   thresholdValue: number;
 }
@@ -88,8 +88,6 @@ export interface KPIAlertModalProps {
   onClose: () => void;
   /** ID of the graph this alert is for */
   graphId: string | null;
-  /** Name of the graph for display */
-  graphName: string;
 }
 
 /**

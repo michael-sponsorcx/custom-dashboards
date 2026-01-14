@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Stack, Text, Select, Flex, TextInput } from '@mantine/core';
-import type { ComparisonOperator, KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../../types/kpi-alerts';
+import type { ThresholdComparisonOperator, KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../../types/kpi-alerts';
 
 // Comparison operator options
 const CONDITION_OPTIONS = [
@@ -32,7 +32,7 @@ export const ThresholdAlertDetails = ({ setKpiFormData }: ThresholdAlertDetailsP
   const [condition, setCondition] = useState<string>('');
   const [thresholdValue, setThresholdValue] = useState<string>('');
 
-  const handleConditionChange = (newCondition: ComparisonOperator) => {
+  const handleConditionChange = (newCondition: ThresholdComparisonOperator) => {
     setCondition(newCondition);
 
     // Update KPI form data with alert details
@@ -69,7 +69,7 @@ export const ThresholdAlertDetails = ({ setKpiFormData }: ThresholdAlertDetailsP
           value={condition}
           onChange={(value) => {
             if (value) {
-              handleConditionChange(value as ComparisonOperator);
+              handleConditionChange(value as ThresholdComparisonOperator);
             }
           }}
           data={CONDITION_OPTIONS}

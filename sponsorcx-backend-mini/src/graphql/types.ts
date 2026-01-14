@@ -270,6 +270,87 @@ export const DashboardFilterInput = new GraphQLInputObjectType({
     },
 });
 
+// KPI Schedule Enums
+export const FrequencyIntervalEnum = new GraphQLEnumType({
+    name: 'FrequencyInterval',
+    values: {
+        N_MINUTE: { value: 'n_minute' },
+        HOUR: { value: 'hour' },
+        DAY: { value: 'day' },
+        WEEK: { value: 'week' },
+        MONTH: { value: 'month' },
+    },
+});
+
+export const AttachmentTypeEnum = new GraphQLEnumType({
+    name: 'AttachmentType',
+    values: {
+        PDF: { value: 'PDF' },
+        EXCEL: { value: 'Excel' },
+        CSV: { value: 'CSV' },
+    },
+});
+
+// KPI Schedule Type
+export const KpiScheduleType = new GraphQLObjectType({
+    name: 'KpiSchedule',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        organizationId: { type: GraphQLID },
+        graphId: { type: GraphQLID },
+        dashboardId: { type: GraphQLID },
+        createdBy: { type: GraphQLID },
+        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
+        comment: { type: GraphQLString },
+        frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
+        minuteInterval: { type: GraphQLInt },
+        hourInterval: { type: GraphQLInt },
+        scheduleHour: { type: GraphQLInt },
+        scheduleMinute: { type: GraphQLInt },
+        selectedDays: { type: new GraphQLList(GraphQLString) },
+        excludeWeekends: { type: GraphQLBoolean },
+        monthDates: { type: new GraphQLList(GraphQLInt) },
+        timeZone: { type: GraphQLString },
+        hasGatingCondition: { type: GraphQLBoolean },
+        gatingCondition: { type: GraphQLJSON },
+        attachmentType: { type: AttachmentTypeEnum },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+        cronExpression: { type: GraphQLString },
+        lastExecutedAt: { type: GraphQLString },
+        nextExecutionAt: { type: GraphQLString },
+        executionCount: { type: GraphQLInt },
+        createdAt: { type: GraphQLString },
+        updatedAt: { type: GraphQLString },
+    }),
+});
+
+// KPI Schedule Input Type
+export const KpiScheduleInput = new GraphQLInputObjectType({
+    name: 'KpiScheduleInput',
+    fields: {
+        graphId: { type: GraphQLID },
+        dashboardId: { type: GraphQLID },
+        createdBy: { type: GraphQLID },
+        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
+        comment: { type: GraphQLString },
+        frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
+        minuteInterval: { type: GraphQLInt },
+        hourInterval: { type: GraphQLInt },
+        scheduleHour: { type: GraphQLInt },
+        scheduleMinute: { type: GraphQLInt },
+        selectedDays: { type: new GraphQLList(GraphQLString) },
+        excludeWeekends: { type: GraphQLBoolean },
+        monthDates: { type: new GraphQLList(GraphQLInt) },
+        timeZone: { type: GraphQLString },
+        hasGatingCondition: { type: GraphQLBoolean },
+        gatingCondition: { type: GraphQLJSON },
+        attachmentType: { type: AttachmentTypeEnum },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+    },
+});
+
 // Cube API Proxy Types
 export const CubeSchemaType = new GraphQLObjectType({
     name: 'CubeSchema',

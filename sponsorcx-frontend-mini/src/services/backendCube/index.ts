@@ -48,6 +48,19 @@ export {
 } from './api/filters';
 export type { DashboardFilterField, DashboardFilterState } from './api/filters';
 
+// KPI Schedules API
+export {
+  fetchKpiSchedules,
+  fetchKpiSchedule,
+  fetchKpiSchedulesByGraph,
+  fetchKpiSchedulesByDashboard,
+  createKpiSchedule,
+  updateKpiSchedule,
+  deleteKpiSchedule,
+  toggleKpiScheduleActive,
+} from './api/kpi_schedules';
+export type { KpiSchedule, KpiScheduleInput } from './api/kpi_schedules';
+
 // Types
 export type {
   CubeConfig,

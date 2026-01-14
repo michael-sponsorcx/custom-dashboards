@@ -32,7 +32,7 @@ export const cubeProxyQueries = {
         args: {
             query: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: any, args: CubeQueryArgs) => {
+        resolve: async (_: unknown, args: CubeQueryArgs) => {
             const { query } = args;
 
             if (!query || typeof query !== 'string') {
@@ -75,7 +75,7 @@ export const cubeProxyQueries = {
             view: { type: new GraphQLNonNull(GraphQLString) },
             dimension: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: any, args: CubeDimensionValuesArgs) => {
+        resolve: async (_: unknown, args: CubeDimensionValuesArgs) => {
             const { view, dimension } = args;
 
             if (!view || !dimension) {
@@ -86,8 +86,4 @@ export const cubeProxyQueries = {
             return { values };
         },
     },
-};
-
-export const cubeProxyMutations = {
-    // No mutations needed for Cube proxy - all operations are read-only queries
 };

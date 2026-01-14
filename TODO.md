@@ -439,6 +439,87 @@ Before removing files, verify:
 
 ---
 
+## Dashboard Component Reorganization
+
+### Status: Planned (Ready to Implement)
+### Plan File: `~/.claude/plans/spicy-whistling-horizon.md`
+
+### Context
+The dashboard component folder structure has inconsistencies:
+- 4 modals scattered at root level (no grouping)
+- `filter_config/` has no index file and is awkwardly placed
+- Mixed organization (some by type, some by feature)
+- `grid/graph_card/` subfolders lack index files
+
+### Research Summary
+Consulted authoritative sources:
+- [React Official Docs](https://legacy.reactjs.org/docs/faq-structure.html) - Recommends colocation, max 3-4 nesting levels
+- [Bulletproof React](https://github.com/alan2207/bulletproof-react) (30k+ stars) - Feature-based organization
+- **Key finding**: Bulletproof React **discourages barrel/index files** for Vite due to tree-shaking issues
+
+### Decision: Feature-Based Organization (No Barrel Files)
+
+Group by **what it does** (feature), not **what it is** (type):
+
+```
+dashboard/
+├── Dashboard.tsx
+├── DashboardActionsMenu.tsx
+├── filtering/                     # FEATURE: All filter-related
+│   ├── DashboardFilters.tsx
+│   ├── DashboardAvailableFilters.tsx
+│   ├── DashboardFilterModal.tsx
+│   ├── DashboardAvailableFiltersModal.tsx
+│   ├── DataSourceSelection.tsx    # Was filter_config/
+│   └── CommonFieldsSelection.tsx  # Was filter_config/
+├── alerts/                        # FEATURE: KPI alerts
+│   └── KPIAlertModal.tsx
+├── grid/
+│   └── graph_card/
+│       └── GraphFilterModal.tsx   # Moved here (graph-specific)
+├── context/                       # Unchanged
+├── hooks/                         # Unchanged
+├── download_pdf/                  # Unchanged
+└── present/                       # Unchanged
+```
+
+### Key Principles Applied
+1. **Feature colocation** - Related files stay together
+2. **No barrel files** - Direct imports for Vite tree-shaking performance
+3. **Max 3-4 nesting levels** - Per React docs recommendation
+4. **Only create folders that are necessary** - Per Bulletproof React
+
+### File Movements Required
+| Current | New |
+|---------|-----|
+| `DashboardFilters.tsx` | `filtering/DashboardFilters.tsx` |
+| `DashboardAvailableFilters.tsx` | `filtering/DashboardAvailableFilters.tsx` |
+| `DashboardFilterModal.tsx` | `filtering/DashboardFilterModal.tsx` |
+| `DashboardAvailableFiltersModal.tsx` | `filtering/DashboardAvailableFiltersModal.tsx` |
+| `filter_config/DataSourceSelection.tsx` | `filtering/DataSourceSelection.tsx` |
+| `filter_config/CommonFieldsSelection.tsx` | `filtering/CommonFieldsSelection.tsx` |
+| `KPIAlertModal.tsx` | `alerts/KPIAlertModal.tsx` |
+| `GraphFilterModal.tsx` | `grid/graph_card/GraphFilterModal.tsx` |
+
+### Import Updates Needed
+- `Dashboard.tsx` - Update all modal/filter imports
+- `DashboardFilterModal.tsx` - Update filter_config imports, context path
+- `DashboardAvailableFiltersModal.tsx` - Update context path
+- `DataSourceSelection.tsx` / `CommonFieldsSelection.tsx` - Update relative imports
+
+### Implementation Steps
+1. Create `filtering/` directory
+2. Create `alerts/` directory
+3. Move filtering-related files to `filtering/`
+4. Move `KPIAlertModal.tsx` to `alerts/`
+5. Move `GraphFilterModal.tsx` to `grid/graph_card/`
+6. Update imports in `Dashboard.tsx`
+7. Update imports in moved files
+8. Delete empty `filter_config/` directory
+9. Verify build: `yarn build`
+
+---
+
 ## Completed Tasks
 
 ### ✅ localStorage to Backend Migration

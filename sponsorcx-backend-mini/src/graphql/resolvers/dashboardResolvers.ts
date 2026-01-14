@@ -10,8 +10,156 @@ import {
     GraphType,
 } from '../types';
 
-// Helper to convert dashboard row
-const dashboardToCamelCase = (row: any) => ({
+// ============================================================================
+// Database Row Types (snake_case from PostgreSQL)
+// ============================================================================
+
+interface DashboardRow {
+    id: string;
+    organization_id: string | null;
+    name: string;
+    layout: string;
+    created_at: Date;
+    updated_at: Date;
+}
+
+interface DashboardGridItemRow {
+    id: string;
+    dashboard_id: string;
+    graph_id: string;
+    grid_column: number | null;
+    grid_row: number | null;
+    grid_width: number | null;
+    grid_height: number | null;
+    display_order: number;
+}
+
+interface DashboardFilterRow {
+    id: string;
+    dashboard_id: string;
+    selected_views: string[];
+    available_fields: unknown;
+    active_filters: unknown;
+    created_at: Date;
+    updated_at: Date;
+}
+
+// ============================================================================
+// Resolved Types (camelCase for GraphQL)
+// ============================================================================
+
+interface Dashboard {
+    id: string;
+    organizationId: string | null;
+    name: string;
+    layout: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface DashboardGridItem {
+    id: string;
+    dashboardId: string;
+    graphId: string;
+    gridColumn: number | null;
+    gridRow: number | null;
+    gridWidth: number | null;
+    gridHeight: number | null;
+    displayOrder: number;
+}
+
+interface DashboardFilter {
+    id: string;
+    dashboardId: string;
+    selectedViews: string[];
+    availableFields: unknown;
+    activeFilters: unknown;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// ============================================================================
+// Resolver Argument Types
+// ============================================================================
+
+interface DashboardsArgs {
+    organizationId?: string;
+}
+
+interface DashboardArgs {
+    id: string;
+}
+
+interface DashboardGridItemsArgs {
+    dashboardId: string;
+}
+
+interface DashboardFilterArgs {
+    dashboardId: string;
+}
+
+interface DashboardInputData {
+    name: string;
+    layout: string;
+}
+
+interface CreateDashboardArgs {
+    input: DashboardInputData;
+    organizationId?: string;
+}
+
+interface UpdateDashboardArgs {
+    id: string;
+    input: DashboardInputData;
+}
+
+interface DeleteDashboardArgs {
+    id: string;
+}
+
+interface DashboardGridItemInputData {
+    graphId: string;
+    gridColumn?: number | null;
+    gridRow?: number | null;
+    gridWidth?: number | null;
+    gridHeight?: number | null;
+    displayOrder?: number;
+}
+
+interface AddDashboardGridItemArgs {
+    dashboardId: string;
+    input: DashboardGridItemInputData;
+}
+
+interface UpdateDashboardGridItemArgs {
+    id: string;
+    input: DashboardGridItemInputData;
+}
+
+interface RemoveDashboardGridItemArgs {
+    id: string;
+}
+
+interface DashboardFilterInputData {
+    selectedViews?: string[];
+    availableFields?: unknown;
+    activeFilters?: unknown;
+}
+
+interface SaveDashboardFilterArgs {
+    dashboardId: string;
+    input: DashboardFilterInputData;
+}
+
+interface ClearDashboardFilterArgs {
+    dashboardId: string;
+}
+
+// ============================================================================
+// Row-to-Object Converters
+// ============================================================================
+
+const dashboardToCamelCase = (row: DashboardRow): Dashboard => ({
     id: row.id,
     organizationId: row.organization_id,
     name: row.name,
@@ -20,8 +168,7 @@ const dashboardToCamelCase = (row: any) => ({
     updatedAt: row.updated_at,
 });
 
-// Helper to convert dashboard grid item row
-const dashboardGridItemToCamelCase = (row: any) => ({
+const dashboardGridItemToCamelCase = (row: DashboardGridItemRow): DashboardGridItem => ({
     id: row.id,
     dashboardId: row.dashboard_id,
     graphId: row.graph_id,
@@ -32,8 +179,7 @@ const dashboardGridItemToCamelCase = (row: any) => ({
     displayOrder: row.display_order,
 });
 
-// Helper to convert dashboard filter row
-const dashboardFilterToCamelCase = (row: any) => ({
+const dashboardFilterToCamelCase = (row: DashboardFilterRow): DashboardFilter => ({
     id: row.id,
     dashboardId: row.dashboard_id,
     selectedViews: row.selected_views,
@@ -49,13 +195,13 @@ export const dashboardQueries = {
         args: {
             organizationId: { type: GraphQLID },
         },
-        resolve: async (_: any, { organizationId }: any) => {
+        resolve: async (_: unknown, { organizationId }: DashboardsArgs) => {
             const sql = organizationId
                 ? 'SELECT * FROM dashboards WHERE organization_id = $1 ORDER BY updated_at DESC'
                 : 'SELECT * FROM dashboards ORDER BY updated_at DESC';
             const params = organizationId ? [organizationId] : [];
             const result = await query(sql, params);
-            return result.rows.map(dashboardToCamelCase);
+            return result.rows.map((row) => dashboardToCamelCase(row as DashboardRow));
         },
     },
     dashboard: {
@@ -63,9 +209,9 @@ export const dashboardQueries = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { id }: any) => {
+        resolve: async (_: unknown, { id }: DashboardArgs): Promise<Dashboard | null> => {
             const result = await query('SELECT * FROM dashboards WHERE id = $1', [id]);
-            return result.rows[0] ? dashboardToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardToCamelCase(result.rows[0] as DashboardRow) : null;
         },
     },
     dashboardGridItems: {
@@ -73,12 +219,12 @@ export const dashboardQueries = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { dashboardId }: any) => {
+        resolve: async (_: unknown, { dashboardId }: DashboardGridItemsArgs): Promise<DashboardGridItem[]> => {
             // Get all grid items for this dashboard
             // The graph field will be resolved by the field resolver in DashboardGridItemType
             const sql = 'SELECT * FROM dashboard_grid_items WHERE dashboard_id = $1 ORDER BY display_order, created_at';
             const result = await query(sql, [dashboardId]);
-            return result.rows.map(dashboardGridItemToCamelCase);
+            return result.rows.map((row) => dashboardGridItemToCamelCase(row as DashboardGridItemRow));
         },
     },
     dashboardFilter: {
@@ -86,9 +232,9 @@ export const dashboardQueries = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { dashboardId }: any) => {
+        resolve: async (_: unknown, { dashboardId }: DashboardFilterArgs): Promise<DashboardFilter | null> => {
             const result = await query('SELECT * FROM dashboard_filters WHERE dashboard_id = $1', [dashboardId]);
-            return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0] as DashboardFilterRow) : null;
         },
     },
 };
@@ -100,7 +246,7 @@ export const dashboardMutations = {
             input: { type: new GraphQLNonNull(DashboardInput) },
             organizationId: { type: GraphQLID },
         },
-        resolve: async (_: any, { input, organizationId }: any) => {
+        resolve: async (_: unknown, { input, organizationId }: CreateDashboardArgs): Promise<Dashboard> => {
             const sql = `
                 INSERT INTO dashboards (organization_id, name, layout)
                 VALUES ($1, $2, $3)
@@ -108,7 +254,7 @@ export const dashboardMutations = {
             `;
             const params = [organizationId || null, input.name, input.layout];
             const result = await query(sql, params);
-            return dashboardToCamelCase(result.rows[0]);
+            return dashboardToCamelCase(result.rows[0] as DashboardRow);
         },
     },
     updateDashboard: {
@@ -117,7 +263,7 @@ export const dashboardMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardInput) },
         },
-        resolve: async (_: any, { id, input }: any) => {
+        resolve: async (_: unknown, { id, input }: UpdateDashboardArgs): Promise<Dashboard | null> => {
             const sql = `
                 UPDATE dashboards
                 SET name = $2, layout = $3
@@ -126,7 +272,7 @@ export const dashboardMutations = {
             `;
             const params = [id, input.name, input.layout];
             const result = await query(sql, params);
-            return result.rows[0] ? dashboardToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardToCamelCase(result.rows[0] as DashboardRow) : null;
         },
     },
     deleteDashboard: {
@@ -134,9 +280,9 @@ export const dashboardMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { id }: any) => {
+        resolve: async (_: unknown, { id }: DeleteDashboardArgs): Promise<Dashboard | null> => {
             const result = await query('DELETE FROM dashboards WHERE id = $1 RETURNING *', [id]);
-            return result.rows[0] ? dashboardToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardToCamelCase(result.rows[0] as DashboardRow) : null;
         },
     },
     addDashboardGridItem: {
@@ -145,7 +291,7 @@ export const dashboardMutations = {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardGridItemInput) },
         },
-        resolve: async (_: any, { dashboardId, input }: any) => {
+        resolve: async (_: unknown, { dashboardId, input }: AddDashboardGridItemArgs): Promise<DashboardGridItem> => {
             const sql = `
                 INSERT INTO dashboard_grid_items (
                     dashboard_id, graph_id, grid_column, grid_row,
@@ -171,7 +317,7 @@ export const dashboardMutations = {
                 input.displayOrder || 0,
             ];
             const result = await query(sql, params);
-            return dashboardGridItemToCamelCase(result.rows[0]);
+            return dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow);
         },
     },
     updateDashboardGridItem: {
@@ -180,7 +326,7 @@ export const dashboardMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardGridItemInput) },
         },
-        resolve: async (_: any, { id, input }: any) => {
+        resolve: async (_: unknown, { id, input }: UpdateDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
             const sql = `
                 UPDATE dashboard_grid_items
                 SET grid_column = $2, grid_row = $3, grid_width = $4,
@@ -197,7 +343,7 @@ export const dashboardMutations = {
                 input.displayOrder || 0,
             ];
             const result = await query(sql, params);
-            return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow) : null;
         },
     },
     removeDashboardGridItem: {
@@ -205,9 +351,9 @@ export const dashboardMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { id }: any) => {
+        resolve: async (_: unknown, { id }: RemoveDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
             const result = await query('DELETE FROM dashboard_grid_items WHERE id = $1 RETURNING *', [id]);
-            return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow) : null;
         },
     },
     saveDashboardFilter: {
@@ -216,7 +362,7 @@ export const dashboardMutations = {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardFilterInput) },
         },
-        resolve: async (_: any, { dashboardId, input }: any) => {
+        resolve: async (_: unknown, { dashboardId, input }: SaveDashboardFilterArgs): Promise<DashboardFilter> => {
             const sql = `
                 INSERT INTO dashboard_filters (
                     dashboard_id, selected_views, available_fields, active_filters
@@ -236,7 +382,7 @@ export const dashboardMutations = {
                 input.activeFilters ? JSON.stringify(input.activeFilters) : '[]',
             ];
             const result = await query(sql, params);
-            return dashboardFilterToCamelCase(result.rows[0]);
+            return dashboardFilterToCamelCase(result.rows[0] as DashboardFilterRow);
         },
     },
     clearDashboardFilter: {
@@ -244,9 +390,9 @@ export const dashboardMutations = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: any, { dashboardId }: any) => {
+        resolve: async (_: unknown, { dashboardId }: ClearDashboardFilterArgs): Promise<DashboardFilter | null> => {
             const result = await query('DELETE FROM dashboard_filters WHERE dashboard_id = $1 RETURNING *', [dashboardId]);
-            return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0]) : null;
+            return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0] as DashboardFilterRow) : null;
         },
     },
 };
