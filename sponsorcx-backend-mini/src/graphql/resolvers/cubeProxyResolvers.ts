@@ -11,7 +11,28 @@ import {
     fetchCubeSchema,
     fetchDimensionValues,
 } from '../../services/cubeApiClient';
-import { CubeSchemaType, CubeDimensionValuesType } from '../types';
+import {
+    CubeSchemaType,
+    CubeDimensionValuesType,
+    CubeMetadataType,
+    type CubeMetadataResponse,
+} from '../types';
+
+// ============================================================================
+// Resolved Types (for GraphQL responses)
+// ============================================================================
+
+interface CubeSchema {
+    operators: string[];
+}
+
+interface CubeDimensionValues {
+    values: string[];
+}
+
+// ============================================================================
+// Resolver Argument Types
+// ============================================================================
 
 interface CubeQueryArgs {
     query: string;
@@ -21,6 +42,10 @@ interface CubeDimensionValuesArgs {
     view: string;
     dimension: string;
 }
+
+// ============================================================================
+// Queries
+// ============================================================================
 
 export const cubeProxyQueries = {
     /**
@@ -32,7 +57,7 @@ export const cubeProxyQueries = {
         args: {
             query: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: unknown, args: CubeQueryArgs) => {
+        resolve: async (_: unknown, args: CubeQueryArgs): Promise<unknown> => {
             const { query } = args;
 
             if (!query || typeof query !== 'string') {
@@ -48,8 +73,8 @@ export const cubeProxyQueries = {
      * Cached for CUBE_METADATA_CACHE_TTL minutes
      */
     cubeMetadata: {
-        type: GraphQLJSON,
-        resolve: async () => {
+        type: CubeMetadataType,
+        resolve: async (): Promise<CubeMetadataResponse> => {
             return await fetchCubeMetadata();
         },
     },
@@ -60,7 +85,7 @@ export const cubeProxyQueries = {
      */
     cubeSchema: {
         type: CubeSchemaType,
-        resolve: async () => {
+        resolve: async (): Promise<CubeSchema> => {
             const operators = await fetchCubeSchema();
             return { operators };
         },
@@ -75,7 +100,7 @@ export const cubeProxyQueries = {
             view: { type: new GraphQLNonNull(GraphQLString) },
             dimension: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: unknown, args: CubeDimensionValuesArgs) => {
+        resolve: async (_: unknown, args: CubeDimensionValuesArgs): Promise<CubeDimensionValues> => {
             const { view, dimension } = args;
 
             if (!view || !dimension) {

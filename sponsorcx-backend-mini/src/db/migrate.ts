@@ -6,15 +6,15 @@ import { pool, query } from './connection';
 const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 
 // Create migrations tracking table
-// const createMigrationsTable = async () => {
-//     await query(`
-//         CREATE TABLE IF NOT EXISTS migrations (
-//             id SERIAL PRIMARY KEY,
-//             name VARCHAR(255) UNIQUE NOT NULL,
-//             executed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-//         )
-//     `);
-// };
+const createMigrationsTable = async () => {
+    await query(`
+        CREATE TABLE IF NOT EXISTS migrations (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) UNIQUE NOT NULL,
+            executed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+};
 
 // Get list of executed migrations
 const getExecutedMigrations = async (): Promise<string[]> => {
@@ -48,12 +48,12 @@ export const runMigrations = async () => {
     try {
         console.log('🔄 Running database migrations...');
 
-        // await createMigrationsTable();
+        await createMigrationsTable();
 
         const executedMigrations = await getExecutedMigrations();
         const migrationFiles = fs
             .readdirSync(MIGRATIONS_DIR)
-            .filter(file => file.endsWith('.sql'))
+            .filter(file => file.endsWith('.sql') && !file.includes('.down.'))
             .sort();
 
         const pendingMigrations = migrationFiles.filter(

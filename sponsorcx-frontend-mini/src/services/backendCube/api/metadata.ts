@@ -24,7 +24,25 @@ export async function fetchCubeMetadata(): Promise<CubeMetadata> {
     // Build the backend GraphQL query
     const backendQuery = `
       query {
-        cubeMetadata
+        cubeMetadata {
+          cubes {
+            name
+            title
+            type
+            measures {
+              name
+              title
+              shortTitle
+              type
+            }
+            dimensions {
+              name
+              title
+              shortTitle
+              type
+            }
+          }
+        }
       }
     `;
 

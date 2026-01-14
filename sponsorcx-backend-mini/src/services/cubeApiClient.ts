@@ -5,6 +5,7 @@
 
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import { cache } from './cache';
+import type { CubeMetadataResponse } from '../graphql/types';
 
 // Configuration from environment variables
 const CUBE_API_BASE_URL = process.env.CUBE_API_BASE_URL;
@@ -163,9 +164,9 @@ export const executeCubeGraphQL = async (query: string): Promise<unknown> => {
  * Fetch Cube metadata (cubes, dimensions, measures)
  * Cached for METADATA_CACHE_TTL minutes
  */
-export const fetchCubeMetadata = async (): Promise<unknown> => {
+export const fetchCubeMetadata = async (): Promise<CubeMetadataResponse> => {
   // Check cache first
-  const cached = cache.get(CACHE_KEYS.METADATA);
+  const cached = cache.get<CubeMetadataResponse>(CACHE_KEYS.METADATA);
   if (cached) {
     console.log('Returning cached Cube metadata');
     return cached;
@@ -174,7 +175,7 @@ export const fetchCubeMetadata = async (): Promise<unknown> => {
   console.log('Fetching Cube metadata from API...');
 
   const client = getCubeClient();
-  const response = await client.get('/v1/meta');
+  const response = await client.get<CubeMetadataResponse>('/v1/meta');
   const metadata = response.data;
 
   // Cache the result
