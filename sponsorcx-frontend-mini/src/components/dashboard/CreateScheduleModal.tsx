@@ -9,7 +9,7 @@ import { createKpiSchedule } from '../../services/backendCube';
 interface CreateScheduleModalProps {
   opened: boolean;
   onClose: () => void;
-  organizationId: string;
+  organizationId: number;
   userId?: string;
 }
 

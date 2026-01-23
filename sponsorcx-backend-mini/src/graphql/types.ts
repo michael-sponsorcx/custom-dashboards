@@ -619,3 +619,80 @@ export const CubeMetadataType = new GraphQLObjectType({
         cubes: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CubeMetaType))) },
     }),
 });
+
+// ============================================================================
+// KPI Alert Types (shared base for schedules and thresholds)
+// ============================================================================
+
+export const AlertTypeEnum = new GraphQLEnumType({
+    name: 'AlertType',
+    values: {
+        SCHEDULE: { value: 'schedule' },
+        THRESHOLD: { value: 'threshold' },
+    },
+});
+
+export const KpiAlertType = new GraphQLObjectType({
+    name: 'KpiAlert',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        organizationId: { type: GraphQLID },
+        graphId: { type: GraphQLID },
+        dashboardId: { type: GraphQLID },
+        createdById: { type: GraphQLID },
+        alertName: { type: new GraphQLNonNull(GraphQLString) },
+        alertType: { type: new GraphQLNonNull(AlertTypeEnum) },
+        comment: { type: GraphQLString },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+        lastExecutedAt: { type: GraphQLString },
+        nextExecutionAt: { type: GraphQLString },
+        executionCount: { type: GraphQLInt },
+        createdAt: { type: GraphQLString },
+        updatedAt: { type: GraphQLString },
+    }),
+});
+
+// ============================================================================
+// KPI Threshold Types
+// ============================================================================
+
+export const ThresholdConditionEnum = new GraphQLEnumType({
+    name: 'ThresholdCondition',
+    values: {
+        GREATER_THAN: { value: 'GREATER_THAN' },
+        GREATER_THAN_OR_EQUAL: { value: 'GREATER_THAN_OR_EQUAL' },
+        LESS_THAN: { value: 'LESS_THAN' },
+        LESS_THAN_OR_EQUAL: { value: 'LESS_THAN_OR_EQUAL' },
+        EQUAL_TO: { value: 'EQUAL_TO' },
+        NOT_EQUAL_TO: { value: 'NOT_EQUAL_TO' },
+    },
+});
+
+export const KpiThresholdType = new GraphQLObjectType({
+    name: 'KpiThreshold',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        kpiAlertId: { type: new GraphQLNonNull(GraphQLID) },
+        condition: { type: new GraphQLNonNull(ThresholdConditionEnum) },
+        thresholdValue: { type: new GraphQLNonNull(GraphQLFloat) },
+        timeZone: { type: GraphQLString },
+        alert: { type: new GraphQLNonNull(KpiAlertType) },
+    }),
+});
+
+export const CreateKpiThresholdInput = new GraphQLInputObjectType({
+    name: 'CreateKpiThresholdInput',
+    fields: {
+        graphId: { type: GraphQLID },
+        dashboardId: { type: GraphQLID },
+        createdById: { type: GraphQLID },
+        alertName: { type: new GraphQLNonNull(GraphQLString) },
+        comment: { type: GraphQLString },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+        condition: { type: new GraphQLNonNull(ThresholdConditionEnum) },
+        thresholdValue: { type: new GraphQLNonNull(GraphQLFloat) },
+        timeZone: { type: GraphQLString },
+    },
+});

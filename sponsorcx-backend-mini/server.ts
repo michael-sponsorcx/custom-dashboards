@@ -20,12 +20,12 @@ app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps, curl, Postman)
         if (!origin) {
-            console.log('✅ CORS: Allowing request with no origin (Postman/curl/server-to-server)');
+            // console.log('✅ CORS: Allowing request with no origin (Postman/curl/server-to-server)');
             return callback(null, true);
         }
 
         // Allow everything for development - maximally open
-        console.log(`✅ CORS: Allowing request from origin: ${origin}`);
+        // console.log(`✅ CORS: Allowing request from origin: ${origin}`);
         return callback(null, true);
     },
     credentials: true,

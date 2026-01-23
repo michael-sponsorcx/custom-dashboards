@@ -4,6 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { KPIAlertTile } from './KPIAlertTile';
 import { KPIAlertModalConfigureTab } from './KPIAlertModalConfigureTab';
 import type { KPIAlertModalProps, KPIAlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
+import { createKpiAlert } from '../../services/backendCube/api/kpi_alerts';
 
 /**
  * Fixed list of KPI alert types available to users
@@ -47,7 +48,7 @@ const KPI_ALERT_TYPES: KPIAlertTypeDefinition[] = [
  * - Body: Alert configuration content
  * - Footer: Cancel and Next buttons
  */
-export const KPIAlertModal = ({ opened, onClose, graphId }: KPIAlertModalProps) => {
+export const KPIAlertModal = ({ opened, onClose, graphId, organizationId }: KPIAlertModalProps) => {
   const [selectedAlertType, setSelectedAlertType] = useState<KPIAlertTypeDefinition | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>('select-type');
   const [kpiFormData, setKpiFormData] = useState<KPIFormData>({});
@@ -95,11 +96,8 @@ export const KPIAlertModal = ({ opened, onClose, graphId }: KPIAlertModalProps) 
         throw new Error('Missing required alert information');
       }
 
-      // Log the alert object
-      console.log('KPI Form Data:', kpiFormData);
-
-      // TODO: Implement actual API call here
-      // await createKPIAlert(alertObject);
+      // Create the KPI alert
+      await createKpiAlert(graphId, kpiFormData, organizationId);
 
       // Show success notification
       notifications.show({

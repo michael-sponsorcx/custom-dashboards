@@ -66,3 +66,25 @@ The backend uses uppercase GraphQL enum values (e.g., `ChartType.Bar`, `SortOrde
 - The mapper automatically converts frontend enum values to backend enum values
 - Example: `'asc'` → `SortOrder.Asc`, `'bar'` → `ChartType.Bar`, `'horizontalStackedBar'` → `ChartType.Bar`
 - The graph API services already use this mapper, so you don't need to worry about enum conversion when using those services
+
+## SQL Schema Guidelines
+
+**IMPORTANT:** Follow these conventions when creating or editing database schema files.
+
+- Use `bigserial` for primary keys (not `serial`) for larger ID range in production
+- Define primary keys inline: `id bigserial PRIMARY KEY`
+- Use `references` for foreign keys: `user_id bigint NOT NULL REFERENCES users(id)`
+- Always specify `ON DELETE` behavior (`CASCADE`, `SET NULL`, or `RESTRICT`)
+- Place indexes immediately after their table definition
+- Example:
+  ```sql
+  CREATE TABLE example_table (
+      id bigserial PRIMARY KEY,
+      user_id bigint NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      name text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+  );
+
+  CREATE INDEX idx_example_table_user_id ON example_table(user_id);
+  CREATE INDEX idx_example_table_created_at ON example_table(created_at);
+  ```

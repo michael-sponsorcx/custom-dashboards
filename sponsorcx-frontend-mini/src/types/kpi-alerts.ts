@@ -88,6 +88,8 @@ export interface KPIAlertModalProps {
   onClose: () => void;
   /** ID of the graph this alert is for */
   graphId: string | null;
+  /** ID of the organization this alert belongs to */
+  organizationId: string;
 }
 
 /**

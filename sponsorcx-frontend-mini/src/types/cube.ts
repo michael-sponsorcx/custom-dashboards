@@ -3,12 +3,6 @@ export interface CubeView {
   title?: string;
 }
 
-export interface CubeField {
-  name: string;
-  title?: string;
-  type: string;
-}
-
 export interface CubeMeasure {
   name: string;
   title?: string;

@@ -24,7 +24,7 @@ import { useOrganizationStore, useDashboardFilterStore } from '../../store';
  */
 export function Dashboard() {
   // Load dashboard filters when dashboardId changes
-  const { dashboardId } = useOrganizationStore();
+  const { dashboardId, organizationId } = useOrganizationStore();
   const { loadFilters } = useDashboardFilterStore();
 
   useEffect(() => {
@@ -253,10 +253,11 @@ export function Dashboard() {
         opened={kpiAlertModalOpen}
         onClose={handleCloseKPIAlertModal}
         graphId={selectedKPIAlertGraphId}
+        organizationId={organizationId}
       />
 
       {/* Create Schedule Modal */}
-      <CreateScheduleModal opened={createScheduleModalOpen} onClose={handleCloseCreateSchedule} />
+      <CreateScheduleModal opened={createScheduleModalOpen} onClose={handleCloseCreateSchedule} organizationId={organizationId} />
 
       {/* Manage Schedules Modal */}
       <ManageSchedulesModal opened={manageSchedulesModalOpen} onClose={handleCloseManageSchedules} />
