@@ -24,7 +24,7 @@ import { useOrganizationStore, useDashboardFilterStore } from '../../store';
  */
 export function Dashboard() {
   // Load dashboard filters when dashboardId changes
-  const { dashboardId, organizationId } = useOrganizationStore();
+  const { dashboardId, organizationId, userId } = useOrganizationStore();
   const { loadFilters } = useDashboardFilterStore();
 
   useEffect(() => {
@@ -181,6 +181,23 @@ export function Dashboard() {
     return <Present graphs={graphs} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
+  // Error state: organizationId, dashboardId, and userId are required for the dashboard to function
+  if (!organizationId || !dashboardId || !userId) {
+    console.error('Dashboard: Required IDs are not set in the store. This should be set after login.', {
+      organizationId,
+      dashboardId,
+      userId,
+    });
+    return (
+      <Container size="xl" py="xl">
+        <Stack align="center" gap="md">
+          <Title order={2} c="red">Something went wrong</Title>
+          <Text c="dimmed">Unable to load dashboard. Please try refreshing the page or logging in again.</Text>
+        </Stack>
+      </Container>
+    );
+  }
+
   if (loading) {
     return (
       <Container size="xl" py="xl">
@@ -254,10 +271,18 @@ export function Dashboard() {
         onClose={handleCloseKPIAlertModal}
         graphId={selectedKPIAlertGraphId}
         organizationId={organizationId}
+        dashboardId={dashboardId}
+        userId={userId}
       />
 
       {/* Create Schedule Modal */}
-      <CreateScheduleModal opened={createScheduleModalOpen} onClose={handleCloseCreateSchedule} organizationId={organizationId} />
+      <CreateScheduleModal
+        opened={createScheduleModalOpen}
+        onClose={handleCloseCreateSchedule}
+        organizationId={organizationId}
+        dashboardId={dashboardId}
+        userId={userId}
+      />
 
       {/* Manage Schedules Modal */}
       <ManageSchedulesModal opened={manageSchedulesModalOpen} onClose={handleCloseManageSchedules} />

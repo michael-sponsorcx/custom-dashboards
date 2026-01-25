@@ -9,8 +9,9 @@ import { createKpiSchedule } from '../../services/backendCube';
 interface CreateScheduleModalProps {
   opened: boolean;
   onClose: () => void;
-  organizationId: number;
-  userId?: string;
+  organizationId: string;
+  dashboardId: string;
+  userId: string;
 }
 
 // Frequency interval options
@@ -52,7 +53,7 @@ const ATTACHMENT_TYPE_OPTIONS: Array<{ value: AttachmentType; label: string }> =
  * - Body: Scrollable content area with all form fields
  * - Footer: Cancel and Create Schedule buttons
  */
-export const CreateScheduleModal = ({ opened, onClose, organizationId, userId }: CreateScheduleModalProps) => {
+export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId }: CreateScheduleModalProps) => {
   const [scheduleFormData, setScheduleFormData] = useState<ScheduleFormData>({});
   const [emailInput, setEmailInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -224,7 +225,8 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, userId }:
     setIsSubmitting(true);
 
     try {
-      await createKpiSchedule(scheduleFormData, organizationId, userId);
+      
+      await createKpiSchedule(scheduleFormData, organizationId, dashboardId, userId);
 
       notifications.show({
         title: 'Schedule Created',

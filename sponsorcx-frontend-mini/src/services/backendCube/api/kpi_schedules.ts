@@ -12,10 +12,10 @@ import type { ScheduleFormData, FrequencyInterval } from '../../../types/schedul
  */
 export interface KpiSchedule {
   id: string;
-  organizationId?: string;
+  organizationId: string;
   graphId?: string;
-  dashboardId?: string;
-  createdBy?: string;
+  dashboardId: string;
+  createdById: string;
   scheduleName: string;
   comment?: string;
   frequencyInterval: FrequencyInterval;
@@ -34,7 +34,7 @@ export interface KpiSchedule {
   isActive?: boolean;
   cronExpression?: string;
   lastExecutedAt?: string;
-  nextExecutionAt?: string;
+  nextExecutionAt: string;
   executionCount?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -45,8 +45,8 @@ export interface KpiSchedule {
  */
 export interface KpiScheduleInput {
   graphId?: string;
-  dashboardId?: string;
-  createdBy?: string;
+  dashboardId: string;
+  createdById: string;
   scheduleName: string;
   comment?: string;
   frequencyInterval: string;
@@ -71,7 +71,7 @@ const KPI_SCHEDULE_FIELDS = `
   organizationId
   graphId
   dashboardId
-  createdBy
+  createdById
   scheduleName
   comment
   frequencyInterval
@@ -99,7 +99,7 @@ const KPI_SCHEDULE_FIELDS = `
 /**
  * Convert frontend ScheduleFormData to backend KpiScheduleInput
  */
-const toKpiScheduleInput = (formData: ScheduleFormData, createdBy?: string): KpiScheduleInput => {
+const toKpiScheduleInput = (formData: ScheduleFormData, dashboardId: string, createdById: string): KpiScheduleInput => {
   // Parse month dates from comma-separated string to number array
   const monthDates = formData.monthDates
     ? formData.monthDates
@@ -125,7 +125,8 @@ const toKpiScheduleInput = (formData: ScheduleFormData, createdBy?: string): Kpi
   };
 
   return {
-    createdBy,
+    dashboardId,
+    createdById,
     scheduleName: formData.scheduleName || '',
     comment: formData.addComment ? formData.comment : undefined,
     frequencyInterval: formData.frequencyInterval
@@ -232,7 +233,8 @@ export const fetchKpiSchedulesByDashboard = async (dashboardId: string): Promise
 export const createKpiSchedule = async (
   formData: ScheduleFormData,
   organizationId: string,
-  createdBy?: string
+  dashboardId: string,
+  createdById: string
 ): Promise<KpiSchedule> => {
   const query = `
     mutation CreateKpiSchedule($organizationId: ID!, $input: KpiScheduleInput!) {
@@ -242,7 +244,7 @@ export const createKpiSchedule = async (
     }
   `;
 
-  const input = toKpiScheduleInput(formData, createdBy);
+  const input = toKpiScheduleInput(formData, dashboardId, createdById);
 
   const response = await executeBackendGraphQL<{ createKpiSchedule: KpiSchedule }>(query, {
     organizationId,
@@ -261,7 +263,9 @@ export const createKpiSchedule = async (
  */
 export const updateKpiSchedule = async (
   id: string,
-  formData: ScheduleFormData
+  formData: ScheduleFormData,
+  dashboardId: string,
+  createdById: string
 ): Promise<KpiSchedule> => {
   const query = `
     mutation UpdateKpiSchedule($id: ID!, $input: KpiScheduleInput!) {
@@ -271,7 +275,7 @@ export const updateKpiSchedule = async (
     }
   `;
 
-  const input = toKpiScheduleInput(formData);
+  const input = toKpiScheduleInput(formData, dashboardId, createdById);
 
   const response = await executeBackendGraphQL<{ updateKpiSchedule: KpiSchedule }>(query, {
     id,

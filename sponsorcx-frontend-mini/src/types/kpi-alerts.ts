@@ -90,6 +90,10 @@ export interface KPIAlertModalProps {
   graphId: string | null;
   /** ID of the organization this alert belongs to */
   organizationId: string;
+  /** ID of the dashboard this alert belongs to */
+  dashboardId: string;
+  /** ID of the user creating this alert */
+  userId: string;
 }
 
 /**

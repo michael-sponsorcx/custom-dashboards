@@ -29,17 +29,17 @@ import {
 /** Base alert fields shared by schedules and thresholds */
 export interface KpiAlert {
     id: string;
-    organizationId?: string;
+    organizationId: string;
     graphId?: string;
-    dashboardId?: string;
-    createdById?: string;
+    dashboardId: string;
+    createdById: string;
     alertName: string;
     alertType: 'schedule' | 'threshold';
     comment?: string;
     recipients?: string[];
     isActive?: boolean;
     lastExecutedAt?: string;
-    nextExecutionAt?: string;
+    nextExecutionAt: string;
     executionCount?: number;
     createdAt?: string;
     updatedAt?: string;
@@ -82,8 +82,8 @@ export interface KpiThreshold {
 /** Input for createKpiSchedule mutation */
 interface CreateKpiScheduleInput {
     graphId?: string;
-    dashboardId?: string;
-    createdById?: string;
+    dashboardId: string;
+    createdById: string;
     alertName: string;
     comment?: string;
     recipients?: string[];
@@ -105,8 +105,8 @@ interface CreateKpiScheduleInput {
 /** Input for createKpiThreshold mutation */
 interface CreateKpiThresholdInput {
     graphId?: string;
-    dashboardId?: string;
-    createdById?: string;
+    dashboardId: string;
+    createdById: string;
     alertName: string;
     comment?: string;
     recipients?: string[];
@@ -180,15 +180,17 @@ const KPI_THRESHOLD_FIELDS = `
 const toScheduleInput = (
     graphId: string,
     formData: KPIFormData,
-    createdById?: string
+    dashboardId: string,
+    createdById: string
 ): CreateKpiScheduleInput => {
     const alertDetails = formData.alertDetails as ScheduledAlertDetails | undefined;
 
-    const frequency = alertDetails?.frequency || 'day';
+    const frequency = alertDetails?.frequency || 'daily';
     const frequencyInterval = toBackendFrequency(frequency);
 
     return {
         graphId,
+        dashboardId,
         createdById,
         alertName: alertDetails?.alertName || 'Scheduled Report',
         comment: formData.alertBodyContent,
@@ -208,7 +210,8 @@ const toScheduleInput = (
 const toThresholdInput = (
     graphId: string,
     formData: KPIFormData,
-    createdById?: string
+    dashboardId: string,
+    createdById: string
 ): CreateKpiThresholdInput => {
     const alertDetails = formData.alertDetails as ThresholdAlertDetails | undefined;
 
@@ -217,6 +220,7 @@ const toThresholdInput = (
 
     return {
         graphId,
+        dashboardId,
         createdById,
         alertName: alertDetails?.alertName || 'Threshold Alert',
         comment: formData.alertBodyContent,
@@ -239,14 +243,15 @@ export const createKpiAlert = async (
     graphId: string,
     formData: KPIFormData,
     organizationId: string,
-    createdById?: string
+    dashboardId: string,
+    createdById: string
 ): Promise<KpiSchedule | KpiThreshold> => {
     const alertType: KPIAlertType = formData.alertType || 'threshold';
 
     if (alertType === 'scheduled') {
-        return createKpiSchedule(graphId, formData, organizationId, createdById);
+        return createKpiSchedule(graphId, formData, organizationId, dashboardId, createdById);
     } else {
-        return createKpiThreshold(graphId, formData, organizationId, createdById);
+        return createKpiThreshold(graphId, formData, organizationId, dashboardId, createdById);
     }
 };
 
@@ -257,9 +262,10 @@ export const createKpiSchedule = async (
     graphId: string,
     formData: KPIFormData,
     organizationId: string,
-    createdById?: string
+    dashboardId: string,
+    createdById: string
 ): Promise<KpiSchedule> => {
-    const input = toScheduleInput(graphId, formData, createdById);
+    const input = toScheduleInput(graphId, formData, dashboardId, createdById);
 
     const mutation = `
         mutation CreateKpiSchedule($organizationId: ID!, $input: CreateKpiScheduleInput!) {
@@ -288,9 +294,10 @@ export const createKpiThreshold = async (
     graphId: string,
     formData: KPIFormData,
     organizationId: string,
-    createdById?: string
+    dashboardId: string,
+    createdById: string
 ): Promise<KpiThreshold> => {
-    const input = toThresholdInput(graphId, formData, createdById);
+    const input = toThresholdInput(graphId, formData, dashboardId, createdById);
 
     const mutation = `
         mutation CreateKpiThreshold($organizationId: ID!, $input: CreateKpiThresholdInput!) {

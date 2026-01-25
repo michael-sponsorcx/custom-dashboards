@@ -10,17 +10,17 @@
 
 CREATE TABLE kpi_alerts (
     id bigserial PRIMARY KEY,
-    organization_id bigint REFERENCES organizations(id) ON DELETE CASCADE,
+    organization_id bigint NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     graph_id bigint REFERENCES graphs(id) ON DELETE SET NULL,
-    dashboard_id bigint REFERENCES dashboards(id) ON DELETE SET NULL,
-    created_by_id bigint REFERENCES users(id) ON DELETE CASCADE,
+    dashboard_id bigint NOT NULL REFERENCES dashboards(id) ON DELETE CASCADE,
+    created_by_id bigint NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     alert_name VARCHAR(255) NOT NULL,
     alert_type VARCHAR(20) NOT NULL CHECK (alert_type IN ('schedule', 'threshold')),
     comment TEXT,
     recipients TEXT[] DEFAULT '{}',
     is_active BOOLEAN DEFAULT true,
     last_executed_at TIMESTAMP WITH TIME ZONE,
-    next_execution_at TIMESTAMP WITH TIME ZONE,
+    next_execution_at TIMESTAMP WITH TIME ZONE NOT NULL,
     execution_count INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

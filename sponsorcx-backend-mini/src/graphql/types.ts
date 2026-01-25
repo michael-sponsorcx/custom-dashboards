@@ -397,17 +397,12 @@ export const AttachmentTypeEnum = new GraphQLEnumType({
     },
 });
 
-// KPI Schedule Type
+// KPI Schedule Type (with nested alert)
 export const KpiScheduleType = new GraphQLObjectType({
     name: 'KpiSchedule',
     fields: () => ({
         id: { type: new GraphQLNonNull(GraphQLID) },
-        organizationId: { type: GraphQLID },
-        graphId: { type: GraphQLID },
-        dashboardId: { type: GraphQLID },
-        createdBy: { type: GraphQLID },
-        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
-        comment: { type: GraphQLString },
+        kpiAlertId: { type: new GraphQLNonNull(GraphQLID) },
         frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
         minuteInterval: { type: GraphQLInt },
         hourInterval: { type: GraphQLInt },
@@ -420,26 +415,24 @@ export const KpiScheduleType = new GraphQLObjectType({
         hasGatingCondition: { type: GraphQLBoolean },
         gatingCondition: { type: GraphQLJSON },
         attachmentType: { type: AttachmentTypeEnum },
-        recipients: { type: new GraphQLList(GraphQLString) },
-        isActive: { type: GraphQLBoolean },
         cronExpression: { type: GraphQLString },
-        lastExecutedAt: { type: GraphQLString },
-        nextExecutionAt: { type: GraphQLString },
-        executionCount: { type: GraphQLInt },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        alert: { type: new GraphQLNonNull(KpiAlertType) },
     }),
 });
 
-// KPI Schedule Input Type
-export const KpiScheduleInput = new GraphQLInputObjectType({
-    name: 'KpiScheduleInput',
+// KPI Schedule Input Type (flattened for easier mutation input)
+export const CreateKpiScheduleInput = new GraphQLInputObjectType({
+    name: 'CreateKpiScheduleInput',
     fields: {
+        // Alert fields
         graphId: { type: GraphQLID },
-        dashboardId: { type: GraphQLID },
-        createdBy: { type: GraphQLID },
-        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
+        dashboardId: { type: new GraphQLNonNull(GraphQLID) },
+        createdById: { type: new GraphQLNonNull(GraphQLID) },
+        alertName: { type: new GraphQLNonNull(GraphQLString) },
         comment: { type: GraphQLString },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+        // Schedule-specific fields
         frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
         minuteInterval: { type: GraphQLInt },
         hourInterval: { type: GraphQLInt },
@@ -452,8 +445,6 @@ export const KpiScheduleInput = new GraphQLInputObjectType({
         hasGatingCondition: { type: GraphQLBoolean },
         gatingCondition: { type: GraphQLJSON },
         attachmentType: { type: AttachmentTypeEnum },
-        recipients: { type: new GraphQLList(GraphQLString) },
-        isActive: { type: GraphQLBoolean },
     },
 });
 
@@ -636,17 +627,17 @@ export const KpiAlertType = new GraphQLObjectType({
     name: 'KpiAlert',
     fields: () => ({
         id: { type: new GraphQLNonNull(GraphQLID) },
-        organizationId: { type: GraphQLID },
+        organizationId: { type: new GraphQLNonNull(GraphQLID) },
         graphId: { type: GraphQLID },
-        dashboardId: { type: GraphQLID },
-        createdById: { type: GraphQLID },
+        dashboardId: { type: new GraphQLNonNull(GraphQLID) },
+        createdById: { type: new GraphQLNonNull(GraphQLID) },
         alertName: { type: new GraphQLNonNull(GraphQLString) },
         alertType: { type: new GraphQLNonNull(AlertTypeEnum) },
         comment: { type: GraphQLString },
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
         lastExecutedAt: { type: GraphQLString },
-        nextExecutionAt: { type: GraphQLString },
+        nextExecutionAt: { type: new GraphQLNonNull(GraphQLString) },
         executionCount: { type: GraphQLInt },
         createdAt: { type: GraphQLString },
         updatedAt: { type: GraphQLString },
@@ -685,8 +676,8 @@ export const CreateKpiThresholdInput = new GraphQLInputObjectType({
     name: 'CreateKpiThresholdInput',
     fields: {
         graphId: { type: GraphQLID },
-        dashboardId: { type: GraphQLID },
-        createdById: { type: GraphQLID },
+        dashboardId: { type: new GraphQLNonNull(GraphQLID) },
+        createdById: { type: new GraphQLNonNull(GraphQLID) },
         alertName: { type: new GraphQLNonNull(GraphQLString) },
         comment: { type: GraphQLString },
         recipients: { type: new GraphQLList(GraphQLString) },
