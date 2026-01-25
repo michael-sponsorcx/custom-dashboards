@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Stack, Text, Select, Flex, Checkbox } from '@mantine/core';
 import { FREQUENCY_OPTIONS, HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../../constants/timeOptions';
-import type { KPIFormData, AlertFrequency, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../../types/kpi-alerts';
+import { FrequencyInterval } from '../../../types/backend-graphql';
+import type { KPIFormData, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../../types/kpi-alerts';
 
 /**
  * ScheduledAlertDetails Component
@@ -35,7 +36,7 @@ export const ScheduledAlertDetails = ({ setKpiFormData }: ScheduledAlertDetailsP
         ...prev,
         alertDetails: {
           ...prev.alertDetails,
-          frequency: value as AlertFrequency,
+          frequency: value as FrequencyInterval,
         } as ScheduledAlertDetailsType,
       }));
     }

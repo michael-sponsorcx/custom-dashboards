@@ -1,4 +1,4 @@
-import type { AlertFrequency } from '../types/kpi-alerts';
+import { FrequencyInterval } from '../types/backend-graphql';
 
 /**
  * Common time-related options used across the application
@@ -8,11 +8,11 @@ import type { AlertFrequency } from '../types/kpi-alerts';
 /**
  * Frequency options for scheduling (hourly, daily, weekly, monthly)
  */
-export const FREQUENCY_OPTIONS: Array<{ value: AlertFrequency; label: string }> = [
-  { value: 'hourly', label: 'Hourly' },
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
+export const FREQUENCY_OPTIONS: Array<{ value: FrequencyInterval; label: string }> = [
+  { value: FrequencyInterval.Hour, label: 'Hourly' },
+  { value: FrequencyInterval.Day, label: 'Daily' },
+  { value: FrequencyInterval.Week, label: 'Weekly' },
+  { value: FrequencyInterval.Month, label: 'Monthly' },
 ];
 
 /**

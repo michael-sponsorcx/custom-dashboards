@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Stack, Text, Select, Flex, TextInput } from '@mantine/core';
-import type { ThresholdComparisonOperator, KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../../types/kpi-alerts';
+import { ThresholdCondition } from '../../../types/backend-graphql';
+import type { KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType } from '../../../types/kpi-alerts';
 
 // Comparison operator options
 const CONDITION_OPTIONS = [
-  { value: 'greater-than', label: 'Greater than' },
-  { value: 'greater-than-or-equal', label: 'Greater than or equal to' },
-  { value: 'less-than', label: 'Less than' },
-  { value: 'less-than-or-equal', label: 'Less than or equal to' },
-  { value: 'equal-to', label: 'Equal to' },
-  { value: 'not-equal-to', label: 'Not equal to' },
+  { value: ThresholdCondition.GreaterThan, label: 'Greater than' },
+  { value: ThresholdCondition.GreaterThanOrEqual, label: 'Greater than or equal to' },
+  { value: ThresholdCondition.LessThan, label: 'Less than' },
+  { value: ThresholdCondition.LessThanOrEqual, label: 'Less than or equal to' },
+  { value: ThresholdCondition.EqualTo, label: 'Equal to' },
+  { value: ThresholdCondition.NotEqualTo, label: 'Not equal to' },
 ];
 
 /**
@@ -32,7 +33,7 @@ export const ThresholdAlertDetails = ({ setKpiFormData }: ThresholdAlertDetailsP
   const [condition, setCondition] = useState<string>('');
   const [thresholdValue, setThresholdValue] = useState<string>('');
 
-  const handleConditionChange = (newCondition: ThresholdComparisonOperator) => {
+  const handleConditionChange = (newCondition: ThresholdCondition) => {
     setCondition(newCondition);
 
     // Update KPI form data with alert details
@@ -69,7 +70,7 @@ export const ThresholdAlertDetails = ({ setKpiFormData }: ThresholdAlertDetailsP
           value={condition}
           onChange={(value) => {
             if (value) {
-              handleConditionChange(value as ThresholdComparisonOperator);
+              handleConditionChange(value as ThresholdCondition);
             }
           }}
           data={CONDITION_OPTIONS}

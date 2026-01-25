@@ -18,6 +18,17 @@ export type Scalars = {
   JSON: { input: any; output: any; }
 };
 
+export enum AlertType {
+  Schedule = 'SCHEDULE',
+  Threshold = 'THRESHOLD'
+}
+
+export enum AttachmentType {
+  Csv = 'CSV',
+  Excel = 'EXCEL',
+  Pdf = 'PDF'
+}
+
 export enum ChartType {
   Area = 'AREA',
   Bar = 'BAR',
@@ -32,14 +43,114 @@ export enum ChartType {
   Table = 'TABLE'
 }
 
+export type CreateKpiScheduleInput = {
+  alertName: Scalars['String']['input'];
+  attachmentType?: InputMaybe<AttachmentType>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  createdById: Scalars['ID']['input'];
+  dashboardId: Scalars['ID']['input'];
+  excludeWeekends?: InputMaybe<Scalars['Boolean']['input']>;
+  frequencyInterval: FrequencyInterval;
+  gatingCondition?: InputMaybe<Scalars['JSON']['input']>;
+  graphId?: InputMaybe<Scalars['ID']['input']>;
+  hasGatingCondition?: InputMaybe<Scalars['Boolean']['input']>;
+  hourInterval?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  minuteInterval?: InputMaybe<Scalars['Int']['input']>;
+  monthDates?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  recipients?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  scheduleHour?: InputMaybe<Scalars['Int']['input']>;
+  scheduleMinute?: InputMaybe<Scalars['Int']['input']>;
+  selectedDays?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  timeZone?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateKpiThresholdInput = {
+  alertName: Scalars['String']['input'];
+  comment?: InputMaybe<Scalars['String']['input']>;
+  condition: ThresholdCondition;
+  createdById: Scalars['ID']['input'];
+  dashboardId: Scalars['ID']['input'];
+  graphId?: InputMaybe<Scalars['ID']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  recipients?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  thresholdValue: Scalars['Float']['input'];
+  timeZone?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CubeDimension = {
+  __typename?: 'CubeDimension';
+  description?: Maybe<Scalars['String']['output']>;
+  isVisible: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  primaryKey: Scalars['Boolean']['output'];
+  public: Scalars['Boolean']['output'];
+  shortTitle: Scalars['String']['output'];
+  suggestFilterValues: Scalars['Boolean']['output'];
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
 export type CubeDimensionValues = {
   __typename?: 'CubeDimensionValues';
   values: Array<Maybe<Scalars['String']['output']>>;
 };
 
+export type CubeDrillMembersGrouped = {
+  __typename?: 'CubeDrillMembersGrouped';
+  dimensions: Array<Maybe<Scalars['String']['output']>>;
+  measures: Array<Maybe<Scalars['String']['output']>>;
+};
+
+export type CubeMeasure = {
+  __typename?: 'CubeMeasure';
+  aggType: Scalars['String']['output'];
+  cumulative: Scalars['Boolean']['output'];
+  cumulativeTotal: Scalars['Boolean']['output'];
+  drillMembers: Array<Maybe<Scalars['String']['output']>>;
+  drillMembersGrouped: CubeDrillMembersGrouped;
+  format?: Maybe<Scalars['String']['output']>;
+  isVisible: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  public: Scalars['Boolean']['output'];
+  shortTitle: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type CubeMeta = {
+  __typename?: 'CubeMeta';
+  connectedComponent: Scalars['Int']['output'];
+  dimensions: Array<CubeDimension>;
+  folders: Array<Maybe<Scalars['JSON']['output']>>;
+  hierarchies: Array<Maybe<Scalars['JSON']['output']>>;
+  isVisible: Scalars['Boolean']['output'];
+  measures: Array<CubeMeasure>;
+  name: Scalars['String']['output'];
+  nestedFolders: Array<Maybe<Scalars['JSON']['output']>>;
+  public: Scalars['Boolean']['output'];
+  segments: Array<CubeSegment>;
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type CubeMetadata = {
+  __typename?: 'CubeMetadata';
+  cubes: Array<CubeMeta>;
+};
+
 export type CubeSchema = {
   __typename?: 'CubeSchema';
   operators: Array<Maybe<Scalars['String']['output']>>;
+};
+
+export type CubeSegment = {
+  __typename?: 'CubeSegment';
+  isVisible: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  public: Scalars['Boolean']['output'];
+  shortTitle: Scalars['String']['output'];
+  title: Scalars['String']['output'];
 };
 
 export type Dashboard = {
@@ -95,6 +206,14 @@ export type DashboardInput = {
   layout: LayoutType;
   name: Scalars['String']['input'];
 };
+
+export enum FrequencyInterval {
+  Day = 'DAY',
+  Hour = 'HOUR',
+  Month = 'MONTH',
+  NMinute = 'N_MINUTE',
+  Week = 'WEEK'
+}
 
 export type Graph = {
   __typename?: 'Graph';
@@ -171,6 +290,55 @@ export type GraphInput = {
   yAxisLabel?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type KpiAlert = {
+  __typename?: 'KpiAlert';
+  alertName: Scalars['String']['output'];
+  alertType: AlertType;
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdById: Scalars['ID']['output'];
+  dashboardId: Scalars['ID']['output'];
+  executionCount?: Maybe<Scalars['Int']['output']>;
+  graphId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  lastExecutedAt?: Maybe<Scalars['String']['output']>;
+  nextExecutionAt: Scalars['String']['output'];
+  organizationId: Scalars['ID']['output'];
+  recipients?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type KpiSchedule = {
+  __typename?: 'KpiSchedule';
+  alert: KpiAlert;
+  attachmentType?: Maybe<AttachmentType>;
+  cronExpression?: Maybe<Scalars['String']['output']>;
+  excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
+  frequencyInterval: FrequencyInterval;
+  gatingCondition?: Maybe<Scalars['JSON']['output']>;
+  hasGatingCondition?: Maybe<Scalars['Boolean']['output']>;
+  hourInterval?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  kpiAlertId: Scalars['ID']['output'];
+  minuteInterval?: Maybe<Scalars['Int']['output']>;
+  monthDates?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  scheduleHour?: Maybe<Scalars['Int']['output']>;
+  scheduleMinute?: Maybe<Scalars['Int']['output']>;
+  selectedDays?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  timeZone?: Maybe<Scalars['String']['output']>;
+};
+
+export type KpiThreshold = {
+  __typename?: 'KpiThreshold';
+  alert: KpiAlert;
+  condition: ThresholdCondition;
+  id: Scalars['ID']['output'];
+  kpiAlertId: Scalars['ID']['output'];
+  thresholdValue: Scalars['Float']['output'];
+  timeZone?: Maybe<Scalars['String']['output']>;
+};
+
 export enum LayoutType {
   Grid = 'GRID',
   List = 'LIST'
@@ -188,10 +356,16 @@ export type Mutation = {
   clearDashboardFilter?: Maybe<DashboardFilter>;
   createDashboard?: Maybe<Dashboard>;
   createGraph?: Maybe<Graph>;
+  createKpiSchedule?: Maybe<KpiSchedule>;
+  createKpiThreshold?: Maybe<KpiThreshold>;
   deleteDashboard?: Maybe<Dashboard>;
   deleteGraph?: Maybe<Graph>;
+  deleteKpiSchedule?: Maybe<Scalars['Boolean']['output']>;
+  deleteKpiThreshold?: Maybe<Scalars['Boolean']['output']>;
   removeDashboardGridItem?: Maybe<DashboardGridItem>;
   saveDashboardFilter?: Maybe<DashboardFilter>;
+  toggleKpiScheduleActive?: Maybe<KpiSchedule>;
+  toggleKpiThresholdActive?: Maybe<KpiThreshold>;
   updateDashboard?: Maybe<Dashboard>;
   updateDashboardGridItem?: Maybe<DashboardGridItem>;
   updateGraph?: Maybe<Graph>;
@@ -221,12 +395,34 @@ export type MutationCreateGraphArgs = {
 };
 
 
+export type MutationCreateKpiScheduleArgs = {
+  input: CreateKpiScheduleInput;
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateKpiThresholdArgs = {
+  input: CreateKpiThresholdInput;
+  organizationId: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteDashboardArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type MutationDeleteGraphArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteKpiScheduleArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteKpiThresholdArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -239,6 +435,18 @@ export type MutationRemoveDashboardGridItemArgs = {
 export type MutationSaveDashboardFilterArgs = {
   dashboardId: Scalars['ID']['input'];
   input: DashboardFilterInput;
+};
+
+
+export type MutationToggleKpiScheduleActiveArgs = {
+  id: Scalars['ID']['input'];
+  isActive: Scalars['Boolean']['input'];
+};
+
+
+export type MutationToggleKpiThresholdActiveArgs = {
+  id: Scalars['ID']['input'];
+  isActive: Scalars['Boolean']['input'];
 };
 
 
@@ -269,7 +477,7 @@ export enum NumberFormat {
 export type Query = {
   __typename?: 'Query';
   cubeDimensionValues?: Maybe<CubeDimensionValues>;
-  cubeMetadata?: Maybe<Scalars['JSON']['output']>;
+  cubeMetadata?: Maybe<CubeMetadata>;
   cubeQuery?: Maybe<Scalars['JSON']['output']>;
   cubeSchema?: Maybe<CubeSchema>;
   dashboard?: Maybe<Dashboard>;
@@ -279,6 +487,8 @@ export type Query = {
   graph?: Maybe<Graph>;
   graphs?: Maybe<Array<Maybe<Graph>>>;
   hello?: Maybe<Scalars['String']['output']>;
+  kpiSchedulesByGraph?: Maybe<Array<Maybe<KpiSchedule>>>;
+  kpiThresholdsByGraph?: Maybe<Array<Maybe<KpiThreshold>>>;
   status?: Maybe<Scalars['String']['output']>;
 };
 
@@ -323,9 +533,28 @@ export type QueryGraphsArgs = {
   organizationId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+
+export type QueryKpiSchedulesByGraphArgs = {
+  graphId: Scalars['ID']['input'];
+};
+
+
+export type QueryKpiThresholdsByGraphArgs = {
+  graphId: Scalars['ID']['input'];
+};
+
 export enum SortOrder {
   Asc = 'ASC',
   Desc = 'DESC'
+}
+
+export enum ThresholdCondition {
+  EqualTo = 'EQUAL_TO',
+  GreaterThan = 'GREATER_THAN',
+  GreaterThanOrEqual = 'GREATER_THAN_OR_EQUAL',
+  LessThan = 'LESS_THAN',
+  LessThanOrEqual = 'LESS_THAN_OR_EQUAL',
+  NotEqualTo = 'NOT_EQUAL_TO'
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -402,10 +631,20 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AlertType: AlertType;
+  AttachmentType: AttachmentType;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ChartType: ChartType;
+  CreateKpiScheduleInput: CreateKpiScheduleInput;
+  CreateKpiThresholdInput: CreateKpiThresholdInput;
+  CubeDimension: ResolverTypeWrapper<CubeDimension>;
   CubeDimensionValues: ResolverTypeWrapper<CubeDimensionValues>;
+  CubeDrillMembersGrouped: ResolverTypeWrapper<CubeDrillMembersGrouped>;
+  CubeMeasure: ResolverTypeWrapper<CubeMeasure>;
+  CubeMeta: ResolverTypeWrapper<CubeMeta>;
+  CubeMetadata: ResolverTypeWrapper<CubeMetadata>;
   CubeSchema: ResolverTypeWrapper<CubeSchema>;
+  CubeSegment: ResolverTypeWrapper<CubeSegment>;
   Dashboard: ResolverTypeWrapper<Dashboard>;
   DashboardFilter: ResolverTypeWrapper<DashboardFilter>;
   DashboardFilterInput: DashboardFilterInput;
@@ -413,11 +652,15 @@ export type ResolversTypes = ResolversObject<{
   DashboardGridItemInput: DashboardGridItemInput;
   DashboardInput: DashboardInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  FrequencyInterval: FrequencyInterval;
   Graph: ResolverTypeWrapper<Graph>;
   GraphInput: GraphInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
+  KpiAlert: ResolverTypeWrapper<KpiAlert>;
+  KpiSchedule: ResolverTypeWrapper<KpiSchedule>;
+  KpiThreshold: ResolverTypeWrapper<KpiThreshold>;
   LayoutType: LayoutType;
   LegendPosition: LegendPosition;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
@@ -425,13 +668,22 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   SortOrder: SortOrder;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  ThresholdCondition: ThresholdCondition;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output'];
+  CreateKpiScheduleInput: CreateKpiScheduleInput;
+  CreateKpiThresholdInput: CreateKpiThresholdInput;
+  CubeDimension: CubeDimension;
   CubeDimensionValues: CubeDimensionValues;
+  CubeDrillMembersGrouped: CubeDrillMembersGrouped;
+  CubeMeasure: CubeMeasure;
+  CubeMeta: CubeMeta;
+  CubeMetadata: CubeMetadata;
   CubeSchema: CubeSchema;
+  CubeSegment: CubeSegment;
   Dashboard: Dashboard;
   DashboardFilter: DashboardFilter;
   DashboardFilterInput: DashboardFilterInput;
@@ -444,17 +696,79 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   JSON: Scalars['JSON']['output'];
+  KpiAlert: KpiAlert;
+  KpiSchedule: KpiSchedule;
+  KpiThreshold: KpiThreshold;
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   String: Scalars['String']['output'];
+}>;
+
+export type CubeDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeDimension'] = ResolversParentTypes['CubeDimension']> = ResolversObject<{
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isVisible?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primaryKey?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  suggestFilterValues?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type CubeDimensionValuesResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeDimensionValues'] = ResolversParentTypes['CubeDimensionValues']> = ResolversObject<{
   values?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
 }>;
 
+export type CubeDrillMembersGroupedResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeDrillMembersGrouped'] = ResolversParentTypes['CubeDrillMembersGrouped']> = ResolversObject<{
+  dimensions?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+  measures?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+}>;
+
+export type CubeMeasureResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeMeasure'] = ResolversParentTypes['CubeMeasure']> = ResolversObject<{
+  aggType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cumulative?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  cumulativeTotal?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  drillMembers?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+  drillMembersGrouped?: Resolver<ResolversTypes['CubeDrillMembersGrouped'], ParentType, ContextType>;
+  format?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isVisible?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type CubeMetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeMeta'] = ResolversParentTypes['CubeMeta']> = ResolversObject<{
+  connectedComponent?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  dimensions?: Resolver<Array<ResolversTypes['CubeDimension']>, ParentType, ContextType>;
+  folders?: Resolver<Array<Maybe<ResolversTypes['JSON']>>, ParentType, ContextType>;
+  hierarchies?: Resolver<Array<Maybe<ResolversTypes['JSON']>>, ParentType, ContextType>;
+  isVisible?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  measures?: Resolver<Array<ResolversTypes['CubeMeasure']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nestedFolders?: Resolver<Array<Maybe<ResolversTypes['JSON']>>, ParentType, ContextType>;
+  public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  segments?: Resolver<Array<ResolversTypes['CubeSegment']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
+export type CubeMetadataResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeMetadata'] = ResolversParentTypes['CubeMetadata']> = ResolversObject<{
+  cubes?: Resolver<Array<ResolversTypes['CubeMeta']>, ParentType, ContextType>;
+}>;
+
 export type CubeSchemaResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeSchema'] = ResolversParentTypes['CubeSchema']> = ResolversObject<{
   operators?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
+}>;
+
+export type CubeSegmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeSegment'] = ResolversParentTypes['CubeSegment']> = ResolversObject<{
+  isVisible?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type DashboardResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dashboard'] = ResolversParentTypes['Dashboard']> = ResolversObject<{
@@ -531,15 +845,67 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'JSON';
 }
 
+export type KpiAlertResolvers<ContextType = any, ParentType extends ResolversParentTypes['KpiAlert'] = ResolversParentTypes['KpiAlert']> = ResolversObject<{
+  alertName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  alertType?: Resolver<ResolversTypes['AlertType'], ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdById?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  executionCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  graphId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  lastExecutedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  nextExecutionAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  organizationId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  recipients?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type KpiScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['KpiSchedule'] = ResolversParentTypes['KpiSchedule']> = ResolversObject<{
+  alert?: Resolver<ResolversTypes['KpiAlert'], ParentType, ContextType>;
+  attachmentType?: Resolver<Maybe<ResolversTypes['AttachmentType']>, ParentType, ContextType>;
+  cronExpression?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  frequencyInterval?: Resolver<ResolversTypes['FrequencyInterval'], ParentType, ContextType>;
+  gatingCondition?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  hasGatingCondition?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hourInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kpiAlertId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  minuteInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  monthDates?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
+  scheduleHour?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  scheduleMinute?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  selectedDays?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  timeZone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type KpiThresholdResolvers<ContextType = any, ParentType extends ResolversParentTypes['KpiThreshold'] = ResolversParentTypes['KpiThreshold']> = ResolversObject<{
+  alert?: Resolver<ResolversTypes['KpiAlert'], ParentType, ContextType>;
+  condition?: Resolver<ResolversTypes['ThresholdCondition'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  kpiAlertId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  thresholdValue?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  timeZone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationAddDashboardGridItemArgs, 'dashboardId' | 'input'>>;
   clearDashboardFilter?: Resolver<Maybe<ResolversTypes['DashboardFilter']>, ParentType, ContextType, RequireFields<MutationClearDashboardFilterArgs, 'dashboardId'>>;
   createDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationCreateDashboardArgs, 'input'>>;
   createGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationCreateGraphArgs, 'input'>>;
+  createKpiSchedule?: Resolver<Maybe<ResolversTypes['KpiSchedule']>, ParentType, ContextType, RequireFields<MutationCreateKpiScheduleArgs, 'input' | 'organizationId'>>;
+  createKpiThreshold?: Resolver<Maybe<ResolversTypes['KpiThreshold']>, ParentType, ContextType, RequireFields<MutationCreateKpiThresholdArgs, 'input' | 'organizationId'>>;
   deleteDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationDeleteDashboardArgs, 'id'>>;
   deleteGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationDeleteGraphArgs, 'id'>>;
+  deleteKpiSchedule?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteKpiScheduleArgs, 'id'>>;
+  deleteKpiThreshold?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteKpiThresholdArgs, 'id'>>;
   removeDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationRemoveDashboardGridItemArgs, 'id'>>;
   saveDashboardFilter?: Resolver<Maybe<ResolversTypes['DashboardFilter']>, ParentType, ContextType, RequireFields<MutationSaveDashboardFilterArgs, 'dashboardId' | 'input'>>;
+  toggleKpiScheduleActive?: Resolver<Maybe<ResolversTypes['KpiSchedule']>, ParentType, ContextType, RequireFields<MutationToggleKpiScheduleActiveArgs, 'id' | 'isActive'>>;
+  toggleKpiThresholdActive?: Resolver<Maybe<ResolversTypes['KpiThreshold']>, ParentType, ContextType, RequireFields<MutationToggleKpiThresholdActiveArgs, 'id' | 'isActive'>>;
   updateDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardArgs, 'id' | 'input'>>;
   updateDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardGridItemArgs, 'id' | 'input'>>;
   updateGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationUpdateGraphArgs, 'id' | 'input'>>;
@@ -547,7 +913,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   cubeDimensionValues?: Resolver<Maybe<ResolversTypes['CubeDimensionValues']>, ParentType, ContextType, RequireFields<QueryCubeDimensionValuesArgs, 'dimension' | 'view'>>;
-  cubeMetadata?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  cubeMetadata?: Resolver<Maybe<ResolversTypes['CubeMetadata']>, ParentType, ContextType>;
   cubeQuery?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType, RequireFields<QueryCubeQueryArgs, 'query'>>;
   cubeSchema?: Resolver<Maybe<ResolversTypes['CubeSchema']>, ParentType, ContextType>;
   dashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<QueryDashboardArgs, 'id'>>;
@@ -557,17 +923,28 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<QueryGraphArgs, 'id'>>;
   graphs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Graph']>>>, ParentType, ContextType, Partial<QueryGraphsArgs>>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  kpiSchedulesByGraph?: Resolver<Maybe<Array<Maybe<ResolversTypes['KpiSchedule']>>>, ParentType, ContextType, RequireFields<QueryKpiSchedulesByGraphArgs, 'graphId'>>;
+  kpiThresholdsByGraph?: Resolver<Maybe<Array<Maybe<ResolversTypes['KpiThreshold']>>>, ParentType, ContextType, RequireFields<QueryKpiThresholdsByGraphArgs, 'graphId'>>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  CubeDimension?: CubeDimensionResolvers<ContextType>;
   CubeDimensionValues?: CubeDimensionValuesResolvers<ContextType>;
+  CubeDrillMembersGrouped?: CubeDrillMembersGroupedResolvers<ContextType>;
+  CubeMeasure?: CubeMeasureResolvers<ContextType>;
+  CubeMeta?: CubeMetaResolvers<ContextType>;
+  CubeMetadata?: CubeMetadataResolvers<ContextType>;
   CubeSchema?: CubeSchemaResolvers<ContextType>;
+  CubeSegment?: CubeSegmentResolvers<ContextType>;
   Dashboard?: DashboardResolvers<ContextType>;
   DashboardFilter?: DashboardFilterResolvers<ContextType>;
   DashboardGridItem?: DashboardGridItemResolvers<ContextType>;
   Graph?: GraphResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  KpiAlert?: KpiAlertResolvers<ContextType>;
+  KpiSchedule?: KpiScheduleResolvers<ContextType>;
+  KpiThreshold?: KpiThresholdResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;

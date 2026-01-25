@@ -6,6 +6,8 @@
  * and related data structures.
  */
 
+import { FrequencyInterval, ThresholdCondition } from './backend-graphql';
+
 /**
  * Type of KPI alert
  */
@@ -17,29 +19,13 @@ export type KPIAlertType =
   // | 'anomaly';
 
 /**
- * Comparison operators for threshold-based alerts
- */
-export type ThresholdComparisonOperator =
-  | 'greater-than'
-  | 'greater-than-or-equal'
-  | 'less-than'
-  | 'less-than-or-equal'
-  | 'equal-to'
-  | 'not-equal-to';
-
-/**
- * Frequency options for scheduled alerts
- */
-export type AlertFrequency = 'hourly' | 'daily' | 'weekly' | 'monthly';
-
-/**
  * Alert details for threshold-based alerts
  */
 export interface ThresholdAlertDetails {
   /** User-defined name for the alert */
   alertName: string;
   /** Comparison operator */
-  condition: ThresholdComparisonOperator;
+  condition: ThresholdCondition;
   /** Threshold value to compare against */
   thresholdValue: number;
 }
@@ -51,7 +37,7 @@ export interface ScheduledAlertDetails {
   /** User-defined name for the alert */
   alertName: string;
   /** How often to send the alert */
-  frequency: AlertFrequency;
+  frequency: FrequencyInterval;
   /** Hour of day (0-23) */
   hour: string;
   /** Minute of hour (0-55, in 5-minute increments) */

@@ -14,107 +14,17 @@ import type {
     ThresholdAlertDetails,
     ScheduledAlertDetails,
 } from '../../../types/kpi-alerts';
-import {
-    toBackendFrequency,
-    toBackendCondition,
-    type BackendFrequencyInterval,
-    type BackendThresholdCondition,
-    type BackendAttachmentType,
-} from '../utils/enumMappers';
+import type {
+    KpiAlert,
+    KpiSchedule,
+    KpiThreshold,
+    CreateKpiScheduleInput,
+    CreateKpiThresholdInput,
+} from '../../../types/backend-graphql';
+import { FrequencyInterval, ThresholdCondition } from '../../../types/backend-graphql';
 
-// ============================================================================
-// Types matching backend GraphQL schema
-// ============================================================================
-
-/** Base alert fields shared by schedules and thresholds */
-export interface KpiAlert {
-    id: string;
-    organizationId: string;
-    graphId?: string;
-    dashboardId: string;
-    createdById: string;
-    alertName: string;
-    alertType: 'schedule' | 'threshold';
-    comment?: string;
-    recipients?: string[];
-    isActive?: boolean;
-    lastExecutedAt?: string;
-    nextExecutionAt: string;
-    executionCount?: number;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-/** KPI Schedule with nested alert */
-export interface KpiSchedule {
-    id: string;
-    kpiAlertId: string;
-    frequencyInterval: BackendFrequencyInterval;
-    minuteInterval?: number;
-    hourInterval?: number;
-    scheduleHour?: number;
-    scheduleMinute?: number;
-    selectedDays?: string[];
-    excludeWeekends?: boolean;
-    monthDates?: number[];
-    timeZone?: string;
-    hasGatingCondition?: boolean;
-    gatingCondition?: unknown;
-    attachmentType?: BackendAttachmentType;
-    cronExpression?: string;
-    alert: KpiAlert;
-}
-
-/** KPI Threshold with nested alert */
-export interface KpiThreshold {
-    id: string;
-    kpiAlertId: string;
-    condition: BackendThresholdCondition;
-    thresholdValue: number;
-    timeZone?: string;
-    alert: KpiAlert;
-}
-
-// ============================================================================
-// Input Types for Mutations
-// ============================================================================
-
-/** Input for createKpiSchedule mutation */
-interface CreateKpiScheduleInput {
-    graphId?: string;
-    dashboardId: string;
-    createdById: string;
-    alertName: string;
-    comment?: string;
-    recipients?: string[];
-    isActive?: boolean;
-    frequencyInterval: BackendFrequencyInterval;
-    minuteInterval?: number;
-    hourInterval?: number;
-    scheduleHour?: number;
-    scheduleMinute?: number;
-    selectedDays?: string[];
-    excludeWeekends?: boolean;
-    monthDates?: number[];
-    timeZone?: string;
-    hasGatingCondition?: boolean;
-    gatingCondition?: unknown;
-    attachmentType?: BackendAttachmentType;
-}
-
-/** Input for createKpiThreshold mutation */
-interface CreateKpiThresholdInput {
-    graphId?: string;
-    dashboardId: string;
-    createdById: string;
-    alertName: string;
-    comment?: string;
-    recipients?: string[];
-    isActive?: boolean;
-    condition: BackendThresholdCondition;
-    thresholdValue: number;
-    timeZone?: string;
-}
+// Re-export types for consumers of this service
+export type { KpiAlert, KpiSchedule, KpiThreshold };
 
 // ============================================================================
 // GraphQL Fragments
@@ -185,9 +95,6 @@ const toScheduleInput = (
 ): CreateKpiScheduleInput => {
     const alertDetails = formData.alertDetails as ScheduledAlertDetails | undefined;
 
-    const frequency = alertDetails?.frequency || 'daily';
-    const frequencyInterval = toBackendFrequency(frequency);
-
     return {
         graphId,
         dashboardId,
@@ -196,7 +103,7 @@ const toScheduleInput = (
         comment: formData.alertBodyContent,
         recipients: formData.recipients,
         isActive: true,
-        frequencyInterval,
+        frequencyInterval: alertDetails?.frequency || FrequencyInterval.Day,
         scheduleHour: alertDetails?.hour ? parseInt(alertDetails.hour, 10) : undefined,
         scheduleMinute: alertDetails?.minute ? parseInt(alertDetails.minute, 10) : undefined,
         excludeWeekends: alertDetails?.excludeWeekends,
@@ -215,9 +122,6 @@ const toThresholdInput = (
 ): CreateKpiThresholdInput => {
     const alertDetails = formData.alertDetails as ThresholdAlertDetails | undefined;
 
-    const condition = alertDetails?.condition || 'greater-than';
-    const mappedCondition = toBackendCondition(condition);
-
     return {
         graphId,
         dashboardId,
@@ -226,7 +130,7 @@ const toThresholdInput = (
         comment: formData.alertBodyContent,
         recipients: formData.recipients,
         isActive: true,
-        condition: mappedCondition,
+        condition: alertDetails?.condition || ThresholdCondition.GreaterThan,
         thresholdValue: alertDetails?.thresholdValue ?? 0,
         timeZone: 'UTC',
     };
