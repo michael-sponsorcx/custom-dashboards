@@ -124,13 +124,14 @@ export function ChartPreview({
       withBorder
       style={{
         height: '100%',
-        maxHeight: '500px',
-        minHeight: '500px',
+        maxHeight: '600px',
+        minHeight: '600px',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
-      <Stack gap="md" style={{ height: '100%', overflow: 'hidden' }}>
+      <Stack gap="md" style={{ flex: 1, minHeight: 0 }}>
         {/* Chart Title */}
         {chartTitle && (
           <Title order={3} ta="center">
@@ -142,11 +143,9 @@ export function ChartPreview({
         <div
           style={{
             flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '400px',
+            minHeight: 0,
             width: '100%',
+            overflow: 'hidden',
           }}
         >
           {(() => {
