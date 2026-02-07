@@ -9,6 +9,7 @@ import {
   IconBell,
 } from '@tabler/icons-react';
 import type { DrillDownState } from '../hooks/useGraphDrillDown';
+import type { ChartType } from '../../../../../utils/chartDataAnalyzer';
 
 /**
  * Props for GraphCardActions component
@@ -24,6 +25,8 @@ interface GraphCardActionsProps {
   loading: boolean;
   /** Whether query result exists for CSV download */
   hasData: boolean;
+  /** Chart type - used to conditionally show KPI alert button */
+  chartType: ChartType;
   /** Handler for reset drill-down */
   onReset: () => void;
   /** Handler for refresh */
@@ -73,6 +76,7 @@ export function GraphCardActions({
   isRefreshing,
   loading,
   hasData,
+  chartType,
   onReset,
   onRefresh,
   onOpenFilterModal,
@@ -131,17 +135,19 @@ export function GraphCardActions({
         </ActionIcon>
       </Tooltip>
 
-      {/* KPI Alert button - Opens modal to create/manage KPI alerts */}
-      <Tooltip label="Create KPI alert">
-        <ActionIcon
-          color="yellow"
-          variant="subtle"
-          onClick={onOpenKPIAlertModal}
-          aria-label="Create KPI alert"
-        >
-          <IconBell size={18} />
-        </ActionIcon>
-      </Tooltip>
+      {/* KPI Alert button - Only shown for KPI charts */}
+      {chartType === 'kpi' && (
+        <Tooltip label="Create KPI alert">
+          <ActionIcon
+            color="yellow"
+            variant="subtle"
+            onClick={onOpenKPIAlertModal}
+            aria-label="Create KPI alert"
+          >
+            <IconBell size={18} />
+          </ActionIcon>
+        </Tooltip>
+      )}
 
       {/* Download CSV button */}
       <Tooltip label="Download CSV">

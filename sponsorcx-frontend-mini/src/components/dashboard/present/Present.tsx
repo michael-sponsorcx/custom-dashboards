@@ -1,12 +1,12 @@
 import { Box } from '@mantine/core';
-import { DashboardItem } from '@/types/dashboard';
+import { GridItem } from '@/types/dashboard';
 import { useDashboardFilterStore } from '@/store';
 import { useFullscreenMode, useSlideNavigation } from './hooks';
 import { PresentationControls } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
 
 interface PresentProps {
-  graphs: DashboardItem[];
+  gridItems: GridItem[];
   dashboardName: string;
   onClose: () => void;
 }
@@ -15,12 +15,12 @@ interface PresentProps {
  * Presentation mode component for the dashboard
  * Displays graphs in fullscreen mode with keyboard navigation
  */
-export function Present({ graphs, dashboardName, onClose }: PresentProps) {
+export function Present({ gridItems, dashboardName, onClose }: PresentProps) {
   const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Custom hooks handle fullscreen and navigation logic
   const containerRef = useFullscreenMode(onClose);
-  const totalSlides = 1 + graphs.length;
+  const totalSlides = 1 + gridItems.length;
   const { currentSlide, handleNext, handlePrevious, handleClose } = useSlideNavigation({
     totalSlides,
     onExit: onClose,
@@ -55,7 +55,7 @@ export function Present({ graphs, dashboardName, onClose }: PresentProps) {
 
   // Render graph slide
   const graphIndex = currentSlide - 1;
-  const graph = graphs[graphIndex];
+  const graph = gridItems[graphIndex];
 
   return (
     <Box

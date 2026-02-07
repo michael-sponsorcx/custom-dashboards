@@ -11,10 +11,10 @@
 import { useState, useCallback, useMemo } from 'react';
 import { FilterRule, FieldType } from '../../../types/filters';
 import { FilterFieldInfo } from '../types';
-import { GraphTemplate } from '../../../types/graph';
+import { GraphUI } from '../../../types/graph';
 
 interface UseFilterManagementOptions {
-  initialTemplate?: GraphTemplate;
+  initialTemplate?: GraphUI;
 }
 
 export function useFilterManagement(options: UseFilterManagementOptions = {}) {

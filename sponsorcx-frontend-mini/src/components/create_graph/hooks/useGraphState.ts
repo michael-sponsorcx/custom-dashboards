@@ -8,7 +8,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { GraphTemplate } from '../../../types/graph';
+import { GraphUI } from '../../../types/graph';
 import { ViewFields, ChartConfig } from '../types';
 import type { LegendPosition } from '../../../types/graph';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
@@ -18,7 +18,7 @@ import type { ColorPalette } from '../../../constants/colorPalettes';
 import { getPalettePrimaryColor } from '../../../constants/colorPalettes';
 
 interface UseGraphStateOptions {
-  initialTemplate?: GraphTemplate;
+  initialTemplate?: GraphUI;
 }
 
 export function useGraphState(options: UseGraphStateOptions = {}) {

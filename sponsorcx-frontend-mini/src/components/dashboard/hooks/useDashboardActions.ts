@@ -6,7 +6,7 @@ import {
   removeGraphFromDashboard,
   fetchDashboardGridItems,
 } from '../../../services/backendCube';
-import { DashboardItem } from '../../../types/dashboard';
+import { GridItem } from '../../../types/dashboard';
 import { useOrganizationStore } from '../../../store';
 
 interface UseDashboardActionsOptions {
@@ -130,7 +130,7 @@ export function useDashboardActions({
     }
   };
 
-  const handleBatchMoveGraph = async (items: DashboardItem[]) => {
+  const handleBatchMoveGraph = async (items: GridItem[]) => {
     // Persist all layout changes to backend
     // React-grid-layout already updated the visual positions
     // No need to call setGraphs - it would cause redundant re-renders

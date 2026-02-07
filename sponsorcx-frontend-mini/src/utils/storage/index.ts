@@ -6,13 +6,7 @@
  */
 
 // Graph storage
-export {
-  saveGraphTemplate,
-  getAllGraphTemplates,
-  getGraphTemplate,
-  deleteGraphTemplate,
-  generateGraphId,
-} from './graphStorage';
+export { saveGraph, getAllGraphs, getGraph, deleteGraph, generateGraphId } from './graphStorage';
 
 // Dashboard storage
 export {
@@ -23,7 +17,7 @@ export {
   saveGridLayout,
   getGridLayout,
   deleteGridLayout,
-  getDashboardItem,
-  getAllDashboardItems,
-  DASHBOARD_ITEMS_KEY,
+  getGridItem,
+  getAllGridItems,
+  GRID_ITEMS_KEY,
 } from './dashboardStorage';

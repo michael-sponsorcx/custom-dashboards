@@ -12,6 +12,7 @@ import type { ScheduleFormData, FrequencyInterval } from '../../../types/schedul
  */
 export interface KpiSchedule {
   id: string;
+  cronJobId: string;
   organizationId: string;
   graphId?: string;
   dashboardId: string;
@@ -33,9 +34,6 @@ export interface KpiSchedule {
   recipients?: string[];
   isActive?: boolean;
   cronExpression?: string;
-  lastExecutedAt?: string;
-  nextExecutionAt: string;
-  executionCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -68,6 +66,7 @@ export interface KpiScheduleInput {
 // GraphQL fragments for reusability
 const KPI_SCHEDULE_FIELDS = `
   id
+  cronJobId
   organizationId
   graphId
   dashboardId
@@ -89,9 +88,6 @@ const KPI_SCHEDULE_FIELDS = `
   recipients
   isActive
   cronExpression
-  lastExecutedAt
-  nextExecutionAt
-  executionCount
   createdAt
   updatedAt
 `;

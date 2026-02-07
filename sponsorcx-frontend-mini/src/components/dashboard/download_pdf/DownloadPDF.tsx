@@ -1,14 +1,14 @@
 import { useRef, useEffect } from 'react';
 import { Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { DashboardItem } from '@/types/dashboard';
+import { GridItem } from '@/types/dashboard';
 import { useDashboardFilterStore } from '@/store';
 import { usePDFGeneration } from './hooks';
 import { DownloadPDFToast } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
 
 interface DownloadPDFProps {
-  graphs: DashboardItem[];
+  gridItems: GridItem[];
   dashboardName: string;
   onComplete: () => void;
 }
@@ -17,7 +17,7 @@ interface DownloadPDFProps {
  * DownloadPDF component - Generates a PDF document from dashboard slides
  * Renders slides off-screen, captures them as images, and combines into PDF
  */
-export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFProps) {
+export function DownloadPDF({ gridItems, dashboardName, onComplete }: DownloadPDFProps) {
   const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Refs for slide elements to capture
@@ -26,7 +26,7 @@ export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFPr
 
   // PDF generation hook
   const { generatePDF, isGenerating, progress, error, cancel } = usePDFGeneration({
-    graphs,
+    gridItems,
     dashboardName,
     titleSlideRef,
     graphSlideRefs,
@@ -100,7 +100,7 @@ export function DownloadPDF({ graphs, dashboardName, onComplete }: DownloadPDFPr
         </Box>
 
         {/* Graph Slides */}
-        {graphs.map((graph, index) => (
+        {gridItems.map((graph, index) => (
           <Box
             key={graph.id}
             ref={(el) => (graphSlideRefs.current[index] = el)}

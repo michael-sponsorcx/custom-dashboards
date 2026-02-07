@@ -1,7 +1,7 @@
 import { Paper, Group, Loader, Text, Center } from '@mantine/core';
 import { ChartRenderer } from '../../../visualizations/ChartRenderer';
 import { useDownloadCSV } from '../../../../hooks/useDownloadCSV';
-import type { DashboardItem } from '../../../../types/dashboard';
+import type { GridItem } from '../../../../types/dashboard';
 import { useDashboardFilterStore } from '../../../../store';
 import { useGraphData } from './hooks/useGraphData';
 import { useGraphDrillDown } from './hooks/useGraphDrillDown';
@@ -14,7 +14,7 @@ import { GraphCardActions } from './components/GraphCardActions';
  */
 interface GraphCardProps {
   /** Graph configuration template */
-  template: DashboardItem;
+  template: GridItem;
   /** Handler for delete action */
   onDelete: (id: string) => void;
   /** Handler for edit action */
@@ -45,7 +45,7 @@ interface GraphCardProps {
  * - Dashboard-level filters (DashboardFilterContext): Temporary filters applied to ALL graphs
  * - Drill-down filters: Ephemeral filters from clicking chart elements
  *
- * @input template: DashboardItem, handlers, refreshKey
+ * @input template: GridItem, handlers, refreshKey
  * @output Rendered graph card with all controls
  *
  * @example
@@ -119,6 +119,7 @@ export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, 
           isRefreshing={isRefreshing}
           loading={loading}
           hasData={!!queryResult}
+          chartType={template.chartType}
           onReset={resetDrillDown}
           onRefresh={handleRefresh}
           onOpenFilterModal={handleOpenFilterModal}

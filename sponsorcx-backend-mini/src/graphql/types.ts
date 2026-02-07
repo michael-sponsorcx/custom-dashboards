@@ -627,6 +627,7 @@ export const KpiAlertType = new GraphQLObjectType({
     name: 'KpiAlert',
     fields: () => ({
         id: { type: new GraphQLNonNull(GraphQLID) },
+        cronJobId: { type: new GraphQLNonNull(GraphQLID) },
         organizationId: { type: new GraphQLNonNull(GraphQLID) },
         graphId: { type: GraphQLID },
         dashboardId: { type: new GraphQLNonNull(GraphQLID) },
@@ -636,9 +637,6 @@ export const KpiAlertType = new GraphQLObjectType({
         comment: { type: GraphQLString },
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
-        lastExecutedAt: { type: GraphQLString },
-        nextExecutionAt: { type: new GraphQLNonNull(GraphQLString) },
-        executionCount: { type: GraphQLInt },
         createdAt: { type: GraphQLString },
         updatedAt: { type: GraphQLString },
     }),

@@ -12,7 +12,7 @@ import {
   LegendPosition as BackendLegendPosition,
   type GraphInput
 } from '../../../types/backend-graphql';
-import type { GraphTemplate } from '../../../types/graph';
+import type { GraphUI } from '../../../types/graph';
 import type { ChartType as FrontendChartType } from '../../../utils/chartDataAnalyzer';
 
 /**
@@ -34,10 +34,10 @@ function mapChartType(frontendType: FrontendChartType): BackendChartType {
 }
 
 /**
- * Convert GraphTemplate to GraphInput for mutations
+ * Convert GraphUI to GraphInput for mutations
  */
 export function toGraphInput(
-  template: Omit<GraphTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  template: Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'>
 ): GraphInput {
   return {
     name: template.name,

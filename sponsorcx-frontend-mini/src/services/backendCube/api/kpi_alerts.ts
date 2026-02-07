@@ -32,6 +32,7 @@ export type { KpiAlert, KpiSchedule, KpiThreshold };
 
 const KPI_ALERT_FIELDS = `
     id
+    cronJobId
     organizationId
     graphId
     dashboardId
@@ -41,9 +42,6 @@ const KPI_ALERT_FIELDS = `
     comment
     recipients
     isActive
-    lastExecutedAt
-    nextExecutionAt
-    executionCount
     createdAt
     updatedAt
 `;

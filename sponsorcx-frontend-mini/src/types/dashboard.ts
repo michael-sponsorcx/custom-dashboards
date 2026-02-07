@@ -1,6 +1,10 @@
-import { GraphTemplate } from './graph';
+import { GraphUI } from './graph';
 
-export interface DashboardTemplate {
+/**
+ * Frontend dashboard configuration with UI-specific fields.
+ * Distinct from the backend `Dashboard` type in backend-graphql.ts which represents the API contract.
+ */
+export interface DashboardUI {
   id: string;
   name: string;
   layout: 'grid' | 'list';
@@ -20,6 +24,7 @@ export interface GridLayout {
 }
 
 /**
- * Dashboard item combines a graph template with its grid layout properties
+ * A graph positioned within a dashboard grid.
+ * Combines GraphUI configuration with grid layout positioning.
  */
-export interface DashboardItem extends GraphTemplate, GridLayout {}
+export interface GridItem extends GraphUI, GridLayout {}

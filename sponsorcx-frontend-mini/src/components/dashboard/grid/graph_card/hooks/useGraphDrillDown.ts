@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { DashboardItem } from '../../../../../types/dashboard';
+import type { GridItem } from '../../../../../types/dashboard';
 import type { ChartDataPoint } from '../../../../../utils/chartDataTransformations/types';
 import type { DrillDownFilter } from '../utils/graphFilterHelpers';
 import { updateDrillDownFilters } from '../utils/graphFilterHelpers';
@@ -30,7 +30,7 @@ export interface GraphDrillDownResult {
  * **Purpose:** Handle dimension swapping + filter stacking when user drills down
  * **Pattern:** Click bar → swap dimension → add filter → stack on subsequent drills
  *
- * @input template: DashboardItem - Graph configuration with dimensions
+ * @input template: GridItem - Graph configuration with dimensions
  * @output GraphDrillDownResult - State and handlers for drill-down
  *
  * @example
@@ -39,7 +39,7 @@ export interface GraphDrillDownResult {
  * handleDrillDown("Product", { region: "North", sales: 1000 });
  * // Result: effectivePrimaryDimension = "Product", filter = {field: "region", value: "North"}
  */
-export function useGraphDrillDown(template: DashboardItem): GraphDrillDownResult {
+export function useGraphDrillDown(template: GridItem): GraphDrillDownResult {
   const [drillDownState, setDrillDownState] = useState<DrillDownState | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 

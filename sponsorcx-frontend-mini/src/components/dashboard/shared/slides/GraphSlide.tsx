@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Box, Title, Text } from '@mantine/core';
-import { DashboardItem } from '@/types/dashboard';
+import { GridItem } from '@/types/dashboard';
 import { ChartRenderer } from '../../../visualizations/ChartRenderer';
 import { executeCubeGraphQL } from '../../../../services/backendCube';
 import { buildQueryFromTemplate } from '../../../../utils/graphql/builder/builders/buildQueryFromTemplate';
 import { combineFilters } from '../../../../utils/filters/combineFilters';
 
 interface GraphSlideProps {
-  graph: DashboardItem;
+  graph: GridItem;
   dashboardFilters: any[];
   dashboardName: string;
 }

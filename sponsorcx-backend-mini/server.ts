@@ -4,6 +4,7 @@ import { graphqlHTTP } from 'express-graphql';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { graphqlSchema } from './src/graphqlSchema';
+import { initializeKpiAlertsCronJobs } from './src/services/kpiAlertsCronJob';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -113,12 +114,19 @@ Current allowed origins: ${process.env.CORS_ORIGIN || 'Not set'}
     next(err);
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 GraphQL endpoint: http://localhost:${PORT}/graphql`);
     console.log(`🏥 Health check: http://localhost:${PORT}/health`);
-    
+
     if (process.env.NODE_ENV === 'development') {
         console.log(`🎮 GraphiQL playground: http://localhost:${PORT}/graphql`);
+    }
+
+    // Initialize cron jobs (production only - change to 'production' when ready)
+    if (process.env.NODE_ENV === 'development') {
+        console.log('⏰ Initializing cron jobs...');
+        await initializeKpiAlertsCronJobs();
+        console.log('✅ Cron jobs initialized');
     }
 });

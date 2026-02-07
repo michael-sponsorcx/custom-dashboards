@@ -19,7 +19,7 @@ import { useOrganizationStore, useDashboardFilterStore } from '../../store';
 /**
  * Dashboard Component - Refactored
  *
- * Main dashboard view for managing and displaying graphs.
+ * Main dashboard view for managing and displaying gridItems.
  * Uses modular custom hooks for clean separation of concerns.
  */
 export function Dashboard() {
@@ -34,7 +34,7 @@ export function Dashboard() {
   }, [dashboardId, loadFilters]);
 
   // Use custom hooks to manage state and actions
-  const { graphs, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
+  const { gridItems, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
     useDashboardState();
   const {
     handleDeleteGraph,
@@ -74,7 +74,7 @@ export function Dashboard() {
   // PDF generation state
   const [pdfGenerationMode, setPdfGenerationMode] = useState(false);
 
-  // Refresh state - used to force all graphs to re-fetch data
+  // Refresh state - used to force all gridItems to re-fetch data
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -178,7 +178,7 @@ export function Dashboard() {
 
   // If in presentation mode, render the Present component
   if (presentationMode) {
-    return <Present graphs={graphs} dashboardName="Dashboard" onClose={handleClosePresentation} />;
+    return <Present gridItems={gridItems} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
   // Error state: organizationId, dashboardId, and userId are required for the dashboard to function
@@ -220,7 +220,7 @@ export function Dashboard() {
               onCreateSchedule={handleCreateSchedule}
               onManageSchedules={handleManageSchedules}
               onRefresh={handleRefreshAll}
-              disabled={graphs.length === 0}
+              disabled={gridItems.length === 0}
               refreshing={isRefreshing}
             />
             <Button onClick={handleCreateGraph} color="red" size="lg">
@@ -233,7 +233,7 @@ export function Dashboard() {
         <DashboardAvailableFilters onFilterClick={handleFilterFieldClick} />
 
         {/* Empty State or Grid */}
-        {graphs.length === 0 ? (
+        {gridItems.length === 0 ? (
           <Stack align="center" gap="md" py="xl">
             <Text size="lg" c="dimmed">
               No graphs yet. Create your first graph to get started!
@@ -244,7 +244,7 @@ export function Dashboard() {
           </Stack>
         ) : (
           <DashboardGrid
-            graphs={graphs}
+            gridItems={gridItems}
             onDelete={handleDeleteGraph}
             onEdit={handleEditGraph}
             onOpenGraphFilterModal={handleOpenGraphFilterModal}
@@ -303,7 +303,7 @@ export function Dashboard() {
       {/* PDF Generation (non-blocking, renders off-screen) */}
       {pdfGenerationMode && (
         <DownloadPDF
-          graphs={graphs}
+          gridItems={gridItems}
           dashboardName="Dashboard"
           onComplete={handleClosePDFGeneration}
         />

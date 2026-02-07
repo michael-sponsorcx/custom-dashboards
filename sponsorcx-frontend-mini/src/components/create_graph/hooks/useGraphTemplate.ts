@@ -1,7 +1,7 @@
 /**
- * useGraphTemplate Hook
+ * useGraphUI Hook
  *
- * Manages graph template creation and saving:
+ * Manages graph creation and saving:
  * - Determines if editing or creating
  * - Builds template from current state
  * - Saves template to backend
@@ -12,7 +12,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
-import { GraphTemplate } from '../../../types/graph';
+import { GraphUI } from '../../../types/graph';
 import {
   createGraph,
   updateGraph,
@@ -23,8 +23,8 @@ import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';
 import { ChartType } from '../../../utils/chartDataAnalyzer';
 
-interface UseGraphTemplateOptions {
-  editingTemplate?: GraphTemplate;
+interface UseGraphUIOptions {
+  editingGraph?: GraphUI;
 }
 
 interface SaveGraphParams {
@@ -39,15 +39,15 @@ interface SaveGraphParams {
   chartConfig: ChartConfig;
 }
 
-export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
-  const { editingTemplate } = options;
+export function useGraphUI(options: UseGraphUIOptions = {}) {
+  const { editingGraph } = options;
   const navigate = useNavigate();
   const { organizationId, dashboardId } = useOrganizationStore();
-  const isEditing = !!editingTemplate;
+  const isEditing = !!editingGraph;
 
   // Create template from current state
   const createTemplateData = useCallback(
-    (params: SaveGraphParams): Omit<GraphTemplate, 'id' | 'createdAt' | 'updatedAt'> => {
+    (params: SaveGraphParams): Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'> => {
       const {
         selectedView,
         selectedMeasures,
@@ -117,11 +117,11 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
         // Create template data
         const templateData = createTemplateData(params);
 
-        let savedGraph: GraphTemplate;
+        let savedGraph: GraphUI;
 
-        if (isEditing && editingTemplate) {
+        if (isEditing && editingGraph) {
           // Update existing graph
-          savedGraph = await updateGraph(editingTemplate.id, templateData);
+          savedGraph = await updateGraph(editingGraph.id, templateData);
         } else {
           // Create new graph
           savedGraph = await createGraph(templateData, organizationId);
@@ -152,7 +152,7 @@ export function useGraphTemplate(options: UseGraphTemplateOptions = {}) {
         });
       }
     },
-    [isEditing, editingTemplate, createTemplateData, navigate, organizationId, dashboardId]
+    [isEditing, editingGraph, createTemplateData, navigate, organizationId, dashboardId]
   );
 
   return {

@@ -6,8 +6,8 @@
 
 import { executeBackendGraphQL } from '../core/backendClient';
 import { LayoutType } from '../../../types/backend-graphql';
-import type { DashboardTemplate, DashboardItem, GridLayout } from '../../../types/dashboard';
-import type { GraphTemplate } from '../../../types/graph';
+import type { DashboardUI, GridItem, GridLayout } from '../../../types/dashboard';
+import type { GraphUI } from '../../../types/graph';
 import { mapBackendChartType } from '../utils/graphInputMapper';
 
 // GraphQL fragments
@@ -79,13 +79,13 @@ interface DashboardGridItemResponse {
   gridWidth?: number;
   gridHeight?: number;
   displayOrder?: number;
-  graph?: GraphTemplate;
+  graph?: GraphUI;
 }
 
 /**
  * Fetch all dashboards for an organization
  */
-export async function fetchDashboards(organizationId?: string): Promise<DashboardTemplate[]> {
+export async function fetchDashboards(organizationId?: string): Promise<DashboardUI[]> {
   const query = `
     query FetchDashboards($organizationId: ID) {
       dashboards(organizationId: $organizationId) {
@@ -94,7 +94,7 @@ export async function fetchDashboards(organizationId?: string): Promise<Dashboar
     }
   `;
 
-  const response = await executeBackendGraphQL<{ dashboards: DashboardTemplate[] }>(query, {
+  const response = await executeBackendGraphQL<{ dashboards: DashboardUI[] }>(query, {
     organizationId,
   });
 
@@ -109,7 +109,7 @@ export async function fetchDashboards(organizationId?: string): Promise<Dashboar
 /**
  * Fetch a single dashboard by ID
  */
-export async function fetchDashboard(id: string): Promise<DashboardTemplate | null> {
+export async function fetchDashboard(id: string): Promise<DashboardUI | null> {
   const query = `
     query FetchDashboard($id: ID!) {
       dashboard(id: $id) {
@@ -118,7 +118,7 @@ export async function fetchDashboard(id: string): Promise<DashboardTemplate | nu
     }
   `;
 
-  const response = await executeBackendGraphQL<{ dashboard: DashboardTemplate | null }>(query, {
+  const response = await executeBackendGraphQL<{ dashboard: DashboardUI | null }>(query, {
     id,
   });
 
@@ -140,7 +140,7 @@ export async function createDashboard(
   name: string,
   layout: 'grid' | 'list' = 'grid',
   organizationId?: string
-): Promise<DashboardTemplate> {
+): Promise<DashboardUI> {
   const query = `
     mutation CreateDashboard($input: DashboardInput!, $organizationId: ID) {
       createDashboard(input: $input, organizationId: $organizationId) {
@@ -152,7 +152,7 @@ export async function createDashboard(
   // Map frontend layout to backend LayoutType enum
   const backendLayout = layout === 'grid' ? LayoutType.Grid : LayoutType.List;
 
-  const response = await executeBackendGraphQL<{ createDashboard: DashboardTemplate }>(query, {
+  const response = await executeBackendGraphQL<{ createDashboard: DashboardUI }>(query, {
     input: { name, layout: backendLayout },
     organizationId,
   });
@@ -171,7 +171,7 @@ export async function updateDashboard(
   id: string,
   name: string,
   layout: 'grid' | 'list'
-): Promise<DashboardTemplate> {
+): Promise<DashboardUI> {
   const query = `
     mutation UpdateDashboard($id: ID!, $input: DashboardInput!) {
       updateDashboard(id: $id, input: $input) {
@@ -183,7 +183,7 @@ export async function updateDashboard(
   // Map frontend layout to backend LayoutType enum
   const backendLayout = layout === 'grid' ? LayoutType.Grid : LayoutType.List;
 
-  const response = await executeBackendGraphQL<{ updateDashboard: DashboardTemplate }>(query, {
+  const response = await executeBackendGraphQL<{ updateDashboard: DashboardUI }>(query, {
     id,
     input: { name, layout: backendLayout },
   });
@@ -243,10 +243,10 @@ export async function fetchDashboardGridItems(dashboardId: string): Promise<Dash
 }
 
 /**
- * Fetch all dashboard items (graphs with grid layout) for a dashboard
+ * Fetch all grid items (graphs with grid layout) for a dashboard
  * This combines graph data with grid layout information
  */
-export async function fetchDashboardItems(dashboardId: string): Promise<DashboardItem[]> {
+export async function fetchGridItems(dashboardId: string): Promise<GridItem[]> {
   const gridItems = await fetchDashboardGridItems(dashboardId);
 
   return gridItems
@@ -365,7 +365,7 @@ export async function removeGraphFromDashboard(gridItemId: string): Promise<bool
  */
 export async function getOrCreateDefaultDashboard(
   organizationId?: string
-): Promise<DashboardTemplate> {
+): Promise<DashboardUI> {
   const dashboards = await fetchDashboards(organizationId);
 
   if (dashboards.length > 0) {

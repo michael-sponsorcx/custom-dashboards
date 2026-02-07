@@ -1,27 +1,27 @@
-import { GraphTemplate } from '../../types/graph';
+import { GraphUI } from '../../types/graph';
 
 const GRAPHS_KEY = 'sponsorcx_saved_graphs';
 
 /**
- * Save a graph template to localStorage
+ * Save a graph to localStorage
  */
-export function saveGraphTemplate(template: GraphTemplate): void {
-  const existing = getAllGraphTemplates();
-  const index = existing.findIndex((t) => t.id === template.id);
+export const saveGraph = (graph: GraphUI): void => {
+  const existing = getAllGraphs();
+  const index = existing.findIndex((t) => t.id === graph.id);
 
   if (index >= 0) {
-    existing[index] = template;
+    existing[index] = graph;
   } else {
-    existing.push(template);
+    existing.push(graph);
   }
 
   localStorage.setItem(GRAPHS_KEY, JSON.stringify(existing));
-}
+};
 
 /**
- * Get all saved graph templates
+ * Get all saved graphs
  */
-export function getAllGraphTemplates(): GraphTemplate[] {
+export const getAllGraphs = (): GraphUI[] => {
   const data = localStorage.getItem(GRAPHS_KEY);
   if (!data) return [];
 
@@ -30,28 +30,28 @@ export function getAllGraphTemplates(): GraphTemplate[] {
   } catch (error) {
     return [];
   }
-}
+};
 
 /**
- * Get a single graph template by ID
+ * Get a single graph by ID
  */
-export function getGraphTemplate(id: string): GraphTemplate | null {
-  const all = getAllGraphTemplates();
+export const getGraph = (id: string): GraphUI | null => {
+  const all = getAllGraphs();
   return all.find((t) => t.id === id) || null;
-}
+};
 
 /**
- * Delete a graph template
+ * Delete a graph
  */
-export function deleteGraphTemplate(id: string): void {
-  const existing = getAllGraphTemplates();
+export const deleteGraph = (id: string): void => {
+  const existing = getAllGraphs();
   const filtered = existing.filter((t) => t.id !== id);
   localStorage.setItem(GRAPHS_KEY, JSON.stringify(filtered));
-}
+};
 
 /**
  * Generate a unique ID for a graph
  */
-export function generateGraphId(): string {
+export const generateGraphId = (): string => {
   return `graph_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-}
+};

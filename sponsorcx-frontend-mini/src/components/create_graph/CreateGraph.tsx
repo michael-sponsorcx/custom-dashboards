@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GraphTemplate } from '../../types/graph';
+import { GraphUI } from '../../types/graph';
 import { ModelSelector } from '../shared/ModelSelector';
 import { QueryValidationResults } from './field_selection/QueryValidationResults';
 import { FieldSelectionAccordion } from './field_selection/FieldSelectionAccordion';
@@ -21,7 +21,7 @@ import { ChartPreview } from './preview/ChartPreview';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
 import { CreateGraphFilterModal } from './CreateGraphFilterModal';
 import { QueryResultsTable } from '../visualizations/tables/QueryResultsTable';
-import { useGraphState, useFilterManagement, useQueryExecution, useGraphTemplate } from './hooks';
+import { useGraphState, useFilterManagement, useQueryExecution, useGraphUI } from './hooks';
 
 /**
  * CreateGraph Component - Refactored
@@ -34,13 +34,13 @@ export function CreateGraph() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string | null>('data');
 
-  // Get template from location state (for editing)
-  const editingTemplate = location.state?.template as GraphTemplate | undefined;
+  // Get graph from location state (for editing)
+  const editingGraph = location.state?.template as GraphUI | undefined;
 
   // Use custom hooks to manage state and logic
-  const graphState = useGraphState({ initialTemplate: editingTemplate });
-  const filterManagement = useFilterManagement({ initialTemplate: editingTemplate });
-  const templateManager = useGraphTemplate({ editingTemplate });
+  const graphState = useGraphState({ initialTemplate: editingGraph });
+  const filterManagement = useFilterManagement({ initialTemplate: editingGraph });
+  const graphManager = useGraphUI({ editingGraph });
 
   // Query execution hook depends on graph state
   const queryExecution = useQueryExecution({
@@ -52,7 +52,7 @@ export function CreateGraph() {
     filters: filterManagement.filters,
     orderByField: graphState.orderByField,
     orderByDirection: graphState.orderByDirection,
-    isEditing: templateManager.isEditing,
+    isEditing: graphManager.isEditing,
     selectedChartType: graphState.chartConfig.chartType,
     setSelectedChartType: graphState.setSelectedChartType,
     setPrimaryDimension: graphState.setPrimaryDimension,
@@ -65,7 +65,7 @@ export function CreateGraph() {
 
   // Save handler
   const handleSaveGraph = () => {
-    templateManager.saveTemplate({
+    graphManager.saveTemplate({
       selectedView: graphState.selectedView,
       selectedMeasures: graphState.selectedMeasures,
       selectedDimensions: graphState.selectedDimensions,
@@ -102,7 +102,7 @@ export function CreateGraph() {
                 <Stack gap="md">
                   {/* Model Selector */}
                   <ModelSelector
-                    initialViewName={editingTemplate?.viewName}
+                    initialViewName={editingGraph?.viewName}
                     onViewSelect={graphState.setSelectedView}
                     onViewFieldsChange={graphState.setViewFields}
                     onClearSelections={graphState.clearSelections}

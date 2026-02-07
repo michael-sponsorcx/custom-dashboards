@@ -1,16 +1,16 @@
 /**
  * Build Query From Template
  *
- * Utility function to dynamically build a GraphQL query from a GraphTemplate.
+ * Utility function to dynamically build a GraphQL query from a GraphUI.
  * This allows queries to be reconstructed on-the-fly instead of storing them.
  */
 
-import { GraphTemplate } from '../../../../types/graph';
+import { GraphUI } from '../../../../types/graph';
 import { buildSimpleCubeQuery } from './cubeQuery';
 import { CubeMeasure, CubeDimension } from '../../../../types/cube';
 
 /**
- * Build a GraphQL query from a GraphTemplate
+ * Build a GraphQL query from a GraphUI
  *
  * Converts the template's stored field names into the format expected by the query builder
  * and generates a fresh query.
@@ -18,7 +18,7 @@ import { CubeMeasure, CubeDimension } from '../../../../types/cube';
  * @param template - Graph template containing view, measures, dimensions, etc.
  * @returns GraphQL query string
  */
-export function buildQueryFromTemplate(template: GraphTemplate): string {
+export function buildQueryFromTemplate(template: GraphUI): string {
   // Convert string arrays to CubeMeasure/CubeDimension objects
   const measures: CubeMeasure[] = template.measures.map((name) => ({
     name,

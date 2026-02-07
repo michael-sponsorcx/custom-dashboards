@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import RGL, { Layout, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { DashboardItem } from '../../../types/dashboard';
+import { GridItem } from '../../../types/dashboard';
 import { GraphCard } from './graph_card';
 
 const GridLayout = WidthProvider(RGL);
 
 interface DashboardGridProps {
-  graphs: DashboardItem[];
+  gridItems: GridItem[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   /** Handler to open the graph-level filter modal for a specific graph */
@@ -17,7 +17,7 @@ interface DashboardGridProps {
   onOpenKPIAlertModal: (id: string) => void;
   onResize?: (id: string, width: number, height: number) => void;
   onMove?: (id: string, column: number, row: number) => void;
-  onBatchMove?: (items: DashboardItem[]) => void;
+  onBatchMove?: (items: GridItem[]) => void;
   refreshKey?: number;
 }
 
@@ -35,7 +35,7 @@ interface DashboardGridProps {
  * - Graph-level filters are configured per-graph via the filter modal (onOpenGraphFilterModal)
  */
 export function DashboardGrid({
-  graphs,
+  gridItems,
   onDelete,
   onEdit,
   onOpenGraphFilterModal,
@@ -44,30 +44,30 @@ export function DashboardGrid({
   onBatchMove,
   refreshKey,
 }: DashboardGridProps) {
-  // Convert DashboardItem[] to react-grid-layout Layout[]
+  // Convert GridItem[] to react-grid-layout Layout[]
   const layout: Layout[] = useMemo(() => {
-    return graphs.map((graph: DashboardItem) => ({
-      i: graph.id, // Unique identifier
-      x: (graph.gridColumn || 1) - 1, // RGL uses 0-based columns
-      y: (graph.gridRow || 1) - 1, // RGL uses 0-based rows
-      w: graph.gridWidth || 2, // Width in columns
-      h: graph.gridHeight || 2, // Height in rows
+    return gridItems.map((item: GridItem) => ({
+      i: item.id, // Unique identifier
+      x: (item.gridColumn || 1) - 1, // RGL uses 0-based columns
+      y: (item.gridRow || 1) - 1, // RGL uses 0-based rows
+      w: item.gridWidth || 2, // Width in columns
+      h: item.gridHeight || 2, // Height in rows
       minW: 1, // Minimum width
       minH: 1, // Minimum height
     }));
-  }, [graphs]);
+  }, [gridItems]);
 
   // Handle layout changes (drag/resize) - called on drag stop
   const handleDragStop = (newLayout: Layout[]) => {
     if (!onBatchMove) return;
 
-    // Convert Layout[] back to DashboardItem[]
-    const updatedItems = graphs.map((graph: DashboardItem) => {
-      const layoutItem = newLayout.find((l) => l.i === graph.id);
-      if (!layoutItem) return graph;
+    // Convert Layout[] back to GridItem[]
+    const updatedItems = gridItems.map((item: GridItem) => {
+      const layoutItem = newLayout.find((l) => l.i === item.id);
+      if (!layoutItem) return item;
 
       return {
-        ...graph,
+        ...item,
         gridColumn: layoutItem.x + 1, // Convert back to 1-based
         gridRow: layoutItem.y + 1,
         gridWidth: layoutItem.w,
@@ -105,10 +105,10 @@ export function DashboardGrid({
       isResizable={true}
       useCSSTransforms={true}
     >
-      {graphs.map((graph: DashboardItem) => (
-        <div key={graph.id}>
+      {gridItems.map((item: GridItem) => (
+        <div key={item.id}>
           <GraphCard
-            template={graph}
+            template={item}
             onDelete={onDelete}
             onEdit={onEdit}
             onOpenGraphFilterModal={onOpenGraphFilterModal}

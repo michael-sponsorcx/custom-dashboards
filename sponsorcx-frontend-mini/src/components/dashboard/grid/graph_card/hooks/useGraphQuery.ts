@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { DashboardItem } from '../../../../../types/dashboard';
+import type { GridItem } from '../../../../../types/dashboard';
 import type { FilterRule } from '../../../../../types/filters';
 import { buildQueryFromTemplate } from '../../../../../utils/graphql/builder/builders/buildQueryFromTemplate';
 import { combineAllFilters } from '../utils/graphFilterHelpers';
@@ -11,7 +11,7 @@ import type { DrillDownFilter } from '../utils/graphFilterHelpers';
  * **Purpose:** Centralize query building logic with filter combination
  * **Pattern:** Template + dashboard filters + drill-down → GraphQL query string
  *
- * @input template: DashboardItem - Graph configuration
+ * @input template: GridItem - Graph configuration
  * @input dashboardFilters: FilterRule[] - Global dashboard filters
  * @input drillDownFilters: DrillDownFilter[] - Drill-down filter stack
  * @input effectivePrimaryDimension: string - Current primary dimension (may be overridden)
@@ -23,7 +23,7 @@ import type { DrillDownFilter } from '../utils/graphFilterHelpers';
  * const query = useGraphQuery(template, dashboardFilters, drillDownFilters, "Product");
  */
 export function useGraphQuery(
-  template: DashboardItem,
+  template: GridItem,
   dashboardFilters: FilterRule[],
   drillDownFilters: DrillDownFilter[],
   effectivePrimaryDimension?: string

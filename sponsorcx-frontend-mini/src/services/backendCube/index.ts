@@ -33,7 +33,7 @@ export {
   updateDashboard,
   deleteDashboard,
   fetchDashboardGridItems,
-  fetchDashboardItems,
+  fetchGridItems,
   addGraphToDashboard,
   updateDashboardGridItem,
   removeGraphFromDashboard,

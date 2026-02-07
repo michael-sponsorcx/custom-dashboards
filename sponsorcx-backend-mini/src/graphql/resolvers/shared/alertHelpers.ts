@@ -35,6 +35,7 @@ export interface NormalizedAlertInput {
 /** Base KPI Alert record from database (after camelCase conversion) */
 export interface KpiAlertRecord {
     id: string;
+    cronJobId: string;
     organizationId: number | null;
     graphId: string | null;
     dashboardId: string | null;
@@ -44,9 +45,6 @@ export interface KpiAlertRecord {
     comment: string | null;
     recipients: string[];
     isActive: boolean;
-    lastExecutedAt: Date | null;
-    nextExecutionAt: Date | null;
-    executionCount: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -101,6 +99,7 @@ export const transformRowWithAlert = (
     // Explicitly construct the alert object with proper typing
     const alert: KpiAlertRecord = {
         id: row['alert.id'] as string,
+        cronJobId: row['alert.cronJobId'] as string,
         organizationId: row['alert.organizationId'] as number | null,
         graphId: row['alert.graphId'] as string | null,
         dashboardId: row['alert.dashboardId'] as string | null,
@@ -110,9 +109,6 @@ export const transformRowWithAlert = (
         comment: row['alert.comment'] as string | null,
         recipients: row['alert.recipients'] as string[],
         isActive: row['alert.isActive'] as boolean,
-        lastExecutedAt: row['alert.lastExecutedAt'] as Date | null,
-        nextExecutionAt: row['alert.nextExecutionAt'] as Date | null,
-        executionCount: row['alert.executionCount'] as number,
         createdAt: row['alert.createdAt'] as Date,
         updatedAt: row['alert.updatedAt'] as Date,
     };
@@ -129,6 +125,7 @@ export const transformRowWithAlert = (
  */
 export const ALERT_SELECT_FIELDS = `
     a.id AS "alert.id",
+    a.cron_job_id AS "alert.cronJobId",
     a.organization_id AS "alert.organizationId",
     a.graph_id AS "alert.graphId",
     a.dashboard_id AS "alert.dashboardId",
@@ -138,9 +135,6 @@ export const ALERT_SELECT_FIELDS = `
     a.comment AS "alert.comment",
     a.recipients AS "alert.recipients",
     a.is_active AS "alert.isActive",
-    a.last_executed_at AS "alert.lastExecutedAt",
-    a.next_execution_at AS "alert.nextExecutionAt",
-    a.execution_count AS "alert.executionCount",
     a.created_at AS "alert.createdAt",
     a.updated_at AS "alert.updatedAt"
 `;

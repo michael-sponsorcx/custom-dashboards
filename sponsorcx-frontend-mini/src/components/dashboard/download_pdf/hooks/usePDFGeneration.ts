@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { DashboardItem } from '@/types/dashboard';
+import { GridItem } from '@/types/dashboard';
 
 interface UsePDFGenerationProps {
-  graphs: DashboardItem[];
+  gridItems: GridItem[];
   dashboardName: string;
   titleSlideRef: React.RefObject<HTMLDivElement>;
   graphSlideRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
@@ -23,7 +23,7 @@ interface UsePDFGenerationReturn {
  * Captures slides as images and combines them into a PDF document
  */
 export function usePDFGeneration({
-  graphs,
+  gridItems,
   dashboardName,
   titleSlideRef,
   graphSlideRefs,
@@ -45,7 +45,7 @@ export function usePDFGeneration({
       setError(null);
       cancelledRef.current = false;
 
-      const totalSlides = 1 + graphs.length;
+      const totalSlides = 1 + gridItems.length;
       setProgress({ current: 0, total: totalSlides });
 
       // Create PDF in landscape A4 format
@@ -96,7 +96,7 @@ export function usePDFGeneration({
       }
 
       // Capture graph slides
-      for (let i = 0; i < graphs.length; i++) {
+      for (let i = 0; i < gridItems.length; i++) {
         if (cancelledRef.current) {
           return;
         }
@@ -138,7 +138,7 @@ export function usePDFGeneration({
       setError('Failed to generate PDF. Please try again.');
       setIsGenerating(false);
     }
-  }, [graphs, dashboardName, titleSlideRef, graphSlideRefs]);
+  }, [gridItems, dashboardName, titleSlideRef, graphSlideRefs]);
 
   return {
     generatePDF,

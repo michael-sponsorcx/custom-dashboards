@@ -5,7 +5,7 @@
  */
 
 import { executeBackendGraphQL } from '../core/backendClient';
-import type { GraphTemplate } from '../../../types/graph';
+import type { GraphUI } from '../../../types/graph';
 import { toGraphInput } from '../utils/graphInputMapper';
 
 // GraphQL fragments for reusability
@@ -51,7 +51,7 @@ const GRAPH_FIELDS = `
 /**
  * Fetch all graphs for an organization
  */
-export async function fetchGraphs(organizationId?: string): Promise<GraphTemplate[]> {
+export async function fetchGraphs(organizationId?: string): Promise<GraphUI[]> {
   const query = `
     query FetchGraphs($organizationId: ID) {
       graphs(organizationId: $organizationId) {
@@ -60,7 +60,7 @@ export async function fetchGraphs(organizationId?: string): Promise<GraphTemplat
     }
   `;
 
-  const response = await executeBackendGraphQL<{ graphs: GraphTemplate[] }>(query, {
+  const response = await executeBackendGraphQL<{ graphs: GraphUI[] }>(query, {
     organizationId,
   });
 
@@ -70,7 +70,7 @@ export async function fetchGraphs(organizationId?: string): Promise<GraphTemplat
 /**
  * Fetch a single graph by ID
  */
-export async function fetchGraph(id: string): Promise<GraphTemplate | null> {
+export async function fetchGraph(id: string): Promise<GraphUI | null> {
   const query = `
     query FetchGraph($id: ID!) {
       graph(id: $id) {
@@ -79,7 +79,7 @@ export async function fetchGraph(id: string): Promise<GraphTemplate | null> {
     }
   `;
 
-  const response = await executeBackendGraphQL<{ graph: GraphTemplate | null }>(query, { id });
+  const response = await executeBackendGraphQL<{ graph: GraphUI | null }>(query, { id });
 
   return response.data?.graph || null;
 }
@@ -88,9 +88,9 @@ export async function fetchGraph(id: string): Promise<GraphTemplate | null> {
  * Create a new graph
  */
 export async function createGraph(
-  input: Omit<GraphTemplate, 'id' | 'createdAt' | 'updatedAt'>,
+  input: Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'>,
   organizationId?: string
-): Promise<GraphTemplate> {
+): Promise<GraphUI> {
   const query = `
     mutation CreateGraph($input: GraphInput!, $organizationId: ID) {
       createGraph(input: $input, organizationId: $organizationId) {
@@ -99,10 +99,10 @@ export async function createGraph(
     }
   `;
 
-  // Convert frontend GraphTemplate format to backend GraphInput format
+  // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
-  const response = await executeBackendGraphQL<{ createGraph: GraphTemplate }>(query, {
+  const response = await executeBackendGraphQL<{ createGraph: GraphUI }>(query, {
     input: graphInput,
     organizationId,
   });
@@ -119,8 +119,8 @@ export async function createGraph(
  */
 export async function updateGraph(
   id: string,
-  input: Omit<GraphTemplate, 'id' | 'createdAt' | 'updatedAt'>
-): Promise<GraphTemplate> {
+  input: Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<GraphUI> {
   const query = `
     mutation UpdateGraph($id: ID!, $input: GraphInput!) {
       updateGraph(id: $id, input: $input) {
@@ -129,10 +129,10 @@ export async function updateGraph(
     }
   `;
 
-  // Convert frontend GraphTemplate format to backend GraphInput format
+  // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
-  const response = await executeBackendGraphQL<{ updateGraph: GraphTemplate }>(query, {
+  const response = await executeBackendGraphQL<{ updateGraph: GraphUI }>(query, {
     id,
     input: graphInput,
   });

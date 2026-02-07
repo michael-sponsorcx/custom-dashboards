@@ -1,15 +1,18 @@
 -- Migration: 002_add_kpi_alerts_tables
--- Description: Creates the KPI alerting system with three-table inheritance:
---   - kpi_alerts: Base table with shared fields
---   - kpi_schedules: Child table for time-based scheduled reports
---   - kpi_thresholds: Child table for condition-based alerts
+-- Description: Creates the KPI alerting system with four-table inheritance hierarchy:
+--   - cron_jobs: Top level - execution scheduling (already exists)
+--   - kpi_alerts: 1:1 with cron_jobs - KPI-specific data
+--   - kpi_schedules: 1:1 with kpi_alerts - schedule-specific data
+--   - kpi_thresholds: 1:1 with kpi_alerts - threshold-specific data
 
 -- ============================================================================
--- Base table: kpi_alerts
+-- Table: kpi_alerts (1:1 with cron_jobs)
+-- Contains KPI-specific data that's common to all alert types
 -- ============================================================================
 
 CREATE TABLE kpi_alerts (
     id bigserial PRIMARY KEY,
+    cron_job_id TEXT NOT NULL UNIQUE REFERENCES cron_jobs(id) ON DELETE CASCADE,
     organization_id bigint NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     graph_id bigint REFERENCES graphs(id) ON DELETE SET NULL,
     dashboard_id bigint NOT NULL REFERENCES dashboards(id) ON DELETE CASCADE,
@@ -19,31 +22,30 @@ CREATE TABLE kpi_alerts (
     comment TEXT,
     recipients TEXT[] DEFAULT '{}',
     is_active BOOLEAN DEFAULT true,
-    last_executed_at TIMESTAMP WITH TIME ZONE,
-    next_execution_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    execution_count INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE UNIQUE INDEX idx_kpi_alerts_cron_job_id ON kpi_alerts(cron_job_id);
 CREATE INDEX idx_kpi_alerts_organization_id ON kpi_alerts(organization_id);
 CREATE INDEX idx_kpi_alerts_graph_id ON kpi_alerts(graph_id);
 CREATE INDEX idx_kpi_alerts_dashboard_id ON kpi_alerts(dashboard_id);
 CREATE INDEX idx_kpi_alerts_created_by_id ON kpi_alerts(created_by_id);
 CREATE INDEX idx_kpi_alerts_is_active ON kpi_alerts(is_active);
 CREATE INDEX idx_kpi_alerts_alert_type ON kpi_alerts(alert_type);
-CREATE INDEX idx_kpi_alerts_next_execution ON kpi_alerts(next_execution_at) WHERE is_active = true;
 
 CREATE TRIGGER update_kpi_alerts_updated_at
     BEFORE UPDATE ON kpi_alerts
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
-COMMENT ON TABLE kpi_alerts IS 'Base table for all KPI alerts (schedules and thresholds)';
+COMMENT ON TABLE kpi_alerts IS 'KPI-specific data for alerts. 1:1 relationship with cron_jobs for execution scheduling.';
+COMMENT ON COLUMN kpi_alerts.cron_job_id IS 'Reference to parent cron_jobs record (1:1 relationship)';
 COMMENT ON COLUMN kpi_alerts.alert_type IS 'Discriminator: schedule or threshold';
 
 -- ============================================================================
--- Child table: kpi_schedules (time-based scheduled reports)
+-- Table: kpi_schedules (1:1 with kpi_alerts)
+-- Contains schedule-specific data for time-based reports
 -- ============================================================================
 
 CREATE TABLE kpi_schedules (
@@ -64,17 +66,18 @@ CREATE TABLE kpi_schedules (
     cron_expression VARCHAR(100)
 );
 
-CREATE INDEX idx_kpi_schedules_kpi_alert_id ON kpi_schedules(kpi_alert_id);
+CREATE UNIQUE INDEX idx_kpi_schedules_kpi_alert_id ON kpi_schedules(kpi_alert_id);
 CREATE INDEX idx_kpi_schedules_frequency ON kpi_schedules(frequency_interval);
 
-COMMENT ON TABLE kpi_schedules IS 'Schedule-specific fields for time-based KPI alerts';
-COMMENT ON COLUMN kpi_schedules.kpi_alert_id IS 'Reference to parent kpi_alerts record';
+COMMENT ON TABLE kpi_schedules IS 'Schedule-specific fields for time-based KPI alerts. 1:1 relationship with kpi_alerts.';
+COMMENT ON COLUMN kpi_schedules.kpi_alert_id IS 'Reference to parent kpi_alerts record (1:1 relationship)';
 COMMENT ON COLUMN kpi_schedules.frequency_interval IS 'Schedule frequency: n_minute, hour, day, week, or month';
 COMMENT ON COLUMN kpi_schedules.selected_days IS 'Days of week: M, T, W, Th, F, S, Su';
 COMMENT ON COLUMN kpi_schedules.month_dates IS 'Array of day numbers for monthly schedules (1-31)';
 
 -- ============================================================================
--- Child table: kpi_thresholds (condition-based alerts)
+-- Table: kpi_thresholds (1:1 with kpi_alerts)
+-- Contains threshold-specific data for condition-based alerts
 -- ============================================================================
 
 CREATE TABLE kpi_thresholds (
@@ -85,8 +88,8 @@ CREATE TABLE kpi_thresholds (
     time_zone VARCHAR(100) DEFAULT 'UTC'
 );
 
-CREATE INDEX idx_kpi_thresholds_kpi_alert_id ON kpi_thresholds(kpi_alert_id);
+CREATE UNIQUE INDEX idx_kpi_thresholds_kpi_alert_id ON kpi_thresholds(kpi_alert_id);
 
-COMMENT ON TABLE kpi_thresholds IS 'Threshold-specific fields for condition-based KPI alerts';
-COMMENT ON COLUMN kpi_thresholds.kpi_alert_id IS 'Reference to parent kpi_alerts record';
+COMMENT ON TABLE kpi_thresholds IS 'Threshold-specific fields for condition-based KPI alerts. 1:1 relationship with kpi_alerts.';
+COMMENT ON COLUMN kpi_thresholds.kpi_alert_id IS 'Reference to parent kpi_alerts record (1:1 relationship)';
 COMMENT ON COLUMN kpi_thresholds.condition IS 'Comparison operator for threshold evaluation';

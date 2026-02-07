@@ -7,7 +7,11 @@ import { ColorPalette } from '../constants/colorPalettes';
  */
 export type LegendPosition = 'top' | 'bottom' | 'none';
 
-export interface GraphTemplate {
+/**
+ * Frontend graph configuration with UI-specific fields.
+ * Distinct from the backend `Graph` type in backend-graphql.ts which represents the API contract.
+ */
+export interface GraphUI {
   id: string;
   name: string;
   createdAt: string;
