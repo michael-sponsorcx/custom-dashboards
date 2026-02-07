@@ -82,7 +82,7 @@ export function ChartRenderer({
       return (
         <KPI
           userDefinedValue={kpiValue}
-          queryResult={kpiValue === undefined ? queryResult : undefined}
+          queryResult={queryResult}
           label={kpiLabel}
           formatType={numberFormat}
           precision={numberPrecision}

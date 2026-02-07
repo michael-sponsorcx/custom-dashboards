@@ -56,12 +56,16 @@ export function KPI({
 
   const { data: transformedData } = transformationResult;
 
-  // Extract value or show empty state
-  if (!transformedData || transformedData.length === 0) {
+  // Determine the final KPI value: user override takes precedence if defined
+  const queryValue = transformedData && transformedData.length > 0 ? transformedData[0].value : undefined;
+  const finalValue = userDefinedValue !== undefined && userDefinedValue !== null ? userDefinedValue : queryValue;
+
+  // Show empty state only if no value available from either source
+  if (finalValue === undefined || finalValue === null) {
     return <EmptyState data={transformedData} queryResult={queryResult} />;
   }
 
-  const formattedValue = formatNumber(userDefinedValue ?? transformedData[0].value, formatType, precision);
+  const formattedValue = formatNumber(finalValue, formatType, precision);
 
   // Calculate optimal font size based on container dimensions
   useEffect(() => {

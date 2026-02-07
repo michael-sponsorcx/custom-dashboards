@@ -120,6 +120,7 @@ export function mapBackendChartType(backendType: BackendChartType): FrontendChar
     'SCATTER': 'line', // Fallback to line
     'HEATMAP': 'bar', // Fallback to bar
   };
-
-  return mapping[backendType] || 'bar';
+  const mappedValue = mapping[backendType] || 'bar';
+  console.log('mapped value: ', mappedValue)
+  return mappedValue;
 }

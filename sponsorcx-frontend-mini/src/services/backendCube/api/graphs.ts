@@ -6,7 +6,17 @@
 
 import { executeBackendGraphQL } from '../core/backendClient';
 import type { GraphUI } from '../../../types/graph';
-import { toGraphInput } from '../utils/graphInputMapper';
+import type { Graph as BackendGraph } from '../../../types/backend-graphql';
+import { toGraphInput, mapBackendChartType } from '../utils/graphInputMapper';
+
+/**
+ * Map backend Graph response to frontend GraphUI format
+ * Converts chartType from backend enum (uppercase) to frontend format (lowercase)
+ */
+const mapGraphResponse = (graph: BackendGraph): GraphUI => ({
+  ...(graph as unknown as GraphUI),
+  chartType: mapBackendChartType(graph.chartType),
+});
 
 // GraphQL fragments for reusability
 const GRAPH_FIELDS = `
@@ -60,11 +70,11 @@ export async function fetchGraphs(organizationId?: string): Promise<GraphUI[]> {
     }
   `;
 
-  const response = await executeBackendGraphQL<{ graphs: GraphUI[] }>(query, {
+  const response = await executeBackendGraphQL<{ graphs: BackendGraph[] }>(query, {
     organizationId,
   });
 
-  return response.data?.graphs || [];
+  return (response.data?.graphs || []).map(mapGraphResponse);
 }
 
 /**
@@ -79,9 +89,9 @@ export async function fetchGraph(id: string): Promise<GraphUI | null> {
     }
   `;
 
-  const response = await executeBackendGraphQL<{ graph: GraphUI | null }>(query, { id });
+  const response = await executeBackendGraphQL<{ graph: BackendGraph | null }>(query, { id });
 
-  return response.data?.graph || null;
+  return response.data?.graph ? mapGraphResponse(response.data.graph) : null;
 }
 
 /**
@@ -102,7 +112,7 @@ export async function createGraph(
   // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
-  const response = await executeBackendGraphQL<{ createGraph: GraphUI }>(query, {
+  const response = await executeBackendGraphQL<{ createGraph: BackendGraph }>(query, {
     input: graphInput,
     organizationId,
   });
@@ -111,7 +121,7 @@ export async function createGraph(
     throw new Error('Failed to create graph');
   }
 
-  return response.data.createGraph;
+  return mapGraphResponse(response.data.createGraph);
 }
 
 /**
@@ -132,7 +142,7 @@ export async function updateGraph(
   // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
-  const response = await executeBackendGraphQL<{ updateGraph: GraphUI }>(query, {
+  const response = await executeBackendGraphQL<{ updateGraph: BackendGraph }>(query, {
     id,
     input: graphInput,
   });
@@ -141,7 +151,7 @@ export async function updateGraph(
     throw new Error('Failed to update graph');
   }
 
-  return response.data.updateGraph;
+  return mapGraphResponse(response.data.updateGraph);
 }
 
 /**
