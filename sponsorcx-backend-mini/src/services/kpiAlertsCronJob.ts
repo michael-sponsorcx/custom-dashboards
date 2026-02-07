@@ -1,6 +1,9 @@
 import { CronJob } from 'cron';
 import { pool } from '../db/connection';
 import { logger } from './cronService';
+import { fetchKpiValue } from './kpiValueFetcher';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 interface AlertData {
     cron_job_id: string;
@@ -159,12 +162,12 @@ export const deregisterScheduleAlertWrapper = (cronJobId: string): void => {
  * Register wrapper for all threshold alerts (single wrapper)
  */
 const registerThresholdAlertsWrapper = (): void => {
-    console.log('[1-threshold] registerThresholdAlertsWrapper() called - setting up threshold alerts cron job');
+    if (isDev) console.log('[1-threshold] registerThresholdAlertsWrapper() called - setting up threshold alerts cron job');
 
     const cronJob = new CronJob(
         '*/5 * * * *',  // Every 5 minutes
         async function () {
-            console.log('[3-threshold] Threshold cron job TRIGGERED (every 5 min) - calling processAllThresholdAlerts()');
+            if (isDev) console.log('[3-threshold] Threshold cron job TRIGGERED (every 5 min) - calling processAllThresholdAlerts()');
             await processAllThresholdAlerts();
         },
         null,
@@ -173,7 +176,7 @@ const registerThresholdAlertsWrapper = (): void => {
     );
 
     registeredCronJobs.set('__threshold_alerts__', cronJob);
-    console.log('[2-threshold] registerThresholdAlertsWrapper() complete - cron job registered with expression "*/5 * * * *"');
+    if (isDev) console.log('[2-threshold] registerThresholdAlertsWrapper() complete - cron job registered with expression "*/5 * * * *"');
     logger.info('Registered threshold alerts wrapper (every 5 minutes)');
 };
 
@@ -245,24 +248,24 @@ export const initializeKpiAlertsCronJobs = async (): Promise<void> => {
  * Process a single scheduled alert (called by individual wrapper)
  */
 const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<void> => {
-    console.log(`[1-scheduled] processScheduledAlert() started for "${alert.alert_name}"`);
+    if (isDev) console.log(`[1-scheduled] processScheduledAlert() started for "${alert.alert_name}"`);
     const client = await pool.connect();
 
     try {
-        console.log('[2-scheduled] BEGIN transaction');
+        if (isDev) console.log('[2-scheduled] BEGIN transaction');
         await client.query('BEGIN');
 
         // 1. Lock the cron job record
-        console.log(`[3-scheduled] Locking cron_jobs record with id: ${alert.cron_job_id}`);
+        if (isDev) console.log(`[3-scheduled] Locking cron_jobs record with id: ${alert.cron_job_id}`);
         const cronJobResult = await client.query(
             'SELECT * FROM cron_jobs WHERE id = $1 FOR UPDATE',
             [alert.cron_job_id]
         );
         const cronJob = cronJobResult.rows[0];
-        console.log('[3a-scheduled] cron_jobs query result:', JSON.stringify(cronJob, null, 2));
+        if (isDev) console.log('[3a-scheduled] cron_jobs query result:', JSON.stringify(cronJob, null, 2));
 
         if (!cronJob) {
-            console.log(`[ERROR-scheduled] No cron_jobs record found for cron_job_id: ${alert.cron_job_id}`);
+            if (isDev) console.log(`[ERROR-scheduled] No cron_jobs record found for cron_job_id: ${alert.cron_job_id}`);
             await client.query('ROLLBACK');
             logger.error(`No cron_jobs record found for alert ${alert.kpi_alert_id}`);
             return;
@@ -273,18 +276,18 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
         const currentDate = now.toISOString().split('T')[0];
         const currentHour = now.getUTCHours().toString().padStart(2, '0');
         const currentMinute = now.getUTCMinutes().toString().padStart(2, '0');
-        console.log(`[4-scheduled] Checking hourly protection - currentDate: ${currentDate}, currentHour: ${currentHour}, last_ran_at_date: ${cronJob.last_ran_at_date}, last_ran_at_hour: ${cronJob.last_ran_at_hour}`);
+        if (isDev) console.log(`[4-scheduled] Checking hourly protection - currentDate: ${currentDate}, currentHour: ${currentHour}, last_ran_at_date: ${cronJob.last_ran_at_date}, last_ran_at_hour: ${cronJob.last_ran_at_hour}`);
 
         if (cronJob.last_ran_at_date === currentDate &&
             cronJob.last_ran_at_hour === currentHour) {
-            console.log('[4a-scheduled] Already ran this hour - SKIPPING');
+            if (isDev) console.log('[4a-scheduled] Already ran this hour - SKIPPING');
             await client.query('ROLLBACK');
             logger.info(`Already ran ${alert.cron_job_id} this hour, skipping`);
             return;
         }
 
         // 3. Update last_ran_at (UTC)
-        console.log(`[5-scheduled] Updating cron_jobs last_ran_at: date=${currentDate}, hour=${currentHour}, minute=${currentMinute} (UTC)`);
+        if (isDev) console.log(`[5-scheduled] Updating cron_jobs last_ran_at: date=${currentDate}, hour=${currentHour}, minute=${currentMinute} (UTC)`);
         await client.query(
             `UPDATE cron_jobs SET last_ran_at_date = $1, last_ran_at_hour = $2,
              last_ran_at_minute = $3 WHERE id = $4`,
@@ -293,10 +296,10 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
 
         // 4. Check gating condition (if applicable)
         if (alert.has_gating_condition && alert.gating_condition) {
-            console.log('[6-scheduled] Evaluating gating condition...');
+            if (isDev) console.log('[6-scheduled] Evaluating gating condition...');
             const shouldExecute = await evaluateGatingCondition(alert, alert.gating_condition);
             if (!shouldExecute) {
-                console.log('[6a-scheduled] Gating condition NOT met - SKIPPING');
+                if (isDev) console.log('[6a-scheduled] Gating condition NOT met - SKIPPING');
                 logger.info(`Gating condition not met for alert ${alert.kpi_alert_id}, skipping`);
                 await client.query(
                     `INSERT INTO cron_job_results (cron_job_id, notes, completed,
@@ -318,8 +321,8 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
 
         // 5. Fetch dashboard/graph data and generate report
         // TODO: Implement data fetching and report generation
-        console.log(`[7-scheduled] TODO: SEND EMAIL to ${alert.recipients.length} recipients: ${JSON.stringify(alert.recipients)}`);
-        console.log(`[7a-scheduled] Email details: attachmentType=${alert.attachment_type}`);
+        if (isDev) console.log(`[7-scheduled] TODO: SEND EMAIL to ${alert.recipients.length} recipients: ${JSON.stringify(alert.recipients)}`);
+        if (isDev) console.log(`[7a-scheduled] Email details: attachmentType=${alert.attachment_type}`);
         logger.info(`Would send scheduled alert to ${alert.recipients.length} recipients`, {
             kpiAlertId: alert.kpi_alert_id,
             recipients: alert.recipients,
@@ -327,7 +330,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
         });
 
         // 6. Record success
-        console.log('[8-scheduled] Recording success to cron_job_results');
+        if (isDev) console.log('[8-scheduled] Recording success to cron_job_results');
         await client.query(
             `INSERT INTO cron_job_results (cron_job_id, notes, completed,
              job_start_timestamp, trigger, organization_id)
@@ -343,7 +346,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
         );
 
         await client.query('COMMIT');
-        console.log(`[8a-scheduled] COMMIT successful - scheduled alert "${alert.alert_name}" processed`);
+        if (isDev) console.log(`[8a-scheduled] COMMIT successful - scheduled alert "${alert.alert_name}" processed`);
         logger.info(`Successfully processed scheduled alert ${alert.kpi_alert_id}`);
 
     } catch (error) {
@@ -388,7 +391,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
  * Process all threshold alerts (called by single wrapper every 5 minutes)
  */
 const processAllThresholdAlerts = async (): Promise<void> => {
-    console.log('[4-threshold] processAllThresholdAlerts() started - querying active threshold alerts from DB');
+    if (isDev) console.log('[4-threshold] processAllThresholdAlerts() started - querying active threshold alerts from DB');
     const client = await pool.connect();
 
     try {
@@ -410,21 +413,21 @@ const processAllThresholdAlerts = async (): Promise<void> => {
             WHERE ka.alert_type = 'threshold' AND ka.is_active = true
         `);
 
-        console.log(`[5-threshold] Query complete - found ${result.rows.length} active threshold alerts`);
-        console.log('[5a-threshold] Alert data:', JSON.stringify(result.rows, null, 2));
+        if (isDev) console.log(`[5-threshold] Query complete - found ${result.rows.length} active threshold alerts`);
+        if (isDev) console.log('[5a-threshold] Alert data:', JSON.stringify(result.rows, null, 2));
 
         logger.info(`Found ${result.rows.length} active threshold alerts to check`);
 
         for (let i = 0; i < result.rows.length; i++) {
             const alert = result.rows[i];
-            console.log(`[6-threshold] Processing alert ${i + 1}/${result.rows.length}: "${alert.alert_name}" (kpi_alert_id: ${alert.kpi_alert_id}, cron_job_id: ${alert.cron_job_id})`);
+            if (isDev) console.log(`[6-threshold] Processing alert ${i + 1}/${result.rows.length}: "${alert.alert_name}" (kpi_alert_id: ${alert.kpi_alert_id}, cron_job_id: ${alert.cron_job_id})`);
             // Process each threshold alert independently
             // Each gets its own transaction and lock
             await processThresholdAlert(alert);
         }
-        console.log('[17-threshold] processAllThresholdAlerts() complete - all alerts processed');
+        if (isDev) console.log('[17-threshold] processAllThresholdAlerts() complete - all alerts processed');
     } catch (error) {
-        console.log('[ERROR-threshold] processAllThresholdAlerts() failed:', error);
+        if (isDev) console.log('[ERROR-threshold] processAllThresholdAlerts() failed:', error);
         logger.error('Error in threshold alerts processor:', { error });
     } finally {
         client.release();
@@ -435,24 +438,24 @@ const processAllThresholdAlerts = async (): Promise<void> => {
  * Process a single threshold alert
  */
 const processThresholdAlert = async (alert: AlertData): Promise<void> => {
-    console.log(`[7-threshold] processThresholdAlert() started for "${alert.alert_name}"`);
+    if (isDev) console.log(`[7-threshold] processThresholdAlert() started for "${alert.alert_name}"`);
     const client = await pool.connect();
 
     try {
-        console.log('[8-threshold] BEGIN transaction');
+        if (isDev) console.log('[8-threshold] BEGIN transaction');
         await client.query('BEGIN');
 
         // 1. Lock the cron job record
-        console.log(`[9-threshold] Locking cron_jobs record with id: ${alert.cron_job_id}`);
+        if (isDev) console.log(`[9-threshold] Locking cron_jobs record with id: ${alert.cron_job_id}`);
         const cronJobResult = await client.query(
             'SELECT * FROM cron_jobs WHERE id = $1 FOR UPDATE',
             [alert.cron_job_id]
         );
         const cronJob = cronJobResult.rows[0];
-        console.log('[9a-threshold] cron_jobs query result:', JSON.stringify(cronJob, null, 2));
+        if (isDev) console.log('[9a-threshold] cron_jobs query result:', JSON.stringify(cronJob, null, 2));
 
         if (!cronJob) {
-            console.log(`[ERROR-threshold] No cron_jobs record found for cron_job_id: ${alert.cron_job_id}`);
+            if (isDev) console.log(`[ERROR-threshold] No cron_jobs record found for cron_job_id: ${alert.cron_job_id}`);
             await client.query('ROLLBACK');
             logger.error(`No cron_jobs record found for alert ${alert.kpi_alert_id}`);
             return;
@@ -460,25 +463,25 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
 
         // 2. Check if already ran TODAY (not this hour) - threshold alerts fire once per day
         const currentDate = new Date().toISOString().split('T')[0];
-        console.log(`[10-threshold] Checking daily protection - currentDate: ${currentDate}, last_ran_at_date: ${cronJob.last_ran_at_date}`);
+        if (isDev) console.log(`[10-threshold] Checking daily protection - currentDate: ${currentDate}, last_ran_at_date: ${cronJob.last_ran_at_date}`);
 
         if (cronJob.last_ran_at_date === currentDate) {
-            console.log('[10a-threshold] Already fired today - SKIPPING');
+            if (isDev) console.log('[10a-threshold] Already fired today - SKIPPING');
             await client.query('ROLLBACK');
             logger.info(`Threshold alert ${alert.cron_job_id} already fired today, skipping`);
             return;
         }
 
         // 3. Fetch threshold config
-        console.log(`[11-threshold] Fetching kpi_thresholds with kpi_alert_id: ${alert.kpi_alert_id}`);
+        if (isDev) console.log(`[11-threshold] Fetching kpi_thresholds with kpi_alert_id: ${alert.kpi_alert_id}`);
         const thresholdResult = await client.query<KpiThreshold>(
             'SELECT * FROM kpi_thresholds WHERE kpi_alert_id = $1',
             [alert.kpi_alert_id]
         );
-        console.log('[11a-threshold] kpi_thresholds query result:', JSON.stringify(thresholdResult.rows, null, 2));
+        if (isDev) console.log('[11a-threshold] kpi_thresholds query result:', JSON.stringify(thresholdResult.rows, null, 2));
 
         if (thresholdResult.rows.length === 0) {
-            console.log(`[ERROR-threshold] No threshold config found for kpi_alert_id: ${alert.kpi_alert_id}`);
+            if (isDev) console.log(`[ERROR-threshold] No threshold config found for kpi_alert_id: ${alert.kpi_alert_id}`);
             await client.query('ROLLBACK');
             logger.error(`No threshold found for alert ${alert.kpi_alert_id}`);
             return;
@@ -486,36 +489,47 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
 
         const threshold = thresholdResult.rows[0];
 
-        // 4. Fetch current KPI value and evaluate condition
-        // TODO: Implement KPI value fetching from Cube.js
-        // For now, always consider the condition met (testing purposes)
-        const currentValue = 0; // Placeholder
-        const conditionMet = true; // Always true until Cube integration is complete
-        console.log(`[12-threshold] Evaluating condition: ${threshold.condition} ${threshold.threshold_value} (currentValue: ${currentValue}, conditionMet: ${conditionMet} - hardcoded for testing)`);
-
-        // Uncomment when Cube integration is ready:
-        // const conditionMet = evaluateThresholdCondition(
-        //     currentValue,
-        //     threshold.condition,
-        //     threshold.threshold_value
-        // );
-
-        if (!conditionMet) {
-            console.log('[12a-threshold] Condition NOT met - SKIPPING');
+        // 4. Fetch current KPI value from Cube.js
+        if (!alert.graph_id) {
+            if (isDev) console.log(`[ERROR-threshold] No graph_id configured for alert: ${alert.alert_name}`);
             await client.query('ROLLBACK');
-            logger.info(`Threshold condition not met for ${alert.alert_name}`);
+            logger.error(`No graph_id configured for alert ${alert.kpi_alert_id}`);
             return;
         }
 
-        console.log('[13-threshold] Condition MET - proceeding with alert');
-        logger.info(`Threshold condition met for ${alert.alert_name} (testing mode - always true)`);
+        if (isDev) console.log(`[12-threshold] Fetching KPI value from Cube.js for graph_id: ${alert.graph_id}`);
+        const currentValue = await fetchKpiValue(Number(alert.graph_id));
 
+        if (currentValue === null) {
+            if (isDev) console.log(`[ERROR-threshold] Could not fetch KPI value for graph_id: ${alert.graph_id}`);
+            await client.query('ROLLBACK');
+            logger.error(`Could not fetch KPI value for graph ${alert.graph_id}`);
+            return;
+        }
 
-        // 5. Update last_ran_at to TODAY (using UTC to match currentDate)
+        // 5. Evaluate threshold condition
+        const conditionMet = evaluateThresholdCondition(
+            currentValue,
+            threshold.condition,
+            Number(threshold.threshold_value)
+        );
+        if (isDev) console.log(`[12a-threshold] Evaluating condition: ${currentValue} ${threshold.condition} ${threshold.threshold_value} = ${conditionMet}`);
+
+        if (!conditionMet) {
+            if (isDev) console.log('[12b-threshold] Condition NOT met - SKIPPING');
+            await client.query('ROLLBACK');
+            logger.info(`Threshold condition not met for ${alert.alert_name}: ${currentValue} ${threshold.condition} ${threshold.threshold_value}`);
+            return;
+        }
+
+        if (isDev) console.log('[13-threshold] Condition MET - proceeding with alert');
+        logger.info(`Threshold condition met for ${alert.alert_name}: ${currentValue} ${threshold.condition} ${threshold.threshold_value}`);
+
+        // 6. Update last_ran_at to TODAY (using UTC to match currentDate)
         const now = new Date();
         const currentHour = now.getUTCHours().toString().padStart(2, '0');
         const currentMinute = now.getUTCMinutes().toString().padStart(2, '0');
-        console.log(`[14-threshold] Updating cron_jobs last_ran_at: date=${currentDate}, hour=${currentHour}, minute=${currentMinute} (UTC)`);
+        if (isDev) console.log(`[14-threshold] Updating cron_jobs last_ran_at: date=${currentDate}, hour=${currentHour}, minute=${currentMinute} (UTC)`);
 
         await client.query(
             `UPDATE cron_jobs SET last_ran_at_date = $1, last_ran_at_hour = $2,
@@ -523,10 +537,10 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
             [currentDate, currentHour, currentMinute, cronJob.id]
         );
 
-        // 6. Send alert email
+        // 7. Send alert email
         // TODO: Implement email sending
-        console.log(`[15-threshold] TODO: SEND EMAIL to ${alert.recipients.length} recipients: ${JSON.stringify(alert.recipients)}`);
-        console.log(`[15a-threshold] Email details: condition=${threshold.condition}, thresholdValue=${threshold.threshold_value}, currentValue=${currentValue}`);
+        if (isDev) console.log(`[15-threshold] TODO: SEND EMAIL to ${alert.recipients.length} recipients: ${JSON.stringify(alert.recipients)}`);
+        if (isDev) console.log(`[15a-threshold] Email details: condition=${threshold.condition}, thresholdValue=${threshold.threshold_value}, currentValue=${currentValue}`);
         logger.info(`Would send threshold alert to ${alert.recipients.length} recipients`, {
             kpiAlertId: alert.kpi_alert_id,
             recipients: alert.recipients,
@@ -535,8 +549,8 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
             currentValue,
         });
 
-        // 7. Record success
-        console.log('[16-threshold] Recording success to cron_job_results');
+        // 8. Record success
+        if (isDev) console.log('[16-threshold] Recording success to cron_job_results');
         await client.query(
             `INSERT INTO cron_job_results (cron_job_id, notes, completed,
              job_start_timestamp, trigger, organization_id)
@@ -558,7 +572,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
         );
 
         await client.query('COMMIT');
-        console.log(`[16a-threshold] COMMIT successful - threshold alert "${alert.alert_name}" processed`);
+        if (isDev) console.log(`[16a-threshold] COMMIT successful - threshold alert "${alert.alert_name}" processed`);
         logger.info(`Successfully sent threshold alert: ${alert.alert_name}`);
 
     } catch (error) {
@@ -566,14 +580,14 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
 
         // Check if this is the "already executed" scenario - this is normal flow, not an error
         if (errorMessage.includes('already been executed')) {
-            console.log(`[10a-threshold] Threshold alert "${alert.alert_name}" already executed today (via DB trigger), skipping`);
+            if (isDev) console.log(`[10a-threshold] Threshold alert "${alert.alert_name}" already executed today (via DB trigger), skipping`);
             logger.info(`Threshold alert ${alert.kpi_alert_id} already executed today, skipping`);
             await client.query('ROLLBACK');
             return;
         }
 
         // Actual error - log and record
-        console.log(`[ERROR-threshold] processThresholdAlert() failed for "${alert.alert_name}":`, error);
+        if (isDev) console.log(`[ERROR-threshold] processThresholdAlert() failed for "${alert.alert_name}":`, error);
         logger.error(`Error processing threshold alert ${alert.kpi_alert_id}:`, { error });
 
         try {
@@ -592,7 +606,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
             );
             await client.query('COMMIT');
         } catch (nestedError) {
-            console.log('[ERROR-threshold] Failed to record error result:', nestedError);
+            if (isDev) console.log('[ERROR-threshold] Failed to record error result:', nestedError);
             logger.error('Failed to record error result:', { nestedError });
             await client.query('ROLLBACK');
         }

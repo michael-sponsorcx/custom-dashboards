@@ -1,6 +1,8 @@
 // TODO: we'll need to delete this file after migration
 import { pool } from '../db/connection';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 interface CronJob {
     id: string;
     job_name: string;
@@ -34,7 +36,7 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
         );
 
         if (result.rows.length === 0) {
-            console.log(`${jobName}: No cronjob found`);
+            if (isDev) console.log(`${jobName}: No cronjob found`);
             await client.query('ROLLBACK');
             return false;
         }
@@ -71,7 +73,7 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
                         'This cron job has already been executed in the current hour'
                     )
                 ) {
-                    console.log(
+                    if (isDev) console.log(
                         `${jobName}: This cronjob has already been executed, skipping`
                     );
                 } else {
@@ -80,14 +82,14 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
             }
         } else {
             await client.query('ROLLBACK');
-            console.log(
+            if (isDev) console.log(
                 `${jobName}: This cronjob has already been executed this hour, skipping`
             );
         }
         return false;
     } catch (e) {
         await client.query('ROLLBACK');
-        console.error(e);
+        if (isDev) console.error(e);
         return false;
     } finally {
         client.release();
@@ -116,12 +118,17 @@ const surpassedWaitTime = (cronJob: CronJob, waitTime: number): boolean => {
 
 /**
  * Logger utility for cron jobs
+ * Only logs in development mode
  */
 export const logger = {
     info: (message: string, meta?: Record<string, unknown>) => {
-        console.log(`ℹ️  ${message}`, meta || '');
+        if (isDev) {
+            console.log(`ℹ️  ${message}`, meta || '');
+        }
     },
     error: (message: string, meta?: Record<string, unknown>) => {
-        console.error(`❌ ${message}`, meta || '');
+        if (isDev) {
+            console.error(`❌ ${message}`, meta || '');
+        }
     },
 };
