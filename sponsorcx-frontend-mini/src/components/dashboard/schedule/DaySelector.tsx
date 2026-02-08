@@ -1,5 +1,5 @@
 import { Group, Button } from '@mantine/core';
-import type { DayOfWeek } from '../../../types/schedules';
+import type { DayOfWeek } from '../../../types/schedule-common';
 
 interface DaySelectorProps {
   selectedDays: DayOfWeek[];

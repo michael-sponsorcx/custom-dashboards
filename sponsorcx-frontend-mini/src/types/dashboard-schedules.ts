@@ -1,17 +1,20 @@
 /**
- * Schedule Types
+ * Dashboard Schedule Types
  *
- * Type definitions for the schedule system.
- * These types define the structure of schedules and their configurations.
+ * Type definitions for the dashboard schedule system.
+ * Dashboard schedules send entire dashboard reports to recipients on a cadence.
+ *
+ * NOTE: This is separate from KPI schedules which send individual KPI values.
+ * KPI schedule types are in kpi-alerts.ts.
  */
 
-/**
- * Days of the week
- */
-export type DayOfWeek = 'M' | 'T' | 'W' | 'Th' | 'F' | 'S' | 'Su';
+import type { DayOfWeek } from './schedule-common';
+
+// Re-export for convenience
+export type { DayOfWeek };
 
 /**
- * Attachment file format options
+ * Attachment file format options (dashboard schedules only)
  */
 export type AttachmentType = 'PDF' | 'Excel' | 'CSV';
 
@@ -21,9 +24,10 @@ export type AttachmentType = 'PDF' | 'Excel' | 'CSV';
 export type FrequencyInterval = 'n_minute' | 'hour' | 'day' | 'week' | 'month';
 
 /**
- * Schedule Form Data structure
+ * Dashboard Schedule Form Data structure
+ * Used by CreateScheduleModal to create schedules for entire dashboards
  */
-export interface ScheduleFormData {
+export interface DashboardScheduleFormData {
   /** User-defined name for the schedule */
   scheduleName?: string;
   /** Whether to add a comment */

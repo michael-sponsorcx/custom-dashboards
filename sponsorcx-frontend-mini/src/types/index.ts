@@ -8,8 +8,11 @@ export * from './kpi-alerts';
 // Filter Types
 export * from './filters';
 
-// Schedule Types
-export * from './schedules';
+// Common Schedule Types (shared between dashboard and KPI schedules)
+export * from './schedule-common';
+
+// Dashboard Schedule Types
+export * from './dashboard-schedules';
 
 // Graph Types
 export * from './graph';

@@ -48,7 +48,7 @@ export {
 } from './api/filters';
 export type { DashboardFilterField, DashboardFilterState } from './api/filters';
 
-// KPI Schedules API
+// KPI Schedules API (sends KPI values on cadence)
 export {
   fetchKpiSchedules,
   fetchKpiSchedule,
@@ -60,6 +60,18 @@ export {
   toggleKpiScheduleActive,
 } from './api/kpi_schedules';
 export type { KpiSchedule, KpiScheduleInput } from './api/kpi_schedules';
+
+// Dashboard Schedules API (sends dashboard reports on cadence)
+export {
+  fetchDashboardSchedules,
+  fetchDashboardSchedule,
+  fetchDashboardSchedulesByDashboard,
+  createDashboardSchedule,
+  updateDashboardSchedule,
+  deleteDashboardSchedule,
+  toggleDashboardScheduleActive,
+} from './api/dashboard_schedules';
+export type { DashboardSchedule, DashboardScheduleInput } from './api/dashboard_schedules';
 
 // Types
 export type {

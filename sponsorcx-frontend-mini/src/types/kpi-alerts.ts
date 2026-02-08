@@ -7,6 +7,7 @@
  */
 
 import { FrequencyInterval, ThresholdCondition } from './backend-graphql';
+import type { DayOfWeek } from './schedule-common';
 
 /**
  * Type of KPI alert
@@ -112,4 +113,41 @@ export interface KPIFormData {
   recipients?: string[];
   /** KPI details/metrics being monitored */
   kpiDetails?: string[];
+}
+
+/**
+ * KPI Schedule Form Data structure
+ * Used for creating/updating KPI scheduled alerts (sends KPI value on a cadence)
+ *
+ * NOTE: This is separate from DashboardScheduleFormData which sends entire dashboard reports.
+ */
+export interface KpiScheduleFormData {
+  /** User-defined name for the schedule */
+  scheduleName?: string;
+  /** Whether to add a comment */
+  addComment?: boolean;
+  /** Comment text */
+  comment?: string;
+  /** Frequency interval type */
+  frequencyInterval?: FrequencyInterval;
+  /** Minute interval (5, 10, 15, ..., 45) - for n_minute type */
+  minuteInterval?: string;
+  /** Hour interval (1-12) - for hour type */
+  hourInterval?: string;
+  /** Hour of day (00-23) */
+  hour?: string;
+  /** Minute of hour (00-55, in 5-minute increments) */
+  minute?: string;
+  /** Selected days of the week */
+  selectedDays?: DayOfWeek[];
+  /** Exclude weekends - for day type */
+  excludeWeekends?: boolean;
+  /** Dates of month (comma-separated, e.g., "2,10,15") - for month type */
+  monthDates?: string;
+  /** IANA timezone identifier (e.g., 'America/New_York') */
+  timeZone?: string;
+  /** Whether to add a gating condition */
+  addGatingCondition?: boolean;
+  /** List of recipient email addresses */
+  recipients?: string[];
 }

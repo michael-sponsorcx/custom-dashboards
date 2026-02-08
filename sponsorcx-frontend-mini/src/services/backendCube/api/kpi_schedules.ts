@@ -1,11 +1,15 @@
 /**
  * KPI Schedules API Service
  *
- * Handles all KPI schedule CRUD operations via backend GraphQL API
+ * Handles all KPI schedule CRUD operations via backend GraphQL API.
+ * KPI schedules send individual KPI values to recipients on a cadence.
+ *
+ * NOTE: This is separate from dashboard schedules which send entire dashboard reports.
  */
 
 import { executeBackendGraphQL } from '../core/backendClient';
-import type { ScheduleFormData, FrequencyInterval } from '../../../types/schedules';
+import type { KpiScheduleFormData } from '../../../types/kpi-alerts';
+import type { FrequencyInterval } from '../../../types/backend-graphql';
 
 /**
  * KPI Schedule type returned from the API
@@ -95,13 +99,13 @@ const KPI_SCHEDULE_FIELDS = `
 /**
  * Convert frontend ScheduleFormData to backend KpiScheduleInput
  */
-const toKpiScheduleInput = (formData: ScheduleFormData, dashboardId: string, createdById: string): KpiScheduleInput => {
+const toKpiScheduleInput = (formData: KpiScheduleFormData, dashboardId: string, createdById: string): KpiScheduleInput => {
   // Parse month dates from comma-separated string to number array
   const monthDates = formData.monthDates
     ? formData.monthDates
         .split(',')
-        .map((d) => parseInt(d.trim(), 10))
-        .filter((n) => !isNaN(n))
+        .map((d: string) => parseInt(d.trim(), 10))
+        .filter((n: number) => !isNaN(n))
     : undefined;
 
   // Map frontend frequency interval to backend enum format
@@ -111,13 +115,6 @@ const toKpiScheduleInput = (formData: ScheduleFormData, dashboardId: string, cre
     day: 'DAY',
     week: 'WEEK',
     month: 'MONTH',
-  };
-
-  // Map frontend attachment type to backend enum format
-  const attachmentTypeMap: Record<string, string> = {
-    PDF: 'PDF',
-    Excel: 'EXCEL',
-    CSV: 'CSV',
   };
 
   return {
@@ -137,9 +134,6 @@ const toKpiScheduleInput = (formData: ScheduleFormData, dashboardId: string, cre
     monthDates,
     timeZone: formData.timeZone,
     hasGatingCondition: formData.addGatingCondition,
-    attachmentType: formData.attachmentType
-      ? attachmentTypeMap[formData.attachmentType] || formData.attachmentType
-      : undefined,
     recipients: formData.recipients,
     isActive: true,
   };
@@ -227,7 +221,7 @@ export const fetchKpiSchedulesByDashboard = async (dashboardId: string): Promise
  * Create a new KPI schedule
  */
 export const createKpiSchedule = async (
-  formData: ScheduleFormData,
+  formData: KpiScheduleFormData,
   organizationId: string,
   dashboardId: string,
   createdById: string
@@ -259,7 +253,7 @@ export const createKpiSchedule = async (
  */
 export const updateKpiSchedule = async (
   id: string,
-  formData: ScheduleFormData,
+  formData: KpiScheduleFormData,
   dashboardId: string,
   createdById: string
 ): Promise<KpiSchedule> => {

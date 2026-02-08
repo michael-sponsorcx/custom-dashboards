@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { DaySelector } from './schedule/DaySelector';
 import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../constants/timeOptions';
-import type { ScheduleFormData, DayOfWeek, AttachmentType, FrequencyInterval } from '../../types/schedules';
-import { createKpiSchedule } from '../../services/backendCube';
+import type { DashboardScheduleFormData, DayOfWeek, AttachmentType, FrequencyInterval } from '../../types/dashboard-schedules';
+import { createDashboardSchedule } from '../../services/backendCube';
 
 interface CreateScheduleModalProps {
   opened: boolean;
@@ -54,7 +54,7 @@ const ATTACHMENT_TYPE_OPTIONS: Array<{ value: AttachmentType; label: string }> =
  * - Footer: Cancel and Create Schedule buttons
  */
 export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId }: CreateScheduleModalProps) => {
-  const [scheduleFormData, setScheduleFormData] = useState<ScheduleFormData>({});
+  const [scheduleFormData, setScheduleFormData] = useState<DashboardScheduleFormData>({});
   const [emailInput, setEmailInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -226,7 +226,7 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
 
     try {
       
-      await createKpiSchedule(scheduleFormData, organizationId, dashboardId, userId);
+      await createDashboardSchedule(scheduleFormData, organizationId, dashboardId, userId);
 
       notifications.show({
         title: 'Schedule Created',
