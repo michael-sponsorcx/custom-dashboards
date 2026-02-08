@@ -7,6 +7,8 @@
 
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
+const showCacheLogs = import.meta.env.VITE_SHOW_CACHE_LOGS === 'true';
+
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
@@ -38,6 +40,12 @@ export interface CacheConfig {
    * @default false
    */
   debug?: boolean;
+  /**
+   * Function to determine if a specific request should be cached.
+   * Called after method check passes. Return true to cache, false to skip.
+   * If not provided, all requests matching the method will be cached.
+   */
+  shouldCacheRequest?: (config: InternalAxiosRequestConfig) => boolean;
 }
 
 /**
@@ -66,9 +74,10 @@ class AxiosCache {
       methods: config.methods ?? ['get'],
       keyGenerator: config.keyGenerator ?? defaultKeyGenerator,
       debug: config.debug ?? false,
+      shouldCacheRequest: config.shouldCacheRequest ?? (() => true),
     };
 
-    if (this.config.debug) {
+    if (showCacheLogs) {
       console.log('🔧 [AxiosCache] Initialized:', {
         defaultTTL: this.config.defaultTTL,
         methods: this.config.methods,
@@ -111,7 +120,7 @@ class AxiosCache {
       const stored = localStorage.getItem(storageKey);
 
       if (!stored) {
-        if (this.config.debug) {
+        if (showCacheLogs) {
           console.log('❌ [AxiosCache] Cache MISS for key:', key.slice(0, 100));
         }
         return null;
@@ -124,20 +133,20 @@ class AxiosCache {
       // Check if entry has expired
       if (age > entry.ttl) {
         localStorage.removeItem(storageKey);
-        if (this.config.debug) {
+        if (showCacheLogs) {
           console.log(`🗑️ [AxiosCache] Cache EXPIRED (age: ${age}ms, ttl: ${entry.ttl}ms)`);
         }
         return null;
       }
 
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.log(`✅ [AxiosCache] Cache HIT (age: ${age}ms)`);
       }
 
       return entry.data;
     } catch (error) {
       // If localStorage fails, fail silently
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.error('❗ [AxiosCache] Cache read failed:', error);
       }
       return null;
@@ -165,12 +174,12 @@ class AxiosCache {
 
       localStorage.setItem(storageKey, JSON.stringify(entry));
 
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.log(`💾 [AxiosCache] Cached (TTL: ${cacheTTL}ms) ${key.slice(0, 100)}`);
       }
     } catch (error) {
       // If localStorage fails, fail silently
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.error('❗ [AxiosCache] Cache write failed:', error);
       }
     }
@@ -179,9 +188,16 @@ class AxiosCache {
   /**
    * Check if method should be cached
    */
-  shouldCache(method: string | undefined): boolean {
+  shouldCacheMethod(method: string | undefined): boolean {
     if (!method) return false;
     return this.config.methods.includes(method.toLowerCase());
+  }
+
+  /**
+   * Check if a specific request should be cached
+   */
+  shouldCacheRequest(config: InternalAxiosRequestConfig): boolean {
+    return this.config.shouldCacheRequest(config);
   }
 
   /**
@@ -206,11 +222,11 @@ class AxiosCache {
       }
       keysToRemove.forEach((key) => localStorage.removeItem(key));
 
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.log(`🧹 Cache cleared (${keysToRemove.length} entries removed)`);
       }
     } catch (error) {
-      if (this.config.debug) {
+      if (showCacheLogs) {
         console.warn('Cache clear failed:', error);
       }
     }
@@ -297,14 +313,21 @@ export function setupAxiosCache(
   // Request interceptor - check cache before making request
   axiosInstance.interceptors.request.use(
     (requestConfig) => {
-      // Only cache GET requests by default (or configured methods)
-      if (!cache.shouldCache(requestConfig.method)) {
+      const methodOk = cache.shouldCacheMethod(requestConfig.method);
+
+      if (!methodOk) {
+        return requestConfig;
+      }
+
+      const requestOk = cache.shouldCacheRequest(requestConfig);
+
+      // Only cache configured methods and requests that pass the filter
+      if (!requestOk) {
         return requestConfig;
       }
 
       const cacheKey = cache.generateKey(requestConfig);
       const cachedResponse = cache.get(cacheKey);
-
       
       if (cachedResponse) {
         // Mark response as coming from cache for debugging/monitoring
@@ -337,7 +360,7 @@ export function setupAxiosCache(
       const requestConfig = response.config as typeof response.config & { __cacheKey?: string };
       const cacheKey = requestConfig.__cacheKey;
 
-      if (cacheKey && cache.shouldCache(requestConfig.method)) {
+      if (cacheKey && cache.shouldCacheMethod(requestConfig.method) && cache.shouldCacheRequest(requestConfig)) {
         // Check for custom TTL in request headers
         const customTTL = requestConfig.headers?.['X-Cache-TTL'];
         const ttl = customTTL ? parseInt(customTTL as string, 10) : undefined;

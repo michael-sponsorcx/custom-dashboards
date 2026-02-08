@@ -5,8 +5,51 @@
  * This replaces direct calls to Cube Cloud API by proxying through our backend.
  */
 
-import axios, { type AxiosInstance, type AxiosError } from 'axios';
+import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { setupAxiosCache } from '../../config/axiosCacheInterceptor';
+
+const showCacheLogs = import.meta.env.VITE_SHOW_CACHE_LOGS === 'true';
+
+/**
+ * Cube operations that should be cached.
+ * These are read-only queries to the Cube server.
+ */
+const CACHEABLE_CUBE_OPERATIONS = [
+  'cubeQuery',
+  'cubeMetadata',
+  'cubeSchema',
+  'cubeDimensionValues',
+];
+
+/**
+ * Check if a GraphQL request is a Cube operation that should be cached.
+ * Inspects the request body to find the operation name.
+ */
+const isCacheableCubeOperation = (config: InternalAxiosRequestConfig): boolean => {
+  try {
+    const data = config.data;
+    if (!data) return false;
+
+    const body = typeof data === 'string' ? JSON.parse(data) : data;
+    const query = body?.query;
+    if (!query || typeof query !== 'string') return false;
+
+    // Check if it's a cacheable Cube operation
+    const cubeOp = CACHEABLE_CUBE_OPERATIONS.find((op) => query.includes(op));
+    const isCacheable = !!cubeOp;
+
+    // Get operation name for logging
+    if (showCacheLogs) {
+      const opMatch = query.match(/(?:query|mutation)\s+(\w+)/);
+      const opName = opMatch?.[1] || cubeOp || 'anonymous';
+      console.log(`🔍 [Cacheable] ${isCacheable ? '✅ CACHEABLE' : '❌ NOT CACHEABLE'} ${opName}${cubeOp ? ` (${cubeOp})` : ''}`);
+    }
+
+    return isCacheable;
+  } catch {
+    return false;
+  }
+};
 
 interface GraphQLResponse<T = unknown> {
   data?: T;
@@ -41,11 +84,13 @@ function createBackendGraphQLClient(): AxiosInstance {
   // Set up localStorage caching for GraphQL requests FIRST
   // Note: GraphQL uses POST requests, so we configure the cache to handle POST
   // IMPORTANT: Cache interceptor must be added before other interceptors
+  // Only cache Cube-related operations (cubeQuery, cubeMetadata, cubeSchema, cubeDimensionValues)
   setupAxiosCache(client, {
-    defaultTTL: 30000, // 5 second default cache
+    defaultTTL: 30000, // 30 second default cache
     enabled: true,
     methods: ['post'], // Cache POST requests (GraphQL uses POST)
     debug: import.meta.env.DEV, // Enable debug logs in development (built-in Vite variable)
+    shouldCacheRequest: isCacheableCubeOperation, // Only cache Cube operations
   });
 
   // Request interceptor - log requests in development
