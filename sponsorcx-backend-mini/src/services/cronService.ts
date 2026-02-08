@@ -1,7 +1,7 @@
 // TODO: we'll need to delete this file after migration
 import { pool } from '../db/connection';
 
-const isDev = process.env.NODE_ENV === 'development';
+const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';
 
 interface CronJob {
     id: string;
@@ -36,7 +36,7 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
         );
 
         if (result.rows.length === 0) {
-            if (isDev) console.log(`${jobName}: No cronjob found`);
+            if (showCronLogs) console.log(`${jobName}: No cronjob found`);
             await client.query('ROLLBACK');
             return false;
         }
@@ -73,7 +73,7 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
                         'This cron job has already been executed in the current hour'
                     )
                 ) {
-                    if (isDev) console.log(
+                    if (showCronLogs) console.log(
                         `${jobName}: This cronjob has already been executed, skipping`
                     );
                 } else {
@@ -82,14 +82,14 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
             }
         } else {
             await client.query('ROLLBACK');
-            if (isDev) console.log(
+            if (showCronLogs) console.log(
                 `${jobName}: This cronjob has already been executed this hour, skipping`
             );
         }
         return false;
     } catch (e) {
         await client.query('ROLLBACK');
-        if (isDev) console.error(e);
+        if (showCronLogs) console.error(e);
         return false;
     } finally {
         client.release();
@@ -122,12 +122,12 @@ const surpassedWaitTime = (cronJob: CronJob, waitTime: number): boolean => {
  */
 export const logger = {
     info: (message: string, meta?: Record<string, unknown>) => {
-        if (isDev) {
+        if (showCronLogs) {
             console.log(`ℹ️  ${message}`, meta || '');
         }
     },
     error: (message: string, meta?: Record<string, unknown>) => {
-        if (isDev) {
+        if (showCronLogs) {
             console.error(`❌ ${message}`, meta || '');
         }
     },
