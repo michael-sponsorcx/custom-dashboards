@@ -29,7 +29,7 @@ export const query = async (text: string, params?: unknown[]) => {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.SHOW_POSTGRES_LOGS === 'true') {
         console.log('📊 Query executed:', { text, duration, rows: res.rowCount });
     }
 
