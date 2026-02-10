@@ -5,7 +5,7 @@ import {
   updateDashboardGridItem,
   removeGraphFromDashboard,
   fetchDashboardGridItems,
-} from '../../../services/backendCube';
+} from '../../../api';
 import { GridItem } from '../../../types/dashboard';
 import { useOrganizationStore } from '../../../store';
 

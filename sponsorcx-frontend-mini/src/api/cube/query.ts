@@ -4,8 +4,8 @@
  * Proxies GraphQL query execution through the backend API instead of calling Cube Cloud directly.
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
-import { CubeQueryResult } from '../types';
+import { executeBackendGraphQL } from '../core/client';
+import { CubeQueryResult } from '../core/types';
 
 /**
  * Flattens time dimension values in query results

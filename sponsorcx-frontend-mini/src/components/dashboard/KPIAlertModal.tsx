@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { KPIAlertTile } from './KPIAlertTile';
 import { KPIAlertModalConfigureTab } from './KPIAlertModalConfigureTab';
 import type { KPIAlertModalProps, KPIAlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
-import { createKpiAlert } from '../../services/backendCube/api/kpi_alerts';
+import { createKpiAlert } from '../../api/app/kpi';
 
 /**
  * Fixed list of KPI alert types available to users

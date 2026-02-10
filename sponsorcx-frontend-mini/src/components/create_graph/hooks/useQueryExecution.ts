@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { executeCubeGraphQL } from '../../../services/backendCube';
+import { executeCubeGraphQL } from '../../../api';
 import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
 import { analyzeChartCompatibility, ChartType } from '../../../utils/chartDataAnalyzer';
 import { ViewFields } from '../types';

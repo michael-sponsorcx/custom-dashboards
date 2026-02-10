@@ -4,7 +4,7 @@
  * Handles dashboard filter persistence via backend GraphQL API
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
+import { executeBackendGraphQL } from '../../core/client';
 import type { FilterRule } from '../../../types/filters';
 
 export interface DashboardFilterField {

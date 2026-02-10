@@ -8,7 +8,7 @@ import type { LegendPosition } from '../../../types/graph';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { ColorPalette } from '../../../constants/colorPalettes';
 import type { ChartDataPoint } from '../../../utils/chartDataTransformations/types';
-import type { CubeQueryResult } from '../../../services/backendCube';
+import type { CubeQueryResult } from '../../../api';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';

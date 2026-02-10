@@ -5,7 +5,7 @@
  * Helps reduce API calls for frequently accessed data.
  */
 
-import { CacheEntry } from '../types';
+import { CacheEntry } from './types';
 
 /**
  * In-memory cache store

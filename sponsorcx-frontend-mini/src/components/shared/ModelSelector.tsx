@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchCubeMetadata } from '../../services/backendCube';
+import { fetchCubeMetadata } from '../../api';
 import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
 import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
 

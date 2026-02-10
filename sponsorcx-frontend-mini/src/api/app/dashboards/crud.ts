@@ -4,11 +4,11 @@
  * Handles all dashboard and dashboard grid item operations via backend GraphQL API
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
+import { executeBackendGraphQL } from '../../core/client';
 import { LayoutType } from '../../../types/backend-graphql';
 import type { DashboardUI, GridItem, GridLayout } from '../../../types/dashboard';
 import type { GraphUI } from '../../../types/graph';
-import { mapBackendChartType } from '../utils/graphInputMapper';
+import { mapBackendChartType } from '../graphs/mappers';
 
 // GraphQL fragments
 const DASHBOARD_FIELDS = `

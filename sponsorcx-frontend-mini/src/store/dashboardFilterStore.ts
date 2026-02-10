@@ -12,7 +12,7 @@ import {
   saveDashboardFilter,
   type DashboardFilterField,
   type DashboardFilterState,
-} from '../services/backendCube';
+} from '../api';
 import type { FilterRule } from '../types/filters';
 
 // Re-export types for convenience

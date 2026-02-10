@@ -4,9 +4,9 @@
  * Fetches schema and filter operators through the backend proxy instead of calling Cube Cloud directly.
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
+import { executeBackendGraphQL } from '../core/client';
 import { getCached, clearCache } from '../core/cache';
-import { type CubeSchema } from '../../../types/backend-graphql';
+import { type CubeSchema } from '../../types/backend-graphql';
 
 /**
  * Fetch available filter operators from backend via Cube schema

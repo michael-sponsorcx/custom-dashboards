@@ -7,7 +7,7 @@ import {
   DimensionFilterRule,
   DateFilterRule,
 } from '../../types/filters';
-import { fetchDistinctDimensionValues } from '../../services/backendCube';
+import { fetchDistinctDimensionValues } from '../../api';
 import { SharedFilterModalUI } from '../shared/filters/SharedFilterModalUI';
 
 interface DashboardAvailableFiltersModalProps {

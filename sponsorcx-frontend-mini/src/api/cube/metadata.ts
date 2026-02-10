@@ -4,8 +4,8 @@
  * Fetches cube definitions through the backend proxy instead of calling Cube Cloud directly.
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
-import { CubeMetadata } from '../types';
+import { executeBackendGraphQL } from '../core/client';
+import { CubeMetadata } from '../core/types';
 
 /**
  * Fetch Cube metadata via backend proxy

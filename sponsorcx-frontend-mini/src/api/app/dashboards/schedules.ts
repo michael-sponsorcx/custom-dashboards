@@ -9,7 +9,7 @@
  * TODO: Backend implementation required - create migration and resolvers for dashboard_schedules table
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
+import { executeBackendGraphQL } from '../../core/client';
 import type { DashboardScheduleFormData, FrequencyInterval } from '../../../types/dashboard-schedules';
 
 /**

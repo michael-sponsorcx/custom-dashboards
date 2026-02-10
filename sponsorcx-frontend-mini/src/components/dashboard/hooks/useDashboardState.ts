@@ -3,7 +3,7 @@ import { GridItem } from '../../../types/dashboard';
 import {
   getOrCreateDefaultDashboard,
   fetchGridItems,
-} from '../../../services/backendCube';
+} from '../../../api';
 import { useOrganizationStore } from '../../../store';
 
 /**

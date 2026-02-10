@@ -17,7 +17,7 @@ import {
   createGraph,
   updateGraph,
   addGraphToDashboard,
-} from '../../../services/backendCube';
+} from '../../../api';
 import { useOrganizationStore } from '../../../store';
 import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';

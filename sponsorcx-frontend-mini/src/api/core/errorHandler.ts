@@ -4,7 +4,7 @@
  * Provides consistent error handling and logging across all Cube services.
  */
 
-import { CubeApiError } from '../types';
+import { CubeApiError } from './types';
 
 /**
  * Handle and log API errors

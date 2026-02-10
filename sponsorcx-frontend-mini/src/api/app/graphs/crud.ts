@@ -4,10 +4,10 @@
  * Handles all graph CRUD operations via backend GraphQL API
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
+import { executeBackendGraphQL } from '../../core/client';
 import type { GraphUI } from '../../../types/graph';
 import type { Graph as BackendGraph } from '../../../types/backend-graphql';
-import { toGraphInput, mapBackendChartType } from '../utils/graphInputMapper';
+import { toGraphInput, mapBackendChartType } from './mappers';
 
 /**
  * Map backend Graph response to frontend GraphUI format

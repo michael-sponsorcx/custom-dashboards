@@ -4,8 +4,8 @@
  * Fetches distinct dimension values through the backend proxy instead of calling Cube Cloud directly.
  */
 
-import { executeBackendGraphQL } from '../core/backendClient';
-import { type CubeDimensionValues } from '../../../types/backend-graphql';
+import { executeBackendGraphQL } from '../core/client';
+import { type CubeDimensionValues } from '../../types/backend-graphql';
 
 /**
  * Strip cube prefix from field name

@@ -10,7 +10,7 @@ import {
   Loader,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { fetchCubeMetadata } from '../../../services/backendCube';
+import { fetchCubeMetadata } from '../../../api';
 
 interface CommonFieldsSelectionProps {
   selectedViews: string[];

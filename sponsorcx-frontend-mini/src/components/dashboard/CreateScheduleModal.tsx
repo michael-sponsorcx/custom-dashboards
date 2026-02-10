@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { DaySelector } from './schedule/DaySelector';
 import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../constants/timeOptions';
 import type { DashboardScheduleFormData, DayOfWeek, AttachmentType, FrequencyInterval } from '../../types/dashboard-schedules';
-import { createDashboardSchedule } from '../../services/backendCube';
+import { createDashboardSchedule } from '../../api';
 
 interface CreateScheduleModalProps {
   opened: boolean;

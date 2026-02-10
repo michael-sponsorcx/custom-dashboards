@@ -6,7 +6,7 @@
  */
 
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { setupAxiosCache } from '../../config/axiosCacheInterceptor';
+import { setupAxiosCache } from './axiosCacheInterceptor';
 
 const showCacheLogs = import.meta.env.VITE_SHOW_CACHE_LOGS === 'true';
 
