@@ -1,5 +1,5 @@
 {
-  "buildCommand": "yarn build:frontend",
+  "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "installCommand": "rm -f yarn.lock && yarn install --network-timeout 100000",
   "framework": "vite",
