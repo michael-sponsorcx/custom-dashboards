@@ -17,12 +17,15 @@ interface OrganizationStore {
   setUserId: (id: string | undefined) => void;
 }
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+// Default IDs for development/testing until auth is implemented
+const DEFAULT_ORG_ID = '3';
+const DEFAULT_DASHBOARD_ID = '3';
+const DEFAULT_USER_ID = '3';
 
 export const useOrganizationStore = create<OrganizationStore>((set) => ({
-  organizationId: isDevelopment ? '3' : undefined,
-  dashboardId: isDevelopment ? '3' : undefined,
-  userId: isDevelopment ? '3' : undefined,
+  organizationId: DEFAULT_ORG_ID,
+  dashboardId: DEFAULT_DASHBOARD_ID,
+  userId: DEFAULT_USER_ID,
   setOrganizationId: (id) => set({ organizationId: id }),
   setDashboardId: (id) => set({ dashboardId: id }),
   setUserId: (id) => set({ userId: id }),
