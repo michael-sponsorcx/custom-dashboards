@@ -10,7 +10,7 @@
  * Inspired by Tableau 10 and other professional data visualization palettes
  */
 
-export const CHART_COLORS = [
+const CHART_COLORS = [
   '#4E79A7', // Blue
   '#F28E2C', // Orange
   '#E15759', // Red
