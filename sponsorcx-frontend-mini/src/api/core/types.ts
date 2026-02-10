@@ -109,13 +109,3 @@ export interface CacheEntry<T> {
   timestamp: number;
   ttl: number;
 }
-
-/**
- * API error class
- */
-export class CubeApiError extends Error {
-  constructor(message: string, public statusCode?: number, public response?: unknown) {
-    super(message);
-    this.name = 'CubeApiError';
-  }
-}

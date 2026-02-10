@@ -4,7 +4,6 @@
 
 export { executeBackendGraphQL, getBackendGraphQLClient } from './client';
 export { getCached, setCache, deleteCache, clearCache, getCacheStats } from './cache';
-export { handleApiError } from './errorHandler';
 export type {
   CubeConfig,
   RequestOptions,
@@ -13,4 +12,3 @@ export type {
   CubeMetadata,
   CacheEntry,
 } from './types';
-export { CubeApiError } from './types';
