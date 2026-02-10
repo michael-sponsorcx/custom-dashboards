@@ -3,7 +3,7 @@ import {
   IconTrash,
   IconEdit,
   IconDownload,
-  IconFilter,
+  // IconFilter, // TODO: Uncomment when filter feature is implemented
   IconRefresh,
   IconZoomReset,
   IconBell,
@@ -79,7 +79,7 @@ export function GraphCardActions({
   chartType,
   onReset,
   onRefresh,
-  onOpenFilterModal,
+  onOpenFilterModal: _onOpenFilterModal, // TODO: Use when filter feature is implemented
   onOpenKPIAlertModal,
   onDownload,
   onEdit,
@@ -123,7 +123,7 @@ export function GraphCardActions({
         </ActionIcon>
       </Tooltip>
 
-      {/* Filter button - Opens modal to configure graph-level permanent filters */}
+      {/* TODO: Filter button - Uncomment when filter feature is implemented
       <Tooltip label="Configure graph filters">
         <ActionIcon
           color="violet"
@@ -134,6 +134,7 @@ export function GraphCardActions({
           <IconFilter size={18} />
         </ActionIcon>
       </Tooltip>
+      */}
 
       {/* KPI Alert button - Only shown for KPI charts */}
       {chartType === 'kpi' && (

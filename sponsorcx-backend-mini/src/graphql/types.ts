@@ -685,3 +685,61 @@ export const CreateKpiThresholdInput = new GraphQLInputObjectType({
         timeZone: { type: GraphQLString },
     },
 });
+
+// ============================================================================
+// Dashboard Schedule Types
+// ============================================================================
+
+export const DashboardScheduleType = new GraphQLObjectType({
+    name: 'DashboardSchedule',
+    fields: () => ({
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        cronJobId: { type: new GraphQLNonNull(GraphQLID) },
+        organizationId: { type: new GraphQLNonNull(GraphQLID) },
+        dashboardId: { type: new GraphQLNonNull(GraphQLID) },
+        createdById: { type: new GraphQLNonNull(GraphQLID) },
+        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
+        comment: { type: GraphQLString },
+        frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
+        minuteInterval: { type: GraphQLInt },
+        hourInterval: { type: GraphQLInt },
+        scheduleHour: { type: GraphQLInt },
+        scheduleMinute: { type: GraphQLInt },
+        selectedDays: { type: new GraphQLList(GraphQLString) },
+        excludeWeekends: { type: GraphQLBoolean },
+        monthDates: { type: new GraphQLList(GraphQLInt) },
+        timeZone: { type: GraphQLString },
+        hasGatingCondition: { type: GraphQLBoolean },
+        gatingCondition: { type: GraphQLJSON },
+        attachmentType: { type: AttachmentTypeEnum },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+        cronExpression: { type: GraphQLString },
+        createdAt: { type: GraphQLString },
+        updatedAt: { type: GraphQLString },
+    }),
+});
+
+export const DashboardScheduleInput = new GraphQLInputObjectType({
+    name: 'DashboardScheduleInput',
+    fields: {
+        dashboardId: { type: new GraphQLNonNull(GraphQLID) },
+        createdById: { type: new GraphQLNonNull(GraphQLID) },
+        scheduleName: { type: new GraphQLNonNull(GraphQLString) },
+        comment: { type: GraphQLString },
+        frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },
+        minuteInterval: { type: GraphQLInt },
+        hourInterval: { type: GraphQLInt },
+        scheduleHour: { type: GraphQLInt },
+        scheduleMinute: { type: GraphQLInt },
+        selectedDays: { type: new GraphQLList(GraphQLString) },
+        excludeWeekends: { type: GraphQLBoolean },
+        monthDates: { type: new GraphQLList(GraphQLInt) },
+        timeZone: { type: GraphQLString },
+        hasGatingCondition: { type: GraphQLBoolean },
+        gatingCondition: { type: GraphQLJSON },
+        attachmentType: { type: AttachmentTypeEnum },
+        recipients: { type: new GraphQLList(GraphQLString) },
+        isActive: { type: GraphQLBoolean },
+    },
+});
