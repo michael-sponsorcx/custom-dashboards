@@ -1,11 +1,90 @@
 /**
- * Cube API Client
- * Handles all communication with the Cube.js API
+ * Cube API Proxy
+ * Proxies requests to the external Cube.js API
  */
 
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
 import { cache } from './cache';
-import type { CubeMetadataResponse } from '../graphql/types';
+
+// ============================================================================
+// Cube API Response Types
+// ============================================================================
+
+/** Cube drill members grouped */
+export interface CubeDrillMembersGrouped {
+    measures: string[];
+    dimensions: string[];
+}
+
+/** Cube measure metadata */
+export interface CubeMeasure {
+    name: string;
+    title: string;
+    shortTitle: string;
+    format?: string;
+    cumulativeTotal: boolean;
+    cumulative: boolean;
+    type: string;
+    aggType: string;
+    drillMembers: string[];
+    drillMembersGrouped: CubeDrillMembersGrouped;
+    isVisible: boolean;
+    public: boolean;
+}
+
+/** Cube dimension metadata */
+export interface CubeDimension {
+    name: string;
+    title: string;
+    type: string;
+    shortTitle: string;
+    description?: string;
+    suggestFilterValues: boolean;
+    isVisible: boolean;
+    public: boolean;
+    primaryKey: boolean;
+}
+
+/** Cube segment metadata */
+export interface CubeSegment {
+    name: string;
+    title: string;
+    shortTitle: string;
+    isVisible: boolean;
+    public: boolean;
+}
+
+/** Single Cube metadata */
+export interface CubeMeta {
+    name: string;
+    type: string;
+    title: string;
+    isVisible: boolean;
+    public: boolean;
+    connectedComponent: number;
+    measures: CubeMeasure[];
+    dimensions: CubeDimension[];
+    segments: CubeSegment[];
+    hierarchies: unknown[];
+    folders: unknown[];
+    nestedFolders: unknown[];
+}
+
+/** Full Cube metadata response */
+export interface CubeMetadataResponse {
+    cubes: CubeMeta[];
+}
+
+/** Cube GraphQL query response shape */
+interface CubeQueryResponse {
+    data?: {
+        cube?: Array<Record<string, Record<string, number>>>;
+    };
+}
+
+// ============================================================================
+// Configuration
+// ============================================================================
 
 // Configuration from environment variables
 const CUBE_API_BASE_URL = process.env.CUBE_API_BASE_URL;
@@ -265,6 +344,26 @@ export const fetchCubeSchema = async (): Promise<string[]> => {
 const stripCubePrefix = (fieldName: string): string => {
   const parts = fieldName.split('.');
   return parts.length > 1 ? parts[parts.length - 1] : fieldName;
+};
+
+/**
+ * Fetch a single measure value from a Cube view
+ * Used by threshold alerts to get the current KPI value
+ */
+export const fetchMeasureValue = async (
+  viewName: string,
+  measureName: string
+): Promise<number | null> => {
+  const cleanViewName = stripCubePrefix(viewName).toLowerCase();
+  const cleanMeasureName = stripCubePrefix(measureName);
+
+  const query = `query { cube { ${cleanViewName} { ${cleanMeasureName} } } }`;
+
+  const response = (await executeCubeGraphQL(query)) as CubeQueryResponse;
+  const cubeData = response?.data?.cube?.[0];
+  const value = cubeData?.[cleanViewName]?.[cleanMeasureName];
+
+  return typeof value === 'number' ? value : null;
 };
 
 /**

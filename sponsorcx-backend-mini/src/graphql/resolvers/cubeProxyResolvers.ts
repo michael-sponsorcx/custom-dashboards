@@ -11,7 +11,7 @@ import {
     fetchCubeSchema,
     fetchDimensionValues,
     type CubeMetadataResponse,
-} from '../../services/cubeApiClient';
+} from '../../services/cubeProxyApiClient';
 import {
     CubeSchemaType,
     CubeDimensionValuesType,
