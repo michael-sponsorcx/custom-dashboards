@@ -10,6 +10,7 @@ const config: CodegenConfig = {
             plugins: ['typescript', 'typescript-resolvers'],
             config: {
                 useIndexSignature: true,
+                useTypeImports: true,
                 scalars: {
                     JSON: 'Record<string, unknown>',
                 },

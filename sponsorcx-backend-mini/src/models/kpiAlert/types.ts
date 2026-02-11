@@ -1,3 +1,5 @@
+import type { KpiAlert as CodegenKpiAlert } from '../../generated/graphql';
+
 /** Base alert input fields common to schedules and thresholds */
 export interface BaseAlertInput {
     graphId?: string | null;
@@ -39,57 +41,21 @@ export interface AlertRowColumns {
     updated_at: Date;
 }
 
-/** KPI Alert resolved type (camelCase for GraphQL) */
-export interface KpiAlert {
-    id: string;
-    cronJobId: string;
+/**
+ * Resolved KpiAlert type (camelCase for GraphQL).
+ * Overrides: date fields, nullable IDs, alertType (string vs enum),
+ * recipients (non-null array), isActive (non-null boolean)
+ */
+type KpiAlertOverrides = {
     organizationId: string | null;
     graphId: string | null;
     dashboardId: string | null;
     createdById: string | null;
-    alertName: string;
     alertType: string;
-    comment: string | null;
     recipients: string[];
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
-}
+};
 
-/**
- * Normalize base alert input with defaults.
- * Ensures all optional fields have explicit values for SQL insertion.
- */
-export const normalizeAlertInput = (
-    input: BaseAlertInput,
-    alertType: 'schedule' | 'threshold'
-): NormalizedAlertInput => ({
-    graphId: input.graphId ?? null,
-    dashboardId: input.dashboardId ?? null,
-    createdById: input.createdById ?? null,
-    alertName: input.alertName,
-    alertType,
-    comment: input.comment ?? null,
-    recipients: (input.recipients ?? []).filter((r): r is string => r !== null),
-    isActive: input.isActive ?? true,
-});
-
-/**
- * Convert the alert columns from a joined row to camelCase.
- * Used by both kpiSchedule and kpiThreshold models.
- */
-export const rowToKpiAlert = (row: AlertRowColumns): KpiAlert => ({
-    id: row.alert_id,
-    cronJobId: row.cron_job_id,
-    organizationId: row.organization_id,
-    graphId: row.graph_id,
-    dashboardId: row.dashboard_id,
-    createdById: row.created_by_id,
-    alertName: row.alert_name,
-    alertType: row.alert_type,
-    comment: row.comment,
-    recipients: row.recipients,
-    isActive: row.is_active,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-});
+export type KpiAlert = Omit<CodegenKpiAlert, '__typename' | keyof KpiAlertOverrides> & KpiAlertOverrides;

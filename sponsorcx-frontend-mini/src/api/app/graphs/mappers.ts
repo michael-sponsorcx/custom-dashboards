@@ -47,7 +47,7 @@ export function toGraphInput(
     measures: template.measures || [],
     dimensions: template.dimensions || [],
     dates: template.dates || [],
-    filters: template.filters || [],
+    filters: (template.filters || []) as unknown as Record<string, unknown>,
     orderByField: template.orderByField,
     orderByDirection: template.orderByDirection ? (template.orderByDirection === 'asc' ? BackendSortOrder.Asc : BackendSortOrder.Desc) : undefined,
     numberFormat: template.numberFormat ? mapNumberFormat(template.numberFormat) : undefined,

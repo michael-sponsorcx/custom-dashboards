@@ -11,9 +11,6 @@ import {
     GraphQLEnumType,
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-scalars';
-import { query } from '../db/connection';
-import { graphRowToCamelCase } from '../models';
-import type { GraphRow, Graph, DashboardGridItemParent } from '../models';
 
 // ============================================================================
 // GraphQL Enums
@@ -142,16 +139,6 @@ export const DashboardGridItemType = new GraphQLObjectType({
         displayOrder: { type: GraphQLInt },
         graph: {
             type: GraphType,
-            // This loads graphs one at a time, we may need to consider batching this in the future.
-            resolve: async (parent: DashboardGridItemParent): Promise<Graph | null> => {
-                // Lazy-load the graph when requested
-                if (!parent.graphId) return null;
-
-                const result = await query('SELECT * FROM graphs WHERE id = $1', [parent.graphId]);
-                if (!result.rows[0]) return null;
-
-                return graphRowToCamelCase(result.rows[0] as GraphRow);
-            },
         },
     }),
 });
