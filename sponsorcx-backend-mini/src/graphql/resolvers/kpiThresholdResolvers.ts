@@ -1,53 +1,14 @@
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
 import { pool, query } from '../../db/connection';
 import { KpiThresholdType, CreateKpiThresholdInput as CreateKpiThresholdInputType } from '../types';
-import type { KpiAlert, AlertRowColumns } from '../../types/kpi_alert';
-import { normalizeAlertInput, rowToKpiAlert } from './shared/alertHelpers';
+import { normalizeAlertInput, kpiThresholdToCamelCase } from '../../models';
+import type { KpiThresholdRow, KpiThreshold } from '../../models';
 import type {
     QueryKpiThresholdsByGraphArgs,
     MutationCreateKpiThresholdArgs,
     MutationDeleteKpiThresholdArgs,
     MutationToggleKpiThresholdActiveArgs,
 } from '../../generated/graphql';
-
-// ============================================================================
-// Database Row Type (snake_case from PostgreSQL joined query)
-// ============================================================================
-
-interface KpiThresholdRow extends AlertRowColumns {
-    // From kpi_thresholds table
-    threshold_id: string;
-    kpi_alert_id: string;
-    condition: string;
-    threshold_value: string; // NUMERIC returns as string from pg driver
-    time_zone: string;
-}
-
-// ============================================================================
-// Resolved Types (camelCase for GraphQL)
-// ============================================================================
-
-interface KpiThreshold {
-    id: string;
-    kpiAlertId: string;
-    condition: string;
-    thresholdValue: number;
-    timeZone: string;
-    alert: KpiAlert;
-}
-
-// ============================================================================
-// Row-to-Object Converter
-// ============================================================================
-
-const kpiThresholdToCamelCase = (row: KpiThresholdRow): KpiThreshold => ({
-    id: row.threshold_id,
-    kpiAlertId: row.kpi_alert_id,
-    condition: row.condition,
-    thresholdValue: parseFloat(row.threshold_value),
-    timeZone: row.time_zone,
-    alert: rowToKpiAlert(row),
-});
 
 // ============================================================================
 // SQL Helpers

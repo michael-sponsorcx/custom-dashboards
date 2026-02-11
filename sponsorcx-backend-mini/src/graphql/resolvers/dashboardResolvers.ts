@@ -22,108 +22,19 @@ import type {
     MutationSaveDashboardFilterArgs,
     MutationClearDashboardFilterArgs,
 } from '../../generated/graphql';
-
-// ============================================================================
-// Database Row Types (snake_case from PostgreSQL)
-// ============================================================================
-
-interface DashboardRow {
-    id: string;
-    organization_id: string | null;
-    name: string;
-    layout: string;
-    created_at: Date;
-    updated_at: Date;
-}
-
-interface DashboardGridItemRow {
-    id: string;
-    dashboard_id: string;
-    graph_id: string;
-    grid_column: number | null;
-    grid_row: number | null;
-    grid_width: number | null;
-    grid_height: number | null;
-    display_order: number;
-}
-
-interface DashboardFilterRow {
-    id: string;
-    dashboard_id: string;
-    selected_views: string[];
-    available_fields: unknown;
-    active_filters: unknown;
-    created_at: Date;
-    updated_at: Date;
-}
-
-// ============================================================================
-// Resolved Types (camelCase for GraphQL)
-// ============================================================================
-
-interface Dashboard {
-    id: string;
-    organizationId: string | null;
-    name: string;
-    layout: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-interface DashboardGridItem {
-    id: string;
-    dashboardId: string;
-    graphId: string;
-    gridColumn: number | null;
-    gridRow: number | null;
-    gridWidth: number | null;
-    gridHeight: number | null;
-    displayOrder: number;
-}
-
-interface DashboardFilter {
-    id: string;
-    dashboardId: string;
-    selectedViews: string[];
-    availableFields: unknown;
-    activeFilters: unknown;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-// ============================================================================
-// Row-to-Object Converters
-// ============================================================================
-
-const dashboardToCamelCase = (row: DashboardRow): Dashboard => ({
-    id: row.id,
-    organizationId: row.organization_id,
-    name: row.name,
-    layout: row.layout,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-});
-
-const dashboardGridItemToCamelCase = (row: DashboardGridItemRow): DashboardGridItem => ({
-    id: row.id,
-    dashboardId: row.dashboard_id,
-    graphId: row.graph_id,
-    gridColumn: row.grid_column,
-    gridRow: row.grid_row,
-    gridWidth: row.grid_width,
-    gridHeight: row.grid_height,
-    displayOrder: row.display_order,
-});
-
-const dashboardFilterToCamelCase = (row: DashboardFilterRow): DashboardFilter => ({
-    id: row.id,
-    dashboardId: row.dashboard_id,
-    selectedViews: row.selected_views,
-    availableFields: row.available_fields,
-    activeFilters: row.active_filters,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-});
+import {
+    dashboardToCamelCase,
+    dashboardGridItemToCamelCase,
+    dashboardFilterToCamelCase,
+} from '../../models';
+import type {
+    DashboardRow,
+    Dashboard,
+    DashboardGridItemRow,
+    DashboardGridItem,
+    DashboardFilterRow,
+    DashboardFilter,
+} from '../../models';
 
 export const dashboardQueries = {
     dashboards: {
@@ -131,13 +42,13 @@ export const dashboardQueries = {
         args: {
             organizationId: { type: GraphQLID },
         },
-        resolve: async (_: unknown, { organizationId }: QueryDashboardsArgs) => {
+        resolve: async (_: unknown, { organizationId }: QueryDashboardsArgs): Promise<Dashboard[]> => {
             const sql = organizationId
                 ? 'SELECT * FROM dashboards WHERE organization_id = $1 ORDER BY updated_at DESC'
                 : 'SELECT * FROM dashboards ORDER BY updated_at DESC';
             const params = organizationId ? [organizationId] : [];
             const result = await query(sql, params);
-            return result.rows.map((row) => dashboardToCamelCase(row as DashboardRow));
+            return result.rows.map((row: DashboardRow) => dashboardToCamelCase(row));
         },
     },
     dashboard: {

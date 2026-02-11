@@ -1,5 +1,5 @@
 import { pool } from '../db/connection';
-import type { CronJobRow } from '../types/cron_job';
+import type { CronJobRow } from '../models';
 
 const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';
 

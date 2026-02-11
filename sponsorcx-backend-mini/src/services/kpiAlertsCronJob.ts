@@ -1,7 +1,7 @@
 import { CronJob } from 'cron';
 import { pool } from '../db/connection';
 import { logger } from './cronService';
-import type { CronJobRow } from '../types/cron_job';
+import type { CronJobRow } from '../models';
 import { fetchKpiValue } from './kpiValueFetcher';
 
 const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';

@@ -10,12 +10,12 @@ import {
     fetchCubeMetadata,
     fetchCubeSchema,
     fetchDimensionValues,
+    type CubeMetadataResponse,
 } from '../../services/cubeApiClient';
 import {
     CubeSchemaType,
     CubeDimensionValuesType,
     CubeMetadataType,
-    type CubeMetadataResponse,
 } from '../types';
 import type {
     QueryCubeQueryArgs,

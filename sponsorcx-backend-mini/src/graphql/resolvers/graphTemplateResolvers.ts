@@ -1,7 +1,8 @@
 import { GraphQLNonNull, GraphQLID, GraphQLList } from 'graphql';
 import { query } from '../../db/connection';
-import { GraphType, GraphInput, graphRowToCamelCase } from '../types';
-import type { GraphRow, Graph } from '../types';
+import { GraphType, GraphInput } from '../types';
+import { graphRowToCamelCase } from '../../models';
+import type { GraphRow, Graph } from '../../models';
 import type {
     QueryGraphsArgs,
     QueryGraphArgs,
