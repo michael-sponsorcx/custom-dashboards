@@ -252,7 +252,7 @@ export const dashboardMutations = {
                 VALUES ($1, $2, $3)
                 RETURNING *
             `;
-            const params = [organizationId || null, input.name, input.layout];
+            const params = [organizationId ?? null, input.name, input.layout];
             const result = await query(sql, params);
             return dashboardToCamelCase(result.rows[0] as DashboardRow);
         },
@@ -310,11 +310,11 @@ export const dashboardMutations = {
             const params = [
                 dashboardId,
                 input.graphId,
-                input.gridColumn || null,
-                input.gridRow || null,
-                input.gridWidth || null,
-                input.gridHeight || null,
-                input.displayOrder || 0,
+                input.gridColumn ?? null,
+                input.gridRow ?? null,
+                input.gridWidth ?? null,
+                input.gridHeight ?? null,
+                input.displayOrder ?? 0,
             ];
             const result = await query(sql, params);
             return dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow);
@@ -336,11 +336,11 @@ export const dashboardMutations = {
             `;
             const params = [
                 id,
-                input.gridColumn || null,
-                input.gridRow || null,
-                input.gridWidth || null,
-                input.gridHeight || null,
-                input.displayOrder || 0,
+                input.gridColumn ?? null,
+                input.gridRow ?? null,
+                input.gridWidth ?? null,
+                input.gridHeight ?? null,
+                input.displayOrder ?? 0,
             ];
             const result = await query(sql, params);
             return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow) : null;

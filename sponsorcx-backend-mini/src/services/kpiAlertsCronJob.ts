@@ -1,6 +1,7 @@
 import { CronJob } from 'cron';
 import { pool } from '../db/connection';
 import { logger } from './cronService';
+import type { CronJobRow } from '../types/cron_job';
 import { fetchKpiValue } from './kpiValueFetcher';
 
 const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';
@@ -257,7 +258,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
 
         // 1. Lock the cron job record
         if (showCronLogs) console.log(`[3-scheduled] Locking cron_jobs record with id: ${alert.cron_job_id}`);
-        const cronJobResult = await client.query(
+        const cronJobResult = await client.query<CronJobRow>(
             'SELECT * FROM cron_jobs WHERE id = $1 FOR UPDATE',
             [alert.cron_job_id]
         );
@@ -447,7 +448,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
 
         // 1. Lock the cron job record
         if (showCronLogs) console.log(`[9-threshold] Locking cron_jobs record with id: ${alert.cron_job_id}`);
-        const cronJobResult = await client.query(
+        const cronJobResult = await client.query<CronJobRow>(
             'SELECT * FROM cron_jobs WHERE id = $1 FOR UPDATE',
             [alert.cron_job_id]
         );

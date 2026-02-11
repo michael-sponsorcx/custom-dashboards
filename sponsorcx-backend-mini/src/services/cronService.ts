@@ -1,21 +1,15 @@
-// TODO: we'll need to delete this file after migration
 import { pool } from '../db/connection';
+import type { CronJobRow } from '../types/cron_job';
 
 const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';
 
-interface CronJob {
-    id: string;
-    job_name: string;
-    locked: boolean;
-    master_locked: boolean;
-    last_ran_at_date: Date;
-    last_ran_at_hour: string;
-    last_ran_at_minute: string;
-}
 
 /**
- * Checks if a cron job can run safely by preventing duplicate execution
- * Uses database locking via transaction and triggers
+ * Checks if a cron job can run safely by preventing duplicate execution.
+ * Uses database locking via transaction to ensure only one instance runs.
+ *
+ * Self-contained: manages its own pool connection and transaction.
+ * If the job can run, updates last_ran_at before returning true.
  *
  * @param jobName - The name of the cron job to check
  * @returns true if the job can run, false if it should be skipped
@@ -29,8 +23,8 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
     try {
         await client.query('BEGIN');
 
-        // Fetch the cron job record
-        const result = await client.query<CronJob>(
+        // Fetch the cron job record with row lock
+        const result = await client.query<CronJobRow>(
             'SELECT * FROM cron_jobs WHERE job_name = $1 FOR UPDATE',
             [jobName]
         );
@@ -103,7 +97,7 @@ export const cronJobCanRunSafely = async (jobName: string): Promise<boolean> => 
  * @param waitTime - Wait time in milliseconds
  * @returns true if wait time has been exceeded
  */
-const surpassedWaitTime = (cronJob: CronJob, waitTime: number): boolean => {
+const surpassedWaitTime = (cronJob: CronJobRow, waitTime: number): boolean => {
     const currentTime = new Date();
 
     const cronJobTime = new Date(cronJob.last_ran_at_date);

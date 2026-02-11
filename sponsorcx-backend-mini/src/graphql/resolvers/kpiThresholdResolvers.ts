@@ -1,53 +1,25 @@
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
 import { pool, query } from '../../db/connection';
 import { KpiThresholdType, CreateKpiThresholdInput } from '../types';
+import type { KpiAlert, AlertRowColumns, BaseAlertInput } from '../../types/kpi_alert';
+import { normalizeAlertInput, rowToKpiAlert } from './shared/alertHelpers';
 
 // ============================================================================
 // Database Row Type (snake_case from PostgreSQL joined query)
 // ============================================================================
 
-interface KpiThresholdRow {
+interface KpiThresholdRow extends AlertRowColumns {
     // From kpi_thresholds table
     threshold_id: string;
     kpi_alert_id: string;
     condition: string;
     threshold_value: string; // NUMERIC returns as string from pg driver
     time_zone: string;
-    // From kpi_alerts table
-    alert_id: string;
-    cron_job_id: string;
-    organization_id: string | null;
-    graph_id: string | null;
-    dashboard_id: string | null;
-    created_by_id: string | null;
-    alert_name: string;
-    alert_type: string;
-    comment: string | null;
-    recipients: string[];
-    is_active: boolean;
-    created_at: Date;
-    updated_at: Date;
 }
 
 // ============================================================================
 // Resolved Types (camelCase for GraphQL)
 // ============================================================================
-
-interface KpiAlert {
-    id: string;
-    cronJobId: string;
-    organizationId: string | null;
-    graphId: string | null;
-    dashboardId: string | null;
-    createdById: string | null;
-    alertName: string;
-    alertType: string;
-    comment: string | null;
-    recipients: string[];
-    isActive: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
 
 interface KpiThreshold {
     id: string;
@@ -66,14 +38,9 @@ interface KpiThresholdsByGraphArgs {
     graphId: string;
 }
 
-interface CreateKpiThresholdInputData {
-    graphId?: string | null;
+interface CreateKpiThresholdInputData extends BaseAlertInput {
     dashboardId: string;
     createdById: string;
-    alertName: string;
-    comment?: string | null;
-    recipients?: string[];
-    isActive?: boolean;
     condition: string;
     thresholdValue: number;
     timeZone?: string;
@@ -103,21 +70,7 @@ const kpiThresholdToCamelCase = (row: KpiThresholdRow): KpiThreshold => ({
     condition: row.condition,
     thresholdValue: parseFloat(row.threshold_value),
     timeZone: row.time_zone,
-    alert: {
-        id: row.alert_id,
-        cronJobId: row.cron_job_id,
-        organizationId: row.organization_id,
-        graphId: row.graph_id,
-        dashboardId: row.dashboard_id,
-        createdById: row.created_by_id,
-        alertName: row.alert_name,
-        alertType: row.alert_type,
-        comment: row.comment,
-        recipients: row.recipients,
-        isActive: row.is_active,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-    },
+    alert: rowToKpiAlert(row),
 });
 
 // ============================================================================
@@ -202,16 +155,17 @@ export const kpiThresholdMutations = {
                     ) VALUES ($1, $2, $3, $4, $5, $6, 'threshold', $7, $8, $9)
                     RETURNING id
                 `;
+                const normalized = normalizeAlertInput(args.input, 'threshold');
                 const alertParams = [
                     cronJobId,
                     args.organizationId,
-                    args.input.graphId ?? null,
-                    args.input.dashboardId,
-                    args.input.createdById,
-                    args.input.alertName,
-                    args.input.comment ?? null,
-                    args.input.recipients ?? [],
-                    args.input.isActive ?? true,
+                    normalized.graphId,
+                    normalized.dashboardId,
+                    normalized.createdById,
+                    normalized.alertName,
+                    normalized.comment,
+                    normalized.recipients,
+                    normalized.isActive,
                 ];
                 const alertResult = await client.query(alertSql, alertParams);
                 const alertId = alertResult.rows[0].id;

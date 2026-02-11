@@ -11,7 +11,7 @@ const config: CodegenConfig = {
             config: {
                 useIndexSignature: true,
                 scalars: {
-                    JSON: 'any',
+                    JSON: 'Record<string, unknown>',
                 },
             },
         },
