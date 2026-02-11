@@ -24,7 +24,7 @@ export const normalizeAlertInput = (
     alertName: input.alertName,
     alertType,
     comment: input.comment ?? null,
-    recipients: input.recipients ?? [],
+    recipients: (input.recipients ?? []).filter((r): r is string => r !== null),
     isActive: input.isActive ?? true,
 });
 

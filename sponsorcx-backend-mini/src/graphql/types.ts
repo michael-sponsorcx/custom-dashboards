@@ -18,7 +18,7 @@ import { query } from '../db/connection';
 // ============================================================================
 
 /** Database row type for graphs table (snake_case) */
-interface GraphRow {
+export interface GraphRow {
     id: string;
     organization_id: string | null;
     name: string;
@@ -114,7 +114,7 @@ interface DashboardGridItemParent {
 // ============================================================================
 
 /** Convert a graph database row to camelCase for GraphQL */
-const graphRowToCamelCase = (row: GraphRow): Graph => ({
+export const graphRowToCamelCase = (row: GraphRow): Graph => ({
     id: row.id,
     organizationId: row.organization_id,
     name: row.name,

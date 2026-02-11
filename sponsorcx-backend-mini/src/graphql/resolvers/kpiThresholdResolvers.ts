@@ -1,8 +1,14 @@
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
 import { pool, query } from '../../db/connection';
-import { KpiThresholdType, CreateKpiThresholdInput } from '../types';
-import type { KpiAlert, AlertRowColumns, BaseAlertInput } from '../../types/kpi_alert';
+import { KpiThresholdType, CreateKpiThresholdInput as CreateKpiThresholdInputType } from '../types';
+import type { KpiAlert, AlertRowColumns } from '../../types/kpi_alert';
 import { normalizeAlertInput, rowToKpiAlert } from './shared/alertHelpers';
+import type {
+    QueryKpiThresholdsByGraphArgs,
+    MutationCreateKpiThresholdArgs,
+    MutationDeleteKpiThresholdArgs,
+    MutationToggleKpiThresholdActiveArgs,
+} from '../../generated/graphql';
 
 // ============================================================================
 // Database Row Type (snake_case from PostgreSQL joined query)
@@ -28,36 +34,6 @@ interface KpiThreshold {
     thresholdValue: number;
     timeZone: string;
     alert: KpiAlert;
-}
-
-// ============================================================================
-// Resolver Argument Types
-// ============================================================================
-
-interface KpiThresholdsByGraphArgs {
-    graphId: string;
-}
-
-interface CreateKpiThresholdInputData extends BaseAlertInput {
-    dashboardId: string;
-    createdById: string;
-    condition: string;
-    thresholdValue: number;
-    timeZone?: string;
-}
-
-interface CreateKpiThresholdArgs {
-    organizationId: string;
-    input: CreateKpiThresholdInputData;
-}
-
-interface DeleteKpiThresholdArgs {
-    id: string;
-}
-
-interface ToggleKpiThresholdActiveArgs {
-    id: string;
-    isActive: boolean;
 }
 
 // ============================================================================
@@ -112,7 +88,7 @@ export const kpiThresholdQueries = {
         args: {
             graphId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, args: KpiThresholdsByGraphArgs): Promise<KpiThreshold[]> => {
+        resolve: async (_: unknown, args: QueryKpiThresholdsByGraphArgs): Promise<KpiThreshold[]> => {
             const sql = `${SELECT_THRESHOLD_SQL} AND a.graph_id = $1 ORDER BY a.created_at DESC`;
             const result = await query(sql, [args.graphId]);
             return result.rows.map((row: unknown) => kpiThresholdToCamelCase(row as KpiThresholdRow));
@@ -129,9 +105,9 @@ export const kpiThresholdMutations = {
         type: KpiThresholdType,
         args: {
             organizationId: { type: new GraphQLNonNull(GraphQLID) },
-            input: { type: new GraphQLNonNull(CreateKpiThresholdInput) },
+            input: { type: new GraphQLNonNull(CreateKpiThresholdInputType) },
         },
-        resolve: async (_: unknown, args: CreateKpiThresholdArgs): Promise<KpiThreshold> => {
+        resolve: async (_: unknown, args: MutationCreateKpiThresholdArgs): Promise<KpiThreshold> => {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
@@ -203,7 +179,7 @@ export const kpiThresholdMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, args: DeleteKpiThresholdArgs): Promise<boolean> => {
+        resolve: async (_: unknown, args: MutationDeleteKpiThresholdArgs): Promise<boolean> => {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
@@ -244,7 +220,7 @@ export const kpiThresholdMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             isActive: { type: new GraphQLNonNull(GraphQLBoolean) },
         },
-        resolve: async (_: unknown, args: ToggleKpiThresholdActiveArgs): Promise<KpiThreshold | null> => {
+        resolve: async (_: unknown, args: MutationToggleKpiThresholdActiveArgs): Promise<KpiThreshold | null> => {
             // Get the kpi_alert_id from the threshold first
             const thresholdResult = await query(
                 'SELECT kpi_alert_id FROM kpi_thresholds WHERE id = $1',

@@ -1,12 +1,19 @@
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
 import { pool, query } from '../../db/connection';
-import { KpiScheduleType, CreateKpiScheduleInput } from '../types';
-import type { KpiAlert, AlertRowColumns, BaseAlertInput } from '../../types/kpi_alert';
+import { KpiScheduleType, CreateKpiScheduleInput as CreateKpiScheduleInputType } from '../types';
+import type { KpiAlert, AlertRowColumns } from '../../types/kpi_alert';
 import { normalizeAlertInput, rowToKpiAlert } from './shared/alertHelpers';
 import {
     generateCronExpression,
     KpiScheduleRecord,
 } from '../../services/schedules/calculateNextExecution';
+import type {
+    QueryKpiSchedulesByGraphArgs,
+    MutationCreateKpiScheduleArgs,
+    MutationDeleteKpiScheduleArgs,
+    MutationToggleKpiScheduleActiveArgs,
+    CreateKpiScheduleInput,
+} from '../../generated/graphql';
 
 // ============================================================================
 // Database Row Type (snake_case from PostgreSQL joined query)
@@ -55,43 +62,6 @@ interface KpiSchedule {
 }
 
 // ============================================================================
-// Resolver Argument Types
-// ============================================================================
-
-interface KpiSchedulesByGraphArgs {
-    graphId: string;
-}
-
-interface CreateKpiScheduleInputData extends BaseAlertInput {
-    frequencyInterval: string;
-    minuteInterval?: number | null;
-    hourInterval?: number | null;
-    scheduleHour?: number | null;
-    scheduleMinute?: number | null;
-    selectedDays?: string[];
-    excludeWeekends?: boolean;
-    monthDates?: number[];
-    timeZone?: string;
-    hasGatingCondition?: boolean;
-    gatingCondition?: unknown;
-    attachmentType?: string | null;
-}
-
-interface CreateKpiScheduleArgs {
-    organizationId: string;
-    input: CreateKpiScheduleInputData;
-}
-
-interface DeleteKpiScheduleArgs {
-    id: string;
-}
-
-interface ToggleKpiScheduleActiveArgs {
-    id: string;
-    isActive: boolean;
-}
-
-// ============================================================================
 // Row-to-Object Converter
 // ============================================================================
 
@@ -115,15 +85,15 @@ const kpiScheduleToCamelCase = (row: KpiScheduleRow): KpiSchedule => ({
 });
 
 /** Create a KpiScheduleRecord for next execution calculation */
-const toScheduleRecord = (input: CreateKpiScheduleInputData): KpiScheduleRecord => ({
-    frequency_interval: input.frequencyInterval as KpiScheduleRecord['frequency_interval'],
+const toScheduleRecord = (input: CreateKpiScheduleInput): KpiScheduleRecord => ({
+    frequency_interval: input.frequencyInterval as unknown as KpiScheduleRecord['frequency_interval'],
     minute_interval: input.minuteInterval ?? null,
     hour_interval: input.hourInterval ?? null,
     schedule_hour: input.scheduleHour ?? null,
     schedule_minute: input.scheduleMinute ?? null,
-    selected_days: input.selectedDays ?? [],
+    selected_days: (input.selectedDays ?? []).filter((d): d is string => d !== null),
     exclude_weekends: input.excludeWeekends ?? false,
-    month_dates: input.monthDates ?? [],
+    month_dates: (input.monthDates ?? []).filter((d): d is number => d !== null),
     time_zone: input.timeZone ?? 'UTC',
     last_executed_at: null,
 });
@@ -177,7 +147,7 @@ export const kpiScheduleQueries = {
         args: {
             graphId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, args: KpiSchedulesByGraphArgs): Promise<KpiSchedule[]> => {
+        resolve: async (_: unknown, args: QueryKpiSchedulesByGraphArgs): Promise<KpiSchedule[]> => {
             const sql = `${SELECT_SCHEDULE_SQL} AND a.graph_id = $1 ORDER BY a.created_at DESC`;
             const result = await query(sql, [args.graphId]);
             return result.rows.map((row: unknown) => kpiScheduleToCamelCase(row as KpiScheduleRow));
@@ -194,9 +164,9 @@ export const kpiScheduleMutations = {
         type: KpiScheduleType,
         args: {
             organizationId: { type: new GraphQLNonNull(GraphQLID) },
-            input: { type: new GraphQLNonNull(CreateKpiScheduleInput) },
+            input: { type: new GraphQLNonNull(CreateKpiScheduleInputType) },
         },
-        resolve: async (_: unknown, args: CreateKpiScheduleArgs): Promise<KpiSchedule> => {
+        resolve: async (_: unknown, args: MutationCreateKpiScheduleArgs): Promise<KpiSchedule> => {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
@@ -256,9 +226,9 @@ export const kpiScheduleMutations = {
                     args.input.hourInterval ?? null,
                     args.input.scheduleHour ?? null,
                     args.input.scheduleMinute ?? null,
-                    args.input.selectedDays ?? [],
+                    (args.input.selectedDays ?? []).filter((d): d is string => d !== null),
                     args.input.excludeWeekends ?? false,
-                    args.input.monthDates ?? [],
+                    (args.input.monthDates ?? []).filter((d): d is number => d !== null),
                     args.input.timeZone ?? 'UTC',
                     args.input.hasGatingCondition ?? false,
                     args.input.gatingCondition ? JSON.stringify(args.input.gatingCondition) : null,
@@ -287,7 +257,7 @@ export const kpiScheduleMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, args: DeleteKpiScheduleArgs): Promise<boolean> => {
+        resolve: async (_: unknown, args: MutationDeleteKpiScheduleArgs): Promise<boolean> => {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
@@ -328,7 +298,7 @@ export const kpiScheduleMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             isActive: { type: new GraphQLNonNull(GraphQLBoolean) },
         },
-        resolve: async (_: unknown, args: ToggleKpiScheduleActiveArgs): Promise<KpiSchedule | null> => {
+        resolve: async (_: unknown, args: MutationToggleKpiScheduleActiveArgs): Promise<KpiSchedule | null> => {
             // Get the schedule to find alert_id
             const sql = `${SELECT_SCHEDULE_SQL} AND s.id = $1`;
             const existingResult = await query(sql, [args.id]);

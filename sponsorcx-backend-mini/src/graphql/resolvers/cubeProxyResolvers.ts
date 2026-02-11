@@ -17,31 +17,10 @@ import {
     CubeMetadataType,
     type CubeMetadataResponse,
 } from '../types';
-
-// ============================================================================
-// Resolved Types (for GraphQL responses)
-// ============================================================================
-
-interface CubeSchema {
-    operators: string[];
-}
-
-interface CubeDimensionValues {
-    values: string[];
-}
-
-// ============================================================================
-// Resolver Argument Types
-// ============================================================================
-
-interface CubeQueryArgs {
-    query: string;
-}
-
-interface CubeDimensionValuesArgs {
-    view: string;
-    dimension: string;
-}
+import type {
+    QueryCubeQueryArgs,
+    QueryCubeDimensionValuesArgs,
+} from '../../generated/graphql';
 
 // ============================================================================
 // Queries
@@ -57,7 +36,7 @@ export const cubeProxyQueries = {
         args: {
             query: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: unknown, args: CubeQueryArgs): Promise<unknown> => {
+        resolve: async (_: unknown, args: QueryCubeQueryArgs): Promise<unknown> => {
             const { query } = args;
 
             if (!query || typeof query !== 'string') {
@@ -85,7 +64,7 @@ export const cubeProxyQueries = {
      */
     cubeSchema: {
         type: CubeSchemaType,
-        resolve: async (): Promise<CubeSchema> => {
+        resolve: async (): Promise<{ operators: string[] }> => {
             const operators = await fetchCubeSchema();
             return { operators };
         },
@@ -100,7 +79,7 @@ export const cubeProxyQueries = {
             view: { type: new GraphQLNonNull(GraphQLString) },
             dimension: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: async (_: unknown, args: CubeDimensionValuesArgs): Promise<CubeDimensionValues> => {
+        resolve: async (_: unknown, args: QueryCubeDimensionValuesArgs): Promise<{ values: string[] }> => {
             const { view, dimension } = args;
 
             if (!view || !dimension) {

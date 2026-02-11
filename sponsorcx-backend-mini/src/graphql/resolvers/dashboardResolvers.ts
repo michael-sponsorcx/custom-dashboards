@@ -7,8 +7,21 @@ import {
     DashboardGridItemInput,
     DashboardFilterType,
     DashboardFilterInput,
-    GraphType,
 } from '../types';
+import type {
+    QueryDashboardsArgs,
+    QueryDashboardArgs,
+    QueryDashboardGridItemsArgs,
+    QueryDashboardFilterArgs,
+    MutationCreateDashboardArgs,
+    MutationUpdateDashboardArgs,
+    MutationDeleteDashboardArgs,
+    MutationAddDashboardGridItemArgs,
+    MutationUpdateDashboardGridItemArgs,
+    MutationRemoveDashboardGridItemArgs,
+    MutationSaveDashboardFilterArgs,
+    MutationClearDashboardFilterArgs,
+} from '../../generated/graphql';
 
 // ============================================================================
 // Database Row Types (snake_case from PostgreSQL)
@@ -79,83 +92,6 @@ interface DashboardFilter {
 }
 
 // ============================================================================
-// Resolver Argument Types
-// ============================================================================
-
-interface DashboardsArgs {
-    organizationId?: string;
-}
-
-interface DashboardArgs {
-    id: string;
-}
-
-interface DashboardGridItemsArgs {
-    dashboardId: string;
-}
-
-interface DashboardFilterArgs {
-    dashboardId: string;
-}
-
-interface DashboardInputData {
-    name: string;
-    layout: string;
-}
-
-interface CreateDashboardArgs {
-    input: DashboardInputData;
-    organizationId?: string;
-}
-
-interface UpdateDashboardArgs {
-    id: string;
-    input: DashboardInputData;
-}
-
-interface DeleteDashboardArgs {
-    id: string;
-}
-
-interface DashboardGridItemInputData {
-    graphId: string;
-    gridColumn?: number | null;
-    gridRow?: number | null;
-    gridWidth?: number | null;
-    gridHeight?: number | null;
-    displayOrder?: number;
-}
-
-interface AddDashboardGridItemArgs {
-    dashboardId: string;
-    input: DashboardGridItemInputData;
-}
-
-interface UpdateDashboardGridItemArgs {
-    id: string;
-    input: DashboardGridItemInputData;
-}
-
-interface RemoveDashboardGridItemArgs {
-    id: string;
-}
-
-interface DashboardFilterInputData {
-    selectedViews?: string[];
-    availableFields?: unknown;
-    activeFilters?: unknown;
-}
-
-interface SaveDashboardFilterArgs {
-    dashboardId: string;
-    input: DashboardFilterInputData;
-}
-
-interface ClearDashboardFilterArgs {
-    dashboardId: string;
-}
-
-// ============================================================================
 // Row-to-Object Converters
 // ============================================================================
 
@@ -195,7 +131,7 @@ export const dashboardQueries = {
         args: {
             organizationId: { type: GraphQLID },
         },
-        resolve: async (_: unknown, { organizationId }: DashboardsArgs) => {
+        resolve: async (_: unknown, { organizationId }: QueryDashboardsArgs) => {
             const sql = organizationId
                 ? 'SELECT * FROM dashboards WHERE organization_id = $1 ORDER BY updated_at DESC'
                 : 'SELECT * FROM dashboards ORDER BY updated_at DESC';
@@ -209,7 +145,7 @@ export const dashboardQueries = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { id }: DashboardArgs): Promise<Dashboard | null> => {
+        resolve: async (_: unknown, { id }: QueryDashboardArgs): Promise<Dashboard | null> => {
             const result = await query('SELECT * FROM dashboards WHERE id = $1', [id]);
             return result.rows[0] ? dashboardToCamelCase(result.rows[0] as DashboardRow) : null;
         },
@@ -219,7 +155,7 @@ export const dashboardQueries = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { dashboardId }: DashboardGridItemsArgs): Promise<DashboardGridItem[]> => {
+        resolve: async (_: unknown, { dashboardId }: QueryDashboardGridItemsArgs): Promise<DashboardGridItem[]> => {
             // Get all grid items for this dashboard
             // The graph field will be resolved by the field resolver in DashboardGridItemType
             const sql = 'SELECT * FROM dashboard_grid_items WHERE dashboard_id = $1 ORDER BY display_order, created_at';
@@ -232,7 +168,7 @@ export const dashboardQueries = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { dashboardId }: DashboardFilterArgs): Promise<DashboardFilter | null> => {
+        resolve: async (_: unknown, { dashboardId }: QueryDashboardFilterArgs): Promise<DashboardFilter | null> => {
             const result = await query('SELECT * FROM dashboard_filters WHERE dashboard_id = $1', [dashboardId]);
             return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0] as DashboardFilterRow) : null;
         },
@@ -246,7 +182,7 @@ export const dashboardMutations = {
             input: { type: new GraphQLNonNull(DashboardInput) },
             organizationId: { type: GraphQLID },
         },
-        resolve: async (_: unknown, { input, organizationId }: CreateDashboardArgs): Promise<Dashboard> => {
+        resolve: async (_: unknown, { input, organizationId }: MutationCreateDashboardArgs): Promise<Dashboard> => {
             const sql = `
                 INSERT INTO dashboards (organization_id, name, layout)
                 VALUES ($1, $2, $3)
@@ -263,7 +199,7 @@ export const dashboardMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardInput) },
         },
-        resolve: async (_: unknown, { id, input }: UpdateDashboardArgs): Promise<Dashboard | null> => {
+        resolve: async (_: unknown, { id, input }: MutationUpdateDashboardArgs): Promise<Dashboard | null> => {
             const sql = `
                 UPDATE dashboards
                 SET name = $2, layout = $3
@@ -280,7 +216,7 @@ export const dashboardMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { id }: DeleteDashboardArgs): Promise<Dashboard | null> => {
+        resolve: async (_: unknown, { id }: MutationDeleteDashboardArgs): Promise<Dashboard | null> => {
             const result = await query('DELETE FROM dashboards WHERE id = $1 RETURNING *', [id]);
             return result.rows[0] ? dashboardToCamelCase(result.rows[0] as DashboardRow) : null;
         },
@@ -291,7 +227,7 @@ export const dashboardMutations = {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardGridItemInput) },
         },
-        resolve: async (_: unknown, { dashboardId, input }: AddDashboardGridItemArgs): Promise<DashboardGridItem> => {
+        resolve: async (_: unknown, { dashboardId, input }: MutationAddDashboardGridItemArgs): Promise<DashboardGridItem> => {
             const sql = `
                 INSERT INTO dashboard_grid_items (
                     dashboard_id, graph_id, grid_column, grid_row,
@@ -326,7 +262,7 @@ export const dashboardMutations = {
             id: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardGridItemInput) },
         },
-        resolve: async (_: unknown, { id, input }: UpdateDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
+        resolve: async (_: unknown, { id, input }: MutationUpdateDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
             const sql = `
                 UPDATE dashboard_grid_items
                 SET grid_column = $2, grid_row = $3, grid_width = $4,
@@ -351,7 +287,7 @@ export const dashboardMutations = {
         args: {
             id: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { id }: RemoveDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
+        resolve: async (_: unknown, { id }: MutationRemoveDashboardGridItemArgs): Promise<DashboardGridItem | null> => {
             const result = await query('DELETE FROM dashboard_grid_items WHERE id = $1 RETURNING *', [id]);
             return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0] as DashboardGridItemRow) : null;
         },
@@ -362,7 +298,7 @@ export const dashboardMutations = {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
             input: { type: new GraphQLNonNull(DashboardFilterInput) },
         },
-        resolve: async (_: unknown, { dashboardId, input }: SaveDashboardFilterArgs): Promise<DashboardFilter> => {
+        resolve: async (_: unknown, { dashboardId, input }: MutationSaveDashboardFilterArgs): Promise<DashboardFilter> => {
             const sql = `
                 INSERT INTO dashboard_filters (
                     dashboard_id, selected_views, available_fields, active_filters
@@ -390,7 +326,7 @@ export const dashboardMutations = {
         args: {
             dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         },
-        resolve: async (_: unknown, { dashboardId }: ClearDashboardFilterArgs): Promise<DashboardFilter | null> => {
+        resolve: async (_: unknown, { dashboardId }: MutationClearDashboardFilterArgs): Promise<DashboardFilter | null> => {
             const result = await query('DELETE FROM dashboard_filters WHERE dashboard_id = $1 RETURNING *', [dashboardId]);
             return result.rows[0] ? dashboardFilterToCamelCase(result.rows[0] as DashboardFilterRow) : null;
         },
