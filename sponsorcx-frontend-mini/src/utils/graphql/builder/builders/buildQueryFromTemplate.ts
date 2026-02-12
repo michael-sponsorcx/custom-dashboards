@@ -7,33 +7,20 @@
 
 import { GraphUI } from '../../../../types/graph';
 import { buildSimpleCubeQuery } from './cubeQuery';
-import { CubeMeasure, CubeDimension } from '../../../../types/cube';
 
 /**
  * Build a GraphQL query from a GraphUI
  *
- * Converts the template's stored field names into the format expected by the query builder
- * and generates a fresh query.
- *
  * @param template - Graph template containing view, measures, dimensions, etc.
  * @returns GraphQL query string
  */
-export function buildQueryFromTemplate(template: GraphUI): string {
-  // Convert string arrays to CubeMeasure/CubeDimension objects
-  const measures: CubeMeasure[] = template.measures.map((name) => ({
-    name,
-    type: 'number', // Default type, actual type isn't critical for query building
-  }));
+export const buildQueryFromTemplate = (template: GraphUI): string => {
+  const { measures, dimensions, dates: timeDimensions } = template;
 
-  const dimensions: CubeDimension[] = template.dimensions.map((name) => ({
-    name,
-    type: 'string', // Default type
-  }));
-
-  const timeDimensions: CubeDimension[] = template.dates.map((name) => ({
-    name,
-    type: 'time', // Time dimensions
-  }));
+  if (measures.length === 0 && dimensions.length === 0 && timeDimensions.length === 0) {
+    console.warn('[buildQueryFromTemplate] No measures, dimensions, or time dimensions configured for template:', template.viewName);
+    return '';
+  }
 
   // Build orderBy parameter if specified
   const orderBy =

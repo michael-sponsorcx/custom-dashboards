@@ -5,10 +5,9 @@
  */
 
 import { executeBackendGraphQL } from '../../core/client';
-import { LayoutType } from '../../../types/backend-graphql';
+import { LayoutType, type DashboardGridItem } from '../../../types/backend-graphql';
 import type { DashboardUI, GridItem, GridLayout } from '../../../types/dashboard';
 import type { GraphUI } from '../../../types/graph';
-import { mapBackendChartType } from '../graphs/mappers';
 
 // GraphQL fragments
 const DASHBOARD_FIELDS = `
@@ -70,22 +69,10 @@ const GRAPH_FIELDS = `
   updatedAt
 `;
 
-interface DashboardGridItemResponse {
-  id: string;
-  dashboardId: string;
-  graphId: string;
-  gridColumn?: number;
-  gridRow?: number;
-  gridWidth?: number;
-  gridHeight?: number;
-  displayOrder?: number;
-  graph?: GraphUI;
-}
-
 /**
  * Fetch all dashboards for an organization
  */
-export async function fetchDashboards(organizationId?: string): Promise<DashboardUI[]> {
+export const fetchDashboards = async (organizationId?: string): Promise<DashboardUI[]> => {
   const query = `
     query FetchDashboards($organizationId: ID) {
       dashboards(organizationId: $organizationId) {
@@ -104,12 +91,12 @@ export async function fetchDashboards(organizationId?: string): Promise<Dashboar
 
   // For now, return empty graphIds - the caller should use fetchDashboardGridItems
   return dashboards.map((d) => ({ ...d, graphIds: [] }));
-}
+};
 
 /**
  * Fetch a single dashboard by ID
  */
-export async function fetchDashboard(id: string): Promise<DashboardUI | null> {
+export const fetchDashboard = async (id: string): Promise<DashboardUI | null> => {
   const query = `
     query FetchDashboard($id: ID!) {
       dashboard(id: $id) {
@@ -131,16 +118,16 @@ export async function fetchDashboard(id: string): Promise<DashboardUI | null> {
     ...dashboard,
     graphIds: gridItems.map((item) => item.graphId),
   };
-}
+};
 
 /**
  * Create a new dashboard
  */
-export async function createDashboard(
+export const createDashboard = async (
   name: string,
   layout: 'grid' | 'list' = 'grid',
   organizationId?: string
-): Promise<DashboardUI> {
+): Promise<DashboardUI> => {
   const query = `
     mutation CreateDashboard($input: DashboardInput!, $organizationId: ID) {
       createDashboard(input: $input, organizationId: $organizationId) {
@@ -162,16 +149,16 @@ export async function createDashboard(
   }
 
   return { ...response.data.createDashboard, graphIds: [] };
-}
+};
 
 /**
  * Update an existing dashboard
  */
-export async function updateDashboard(
+export const updateDashboard = async (
   id: string,
   name: string,
   layout: 'grid' | 'list'
-): Promise<DashboardUI> {
+): Promise<DashboardUI> => {
   const query = `
     mutation UpdateDashboard($id: ID!, $input: DashboardInput!) {
       updateDashboard(id: $id, input: $input) {
@@ -198,12 +185,12 @@ export async function updateDashboard(
     ...response.data.updateDashboard,
     graphIds: gridItems.map((item) => item.graphId),
   };
-}
+};
 
 /**
  * Delete a dashboard
  */
-export async function deleteDashboard(id: string): Promise<boolean> {
+export const deleteDashboard = async (id: string): Promise<boolean> => {
   const query = `
     mutation DeleteDashboard($id: ID!) {
       deleteDashboard(id: $id) {
@@ -218,12 +205,12 @@ export async function deleteDashboard(id: string): Promise<boolean> {
   );
 
   return !!response.data?.deleteDashboard;
-}
+};
 
 /**
  * Fetch all grid items for a dashboard (with full graph details)
  */
-export async function fetchDashboardGridItems(dashboardId: string): Promise<DashboardGridItemResponse[]> {
+export const fetchDashboardGridItems = async (dashboardId: string): Promise<DashboardGridItem[]> => {
   const query = `
     query FetchDashboardGridItems($dashboardId: ID!) {
       dashboardGridItems(dashboardId: $dashboardId) {
@@ -236,40 +223,39 @@ export async function fetchDashboardGridItems(dashboardId: string): Promise<Dash
   `;
 
   const response = await executeBackendGraphQL<{
-    dashboardGridItems: DashboardGridItemResponse[];
+    dashboardGridItems: DashboardGridItem[];
   }>(query, { dashboardId });
 
   return response.data?.dashboardGridItems || [];
-}
+};
 
 /**
  * Fetch all grid items (graphs with grid layout) for a dashboard
  * This combines graph data with grid layout information
  */
-export async function fetchGridItems(dashboardId: string): Promise<GridItem[]> {
+export const fetchGridItems = async (dashboardId: string): Promise<GridItem[]> => {
   const gridItems = await fetchDashboardGridItems(dashboardId);
 
-  return gridItems
-    .filter((item) => item.graph) // Only include items with valid graphs
-    .map((item) => ({
-      ...item.graph!,
-      // Convert backend enum values to frontend format
-      chartType: mapBackendChartType(item.graph!.chartType as any),
+  return gridItems.flatMap((item) => {
+    if (!item.graph) return [];
+    return [{
+      ...(item.graph as unknown as GraphUI),
       gridColumn: item.gridColumn,
       gridRow: item.gridRow,
       gridWidth: item.gridWidth,
       gridHeight: item.gridHeight,
-    }));
-}
+    }];
+  });
+};
 
 /**
  * Add a graph to a dashboard (creates a dashboard grid item)
  */
-export async function addGraphToDashboard(
+export const addGraphToDashboard = async (
   dashboardId: string,
   graphId: string,
   gridLayout?: GridLayout
-): Promise<DashboardGridItemResponse> {
+): Promise<DashboardGridItem> => {
   const query = `
     mutation AddDashboardGridItem($dashboardId: ID!, $input: DashboardGridItemInput!) {
       addDashboardGridItem(dashboardId: $dashboardId, input: $input) {
@@ -288,7 +274,7 @@ export async function addGraphToDashboard(
   };
 
   const response = await executeBackendGraphQL<{
-    addDashboardGridItem: DashboardGridItemResponse;
+    addDashboardGridItem: DashboardGridItem;
   }>(query, {
     dashboardId,
     input,
@@ -299,16 +285,16 @@ export async function addGraphToDashboard(
   }
 
   return response.data.addDashboardGridItem;
-}
+};
 
 /**
  * Update grid layout for a dashboard item
  */
-export async function updateDashboardGridItem(
+export const updateDashboardGridItem = async (
   gridItemId: string,
   graphId: string,
   gridLayout: GridLayout
-): Promise<DashboardGridItemResponse> {
+): Promise<DashboardGridItem> => {
   const query = `
     mutation UpdateDashboardGridItem($id: ID!, $input: DashboardGridItemInput!) {
       updateDashboardGridItem(id: $id, input: $input) {
@@ -327,7 +313,7 @@ export async function updateDashboardGridItem(
   };
 
   const response = await executeBackendGraphQL<{
-    updateDashboardGridItem: DashboardGridItemResponse;
+    updateDashboardGridItem: DashboardGridItem;
   }>(query, {
     id: gridItemId,
     input,
@@ -338,12 +324,12 @@ export async function updateDashboardGridItem(
   }
 
   return response.data.updateDashboardGridItem;
-}
+};
 
 /**
  * Remove a graph from a dashboard (deletes the dashboard grid item)
  */
-export async function removeGraphFromDashboard(gridItemId: string): Promise<boolean> {
+export const removeGraphFromDashboard = async (gridItemId: string): Promise<boolean> => {
   const query = `
     mutation RemoveDashboardGridItem($id: ID!) {
       removeDashboardGridItem(id: $id) {
@@ -357,15 +343,15 @@ export async function removeGraphFromDashboard(gridItemId: string): Promise<bool
   }>(query, { id: gridItemId });
 
   return !!response.data?.removeDashboardGridItem;
-}
+};
 
 /**
  * Helper: Get or create default dashboard
  * If no dashboard exists, creates one with name "Main Dashboard"
  */
-export async function getOrCreateDefaultDashboard(
+export const getOrCreateDefaultDashboard = async (
   organizationId?: string
-): Promise<DashboardUI> {
+): Promise<DashboardUI> => {
   const dashboards = await fetchDashboards(organizationId);
 
   if (dashboards.length > 0) {
@@ -380,4 +366,4 @@ export async function getOrCreateDefaultDashboard(
 
   // Create a default dashboard
   return await createDashboard('Main Dashboard', 'grid', organizationId);
-}
+};

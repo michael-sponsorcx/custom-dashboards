@@ -24,8 +24,7 @@ export function GraphSlide({ graph, dashboardFilters, dashboardName }: GraphSlid
 
   // Combine graph filters with dashboard filters
   const effectiveFilters = useMemo(() => {
-    const graphFilters = graph.filters || [];
-    return combineFilters(graphFilters, dashboardFilters);
+    return combineFilters(graph.filters, dashboardFilters);
   }, [graph.filters, dashboardFilters]);
 
   // Build query from template
@@ -46,6 +45,12 @@ export function GraphSlide({ graph, dashboardFilters, dashboardName }: GraphSlid
 
   // Fetch data
   useEffect(() => {
+    if (!query) {
+      setLoading(false);
+      setError('Empty query');
+      return;
+    }
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -117,27 +122,27 @@ export function GraphSlide({ graph, dashboardFilters, dashboardName }: GraphSlid
           <ChartRenderer
             queryResult={queryResult}
             selectedChartType={graph.chartType}
-            numberFormat={graph.numberFormat || 'number'}
-            numberPrecision={graph.numberPrecision || 2}
-            primaryColor={graph.primaryColor || '#3b82f6'}
+            numberFormat={graph.numberFormat}
+            numberPrecision={graph.numberPrecision}
+            primaryColor={graph.primaryColor}
             colorPalette={graph.colorPalette}
             sortOrder={graph.sortOrder}
             primaryDimension={graph.primaryDimension}
-            secondaryDimension={graph.secondaryDimension}
+            secondaryDimension={graph.secondaryDimension ?? undefined}
             selectedMeasure={graph.selectedMeasure}
-            xAxisLabel={graph.xAxisLabel}
-            yAxisLabel={graph.yAxisLabel}
+            xAxisLabel={graph.xAxisLabel ?? undefined}
+            yAxisLabel={graph.yAxisLabel ?? undefined}
             showXAxisGridLines={graph.showXAxisGridLines}
             showYAxisGridLines={graph.showYAxisGridLines}
             showRegressionLine={graph.showRegressionLine}
             maxDataPoints={graph.maxDataPoints}
             legendPosition={graph.legendPosition}
-            kpiValue={graph.kpiValue}
-            kpiLabel={graph.kpiLabel}
-            kpiSecondaryValue={graph.kpiSecondaryValue}
-            kpiSecondaryLabel={graph.kpiSecondaryLabel}
+            kpiValue={graph.kpiValue ?? undefined}
+            kpiLabel={graph.kpiLabel ?? undefined}
+            kpiSecondaryValue={graph.kpiSecondaryValue ?? undefined}
+            kpiSecondaryLabel={graph.kpiSecondaryLabel ?? undefined}
             kpiShowTrend={graph.kpiShowTrend}
-            kpiTrendPercentage={graph.kpiTrendPercentage}
+            kpiTrendPercentage={graph.kpiTrendPercentage ?? undefined}
           />
         )}
       </Box>

@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { fetchCubeMetadata } from '../../api';
-import { CubeView, CubeMeasure, CubeDimension } from '../../types/cube';
+import { CubeView, CubeMeasureUI, CubeDimensionUI } from '../../types/cube';
 import { ModelSelectionSearchBar } from './ModelSelectionSearchBar';
 
 interface ViewFields {
-  measures: CubeMeasure[];
-  dimensions: CubeDimension[];
-  dates: CubeDimension[];
+  measures: CubeMeasureUI[];
+  dimensions: CubeDimensionUI[];
+  dates: CubeDimensionUI[];
 }
 
 interface ModelSelectorProps {

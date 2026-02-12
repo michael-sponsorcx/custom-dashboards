@@ -1,6 +1,7 @@
 import { Box, Text, Group, Stack } from '@mantine/core';
 import { formatNumber, NumberFormatType } from '../../../utils/numberFormatter';
 import { transformChartData } from '../../../utils/chartDataTransformations';
+import { ChartType } from '../../../types/backend-graphql';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { EmptyState } from '../utils/EmptyState';
 
@@ -48,7 +49,7 @@ export function KPI({
   const transformationResult = useMemo(
     () =>
       transformChartData({
-        chartType: 'kpi',
+        chartType: ChartType.Kpi,
         cubeData: queryResult,
       }),
     [queryResult]

@@ -4,39 +4,38 @@
  * Builds field selections for GraphQL queries.
  */
 
-import { CubeMeasure, CubeDimension } from '../../../../types/cube';
 import { stripCubePrefix } from './utils';
 
 /**
  * Build fields list from measures, dimensions, and time dimensions
  *
- * @param measures - Measures to include
- * @param dimensions - Regular dimensions to include
- * @param timeDimensions - Time dimensions to include
+ * @param measures - Measure field names
+ * @param dimensions - Dimension field names
+ * @param timeDimensions - Time dimension field names
  * @returns Array of field strings
  */
-export function buildFieldsList(
-  measures: CubeMeasure[],
-  dimensions: CubeDimension[],
-  timeDimensions: CubeDimension[]
-): string[] {
+export const buildFieldsList = (
+  measures: string[],
+  dimensions: string[],
+  timeDimensions: string[]
+): string[] => {
   const fields: string[] = [];
 
   // Add measures
-  measures.forEach((measure) => {
-    const fieldName = stripCubePrefix(measure.name);
+  measures.forEach((name) => {
+    const fieldName = stripCubePrefix(name);
     fields.push(`      ${fieldName}`);
   });
 
   // Add regular dimensions
-  dimensions.forEach((dimension) => {
-    const fieldName = stripCubePrefix(dimension.name);
+  dimensions.forEach((name) => {
+    const fieldName = stripCubePrefix(name);
     fields.push(`      ${fieldName}`);
   });
 
   // Add time dimensions with granularity
-  timeDimensions.forEach((timeDim) => {
-    const fieldName = stripCubePrefix(timeDim.name);
+  timeDimensions.forEach((name) => {
+    const fieldName = stripCubePrefix(name);
     // Default to 'value' for time dimensions
     fields.push(`      ${fieldName} {
         value
@@ -44,4 +43,4 @@ export function buildFieldsList(
   });
 
   return fields;
-}
+};

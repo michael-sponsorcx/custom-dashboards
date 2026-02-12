@@ -1,10 +1,10 @@
 import { Paper, Stack, Title, Text, Alert } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { ChartType } from '../../../utils/chartDataAnalyzer';
+import { ChartType, NumberFormat } from '../../../types/backend-graphql';
 import { ChartRenderer } from '../../visualizations/ChartRenderer';
 import { SortOrder } from '../settings/OrderByControl';
-import type { LegendPosition } from '../../../types/graph';
-import type { ColorPalette } from '../../../constants/colorPalettes';
+import { LegendPosition } from '../../../types/backend-graphql';
+import { ColorPalette } from '../../../types/backend-graphql';
 
 interface ChartPreviewProps {
   queryResult: any | null;
@@ -12,7 +12,7 @@ interface ChartPreviewProps {
   chartTitle: string;
 
   // Number tile specific props
-  numberFormat?: 'currency' | 'percentage' | 'number' | 'abbreviated';
+  numberFormat?: NumberFormat;
   numberPrecision?: number;
   primaryColor?: string;
   colorPalette?: ColorPalette;
@@ -50,11 +50,11 @@ export function ChartPreview({
   queryResult,
   selectedChartType,
   chartTitle,
-  numberFormat = 'number',
+  numberFormat = NumberFormat.Number,
   numberPrecision = 2,
   primaryColor = '#3b82f6',
-  colorPalette = 'hubspot-orange',
-  sortOrder = 'desc',
+  colorPalette = ColorPalette.HubspotOrange,
+  sortOrder = SortOrder.Desc,
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
@@ -64,7 +64,7 @@ export function ChartPreview({
   showYAxisGridLines = true,
   showRegressionLine = false,
   maxDataPoints,
-  legendPosition = 'bottom',
+  legendPosition = LegendPosition.Bottom,
   kpiValue,
   kpiLabel,
   kpiSecondaryValue,

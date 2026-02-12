@@ -19,28 +19,43 @@ export type Scalars = {
 };
 
 export enum AlertType {
-  Schedule = 'SCHEDULE',
-  Threshold = 'THRESHOLD'
+  Schedule = 'schedule',
+  Threshold = 'threshold'
 }
 
 export enum AttachmentType {
   Csv = 'CSV',
-  Excel = 'EXCEL',
+  Excel = 'Excel',
   Pdf = 'PDF'
 }
 
 export enum ChartType {
-  Area = 'AREA',
-  Bar = 'BAR',
-  Heatmap = 'HEATMAP',
-  HorizontalBar = 'HORIZONTAL_BAR',
-  HorizontalStackedBar = 'HORIZONTAL_STACKED_BAR',
-  Kpi = 'KPI',
-  Line = 'LINE',
-  Pie = 'PIE',
-  Scatter = 'SCATTER',
-  StackedBar = 'STACKED_BAR',
-  Table = 'TABLE'
+  Area = 'area',
+  Bar = 'bar',
+  Heatmap = 'heatmap',
+  HorizontalBar = 'horizontalBar',
+  HorizontalStackedBar = 'horizontalStackedBar',
+  Kpi = 'kpi',
+  Line = 'line',
+  Pie = 'pie',
+  Scatter = 'scatter',
+  StackedBar = 'stackedBar',
+  Table = 'table'
+}
+
+export enum ColorPalette {
+  AccessibleCalming = 'accessibleCalming',
+  Cool = 'cool',
+  Custom = 'custom',
+  Green = 'green',
+  HubspotOrange = 'hubspotOrange',
+  Monochrome = 'monochrome',
+  Professional = 'professional',
+  ProfessionalMinimalist = 'professionalMinimalist',
+  Purple = 'purple',
+  Vibrant = 'vibrant',
+  VibrantDynamic = 'vibrantDynamic',
+  Warm = 'warm'
 }
 
 export type CreateKpiScheduleInput = {
@@ -155,23 +170,23 @@ export type CubeSegment = {
 
 export type Dashboard = {
   __typename?: 'Dashboard';
-  createdAt?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   layout: LayoutType;
   name: Scalars['String']['output'];
   organizationId?: Maybe<Scalars['ID']['output']>;
-  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type DashboardFilter = {
   __typename?: 'DashboardFilter';
   activeFilters?: Maybe<Scalars['JSON']['output']>;
   availableFields?: Maybe<Scalars['JSON']['output']>;
-  createdAt?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   dashboardId: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   selectedViews?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type DashboardFilterInput = {
@@ -183,13 +198,13 @@ export type DashboardFilterInput = {
 export type DashboardGridItem = {
   __typename?: 'DashboardGridItem';
   dashboardId: Scalars['ID']['output'];
-  displayOrder?: Maybe<Scalars['Int']['output']>;
+  displayOrder: Scalars['Int']['output'];
   graph?: Maybe<Graph>;
   graphId: Scalars['ID']['output'];
-  gridColumn?: Maybe<Scalars['Int']['output']>;
-  gridHeight?: Maybe<Scalars['Int']['output']>;
-  gridRow?: Maybe<Scalars['Int']['output']>;
-  gridWidth?: Maybe<Scalars['Int']['output']>;
+  gridColumn: Scalars['Int']['output'];
+  gridHeight: Scalars['Int']['output'];
+  gridRow: Scalars['Int']['output'];
+  gridWidth: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
 };
 
@@ -208,48 +223,48 @@ export type DashboardInput = {
 };
 
 export enum FrequencyInterval {
-  Day = 'DAY',
-  Hour = 'HOUR',
-  Month = 'MONTH',
-  NMinute = 'N_MINUTE',
-  Week = 'WEEK'
+  Day = 'day',
+  Hour = 'hour',
+  Month = 'month',
+  NMinute = 'n_minute',
+  Week = 'week'
 }
 
 export type Graph = {
   __typename?: 'Graph';
   chartTitle: Scalars['String']['output'];
   chartType: ChartType;
-  colorPalette?: Maybe<Scalars['String']['output']>;
-  createdAt?: Maybe<Scalars['String']['output']>;
-  dates?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  dimensions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  filters?: Maybe<Scalars['JSON']['output']>;
+  colorPalette: ColorPalette;
+  createdAt: Scalars['String']['output'];
+  dates: Array<Scalars['String']['output']>;
+  dimensions: Array<Scalars['String']['output']>;
+  filters: Scalars['JSON']['output'];
   id: Scalars['ID']['output'];
   kpiLabel?: Maybe<Scalars['String']['output']>;
   kpiSecondaryLabel?: Maybe<Scalars['String']['output']>;
   kpiSecondaryValue?: Maybe<Scalars['Float']['output']>;
-  kpiShowTrend?: Maybe<Scalars['Boolean']['output']>;
+  kpiShowTrend: Scalars['Boolean']['output'];
   kpiTrendPercentage?: Maybe<Scalars['Float']['output']>;
   kpiValue?: Maybe<Scalars['Float']['output']>;
-  legendPosition?: Maybe<LegendPosition>;
-  maxDataPoints?: Maybe<Scalars['Int']['output']>;
-  measures?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  legendPosition: LegendPosition;
+  maxDataPoints: Scalars['Int']['output'];
+  measures: Array<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  numberFormat?: Maybe<NumberFormat>;
-  numberPrecision?: Maybe<Scalars['Int']['output']>;
-  orderByDirection?: Maybe<SortOrder>;
-  orderByField?: Maybe<Scalars['String']['output']>;
+  numberFormat: NumberFormat;
+  numberPrecision: Scalars['Int']['output'];
+  orderByDirection: SortOrder;
+  orderByField: Scalars['String']['output'];
   organizationId?: Maybe<Scalars['ID']['output']>;
-  primaryColor?: Maybe<Scalars['String']['output']>;
-  primaryDimension?: Maybe<Scalars['String']['output']>;
+  primaryColor: Scalars['String']['output'];
+  primaryDimension: Scalars['String']['output'];
   secondaryDimension?: Maybe<Scalars['String']['output']>;
-  selectedMeasure?: Maybe<Scalars['String']['output']>;
-  showGridLines?: Maybe<Scalars['Boolean']['output']>;
-  showRegressionLine?: Maybe<Scalars['Boolean']['output']>;
-  showXAxisGridLines?: Maybe<Scalars['Boolean']['output']>;
-  showYAxisGridLines?: Maybe<Scalars['Boolean']['output']>;
-  sortOrder?: Maybe<SortOrder>;
-  updatedAt?: Maybe<Scalars['String']['output']>;
+  selectedMeasure: Scalars['String']['output'];
+  showGridLines: Scalars['Boolean']['output'];
+  showRegressionLine: Scalars['Boolean']['output'];
+  showXAxisGridLines: Scalars['Boolean']['output'];
+  showYAxisGridLines: Scalars['Boolean']['output'];
+  sortOrder: SortOrder;
+  updatedAt: Scalars['String']['output'];
   viewName: Scalars['String']['output'];
   xAxisLabel?: Maybe<Scalars['String']['output']>;
   yAxisLabel?: Maybe<Scalars['String']['output']>;
@@ -258,7 +273,7 @@ export type Graph = {
 export type GraphInput = {
   chartTitle: Scalars['String']['input'];
   chartType: ChartType;
-  colorPalette?: InputMaybe<Scalars['String']['input']>;
+  colorPalette?: InputMaybe<ColorPalette>;
   dates?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   dimensions?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   filters?: InputMaybe<Scalars['JSON']['input']>;
@@ -295,7 +310,7 @@ export type KpiAlert = {
   alertName: Scalars['String']['output'];
   alertType: AlertType;
   comment?: Maybe<Scalars['String']['output']>;
-  createdAt?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   createdById: Scalars['ID']['output'];
   cronJobId: Scalars['ID']['output'];
   dashboardId: Scalars['ID']['output'];
@@ -304,7 +319,7 @@ export type KpiAlert = {
   isActive?: Maybe<Scalars['Boolean']['output']>;
   organizationId: Scalars['ID']['output'];
   recipients?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  updatedAt?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 export type KpiSchedule = {
@@ -338,14 +353,14 @@ export type KpiThreshold = {
 };
 
 export enum LayoutType {
-  Grid = 'GRID',
-  List = 'LIST'
+  Grid = 'grid',
+  List = 'list'
 }
 
 export enum LegendPosition {
-  Bottom = 'BOTTOM',
-  None = 'NONE',
-  Top = 'TOP'
+  Bottom = 'bottom',
+  None = 'none',
+  Top = 'top'
 }
 
 export type Mutation = {
@@ -466,10 +481,10 @@ export type MutationUpdateGraphArgs = {
 };
 
 export enum NumberFormat {
-  Abbreviated = 'ABBREVIATED',
-  Currency = 'CURRENCY',
-  Number = 'NUMBER',
-  Percentage = 'PERCENTAGE'
+  Abbreviated = 'abbreviated',
+  Currency = 'currency',
+  Number = 'number',
+  Percentage = 'percentage'
 }
 
 export type Query = {
@@ -542,8 +557,8 @@ export type QueryKpiThresholdsByGraphArgs = {
 };
 
 export enum SortOrder {
-  Asc = 'ASC',
-  Desc = 'DESC'
+  Asc = 'asc',
+  Desc = 'desc'
 }
 
 export enum ThresholdCondition {
@@ -633,6 +648,7 @@ export type ResolversTypes = ResolversObject<{
   AttachmentType: AttachmentType;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ChartType: ChartType;
+  ColorPalette: ColorPalette;
   CreateKpiScheduleInput: CreateKpiScheduleInput;
   CreateKpiThresholdInput: CreateKpiThresholdInput;
   CubeDimension: ResolverTypeWrapper<CubeDimension>;
@@ -770,70 +786,70 @@ export type CubeSegmentResolvers<ContextType = any, ParentType extends Resolvers
 }>;
 
 export type DashboardResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dashboard'] = ResolversParentTypes['Dashboard']> = ResolversObject<{
-  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   layout?: Resolver<ResolversTypes['LayoutType'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organizationId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type DashboardFilterResolvers<ContextType = any, ParentType extends ResolversParentTypes['DashboardFilter'] = ResolversParentTypes['DashboardFilter']> = ResolversObject<{
   activeFilters?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   availableFields?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   selectedViews?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type DashboardGridItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['DashboardGridItem'] = ResolversParentTypes['DashboardGridItem']> = ResolversObject<{
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  displayOrder?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  displayOrder?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType>;
   graphId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  gridColumn?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  gridHeight?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  gridRow?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  gridWidth?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  gridColumn?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gridHeight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gridRow?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gridWidth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
 export type GraphResolvers<ContextType = any, ParentType extends ResolversParentTypes['Graph'] = ResolversParentTypes['Graph']> = ResolversObject<{
   chartTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   chartType?: Resolver<ResolversTypes['ChartType'], ParentType, ContextType>;
-  colorPalette?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dates?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  dimensions?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  filters?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  colorPalette?: Resolver<ResolversTypes['ColorPalette'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  dates?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  dimensions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  filters?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   kpiLabel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   kpiSecondaryLabel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   kpiSecondaryValue?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  kpiShowTrend?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  kpiShowTrend?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   kpiTrendPercentage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   kpiValue?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  legendPosition?: Resolver<Maybe<ResolversTypes['LegendPosition']>, ParentType, ContextType>;
-  maxDataPoints?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  measures?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  legendPosition?: Resolver<ResolversTypes['LegendPosition'], ParentType, ContextType>;
+  maxDataPoints?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  measures?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  numberFormat?: Resolver<Maybe<ResolversTypes['NumberFormat']>, ParentType, ContextType>;
-  numberPrecision?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  orderByDirection?: Resolver<Maybe<ResolversTypes['SortOrder']>, ParentType, ContextType>;
-  orderByField?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  numberFormat?: Resolver<ResolversTypes['NumberFormat'], ParentType, ContextType>;
+  numberPrecision?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  orderByDirection?: Resolver<ResolversTypes['SortOrder'], ParentType, ContextType>;
+  orderByField?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organizationId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  primaryColor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  primaryDimension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  primaryColor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primaryDimension?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   secondaryDimension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  selectedMeasure?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  showGridLines?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  showRegressionLine?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  showXAxisGridLines?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  showYAxisGridLines?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  sortOrder?: Resolver<Maybe<ResolversTypes['SortOrder']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  selectedMeasure?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  showGridLines?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  showRegressionLine?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  showXAxisGridLines?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  showYAxisGridLines?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  sortOrder?: Resolver<ResolversTypes['SortOrder'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   viewName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   xAxisLabel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   yAxisLabel?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -847,7 +863,7 @@ export type KpiAlertResolvers<ContextType = any, ParentType extends ResolversPar
   alertName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   alertType?: Resolver<ResolversTypes['AlertType'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdById?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   cronJobId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -856,7 +872,7 @@ export type KpiAlertResolvers<ContextType = any, ParentType extends ResolversPar
   isActive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   organizationId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   recipients?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type KpiScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['KpiSchedule'] = ResolversParentTypes['KpiSchedule']> = ResolversObject<{

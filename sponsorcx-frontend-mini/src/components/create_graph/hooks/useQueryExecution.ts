@@ -12,10 +12,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { executeCubeGraphQL } from '../../../api';
 import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
-import { analyzeChartCompatibility, ChartType } from '../../../utils/chartDataAnalyzer';
+import { analyzeChartCompatibility } from '../../../utils/chartDataAnalyzer';
+import { ChartType } from '../../../types/backend-graphql';
 import { ViewFields } from '../types';
 import { FilterRule } from '../../../types/filters';
-import { CubeMeasure, CubeDimension } from '../../../types/cube';
+import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
 
 interface UseQueryExecutionOptions {
   selectedView: string | null;
@@ -66,15 +67,15 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
   const generatedQuery = useMemo(() => {
     if (!selectedView) return '';
 
-    const selectedMeasuresList = viewFields.measures.filter((m: CubeMeasure) =>
-      selectedMeasures.has(m.name)
-    );
-    const selectedDimensionsList = viewFields.dimensions.filter((d: CubeDimension) =>
-      selectedDimensions.has(d.name)
-    );
-    const selectedDatesList = viewFields.dates.filter((d: CubeDimension) =>
-      selectedDates.has(d.name)
-    );
+    const selectedMeasuresList = viewFields.measures
+      .filter((m: CubeMeasureUI) => selectedMeasures.has(m.name))
+      .map((m: CubeMeasureUI) => m.name);
+    const selectedDimensionsList = viewFields.dimensions
+      .filter((d: CubeDimensionUI) => selectedDimensions.has(d.name))
+      .map((d: CubeDimensionUI) => d.name);
+    const selectedDatesList = viewFields.dates
+      .filter((d: CubeDimensionUI) => selectedDates.has(d.name))
+      .map((d: CubeDimensionUI) => d.name);
 
     // Only generate query if at least one field is selected
     if (
@@ -169,7 +170,7 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
           measures: [],
           dimensions: [],
         },
-        recommendation: 'kpi' as ChartType,
+        recommendation: ChartType.Kpi,
       };
     }
     return analyzeChartCompatibility(queryResult);

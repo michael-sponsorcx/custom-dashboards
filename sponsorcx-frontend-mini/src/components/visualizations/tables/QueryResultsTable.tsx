@@ -1,6 +1,7 @@
 import { BaseTable } from './BaseTable';
 import { useMemo } from 'react';
 import { transformChartData } from '../../../utils/chartDataTransformations';
+import { ChartType } from '../../../types/backend-graphql';
 
 interface QueryResultsTableProps {
   queryResult: unknown;
@@ -22,7 +23,7 @@ export function QueryResultsTable({ queryResult, isLoading = false }: QueryResul
   // Use centralized transformation utility to parse Cube data
   const parsedData = useMemo(() => {
     const result = transformChartData({
-      chartType: 'table',
+      chartType: ChartType.Table,
       cubeData: queryResult,
     });
     return result.data;

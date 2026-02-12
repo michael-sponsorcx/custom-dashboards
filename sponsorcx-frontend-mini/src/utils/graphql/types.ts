@@ -2,7 +2,6 @@
  * Shared types for GraphQL utilities (builder and validator)
  */
 
-import { CubeMeasure, CubeDimension } from '../../types/cube';
 import { FilterRule } from '../../types/filters';
 
 /**
@@ -10,9 +9,9 @@ import { FilterRule } from '../../types/filters';
  */
 export interface QueryBuilderParams {
   cubeName: string;
-  measures: CubeMeasure[];
-  dimensions: CubeDimension[];
-  timeDimensions: CubeDimension[];
+  measures: string[];
+  dimensions: string[];
+  timeDimensions: string[];
   orderBy?: { field: string; direction: 'asc' | 'desc' };
   limit?: number;
   timezone?: string;

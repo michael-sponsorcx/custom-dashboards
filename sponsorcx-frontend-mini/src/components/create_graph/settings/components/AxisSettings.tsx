@@ -1,5 +1,5 @@
 import { Stack, TextInput, Text, Switch } from '@mantine/core';
-import { ChartType } from '../../../../utils/chartDataAnalyzer';
+import { ChartType } from '../../../../types/backend-graphql';
 
 interface AxisSettingsProps {
   chartType?: ChartType;

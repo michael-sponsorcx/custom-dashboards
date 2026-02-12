@@ -8,20 +8,20 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { GraphUI } from '../../../types/graph';
+import type { GraphUI } from '../../../types/graph';
 import { ViewFields, ChartConfig } from '../types';
-import type { LegendPosition } from '../../../types/graph';
-import { ChartType } from '../../../utils/chartDataAnalyzer';
+import { LegendPosition, NumberFormat } from '../../../types/backend-graphql';
+import { ChartType } from '../../../types/backend-graphql';
 import { SortOrder } from '../settings/OrderByControl';
 import { createSetToggler } from '../utils/fieldToggle';
-import type { ColorPalette } from '../../../constants/colorPalettes';
+import { ColorPalette } from '../../../types/backend-graphql';
 import { getPalettePrimaryColor } from '../../../constants/colorPalettes';
 
 interface UseGraphStateOptions {
   initialTemplate?: GraphUI;
 }
 
-export function useGraphState(options: UseGraphStateOptions = {}) {
+export const useGraphState = (options: UseGraphStateOptions = {}) => {
   const { initialTemplate } = options;
 
   // View selection
@@ -47,10 +47,10 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
 
   // Query options (orderBy)
   const [orderByField, setOrderByField] = useState<string | undefined>(
-    initialTemplate?.orderByField
+    initialTemplate?.orderByField ?? undefined
   );
-  const [orderByDirection, setOrderByDirection] = useState<'asc' | 'desc'>(
-    initialTemplate?.orderByDirection || 'asc'
+  const [orderByDirection, setOrderByDirection] = useState<SortOrder>(
+    initialTemplate?.orderByDirection ?? SortOrder.Asc
   );
 
   // Chart configuration
@@ -58,23 +58,23 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     initialTemplate?.chartType || null
   );
   const [chartTitle, setChartTitle] = useState(initialTemplate?.chartTitle || '');
-  const [numberFormat, setNumberFormat] = useState<'currency' | 'percentage' | 'number' | 'abbreviated'>(
-    initialTemplate?.numberFormat || 'number'
+  const [numberFormat, setNumberFormat] = useState<NumberFormat>(
+    initialTemplate?.numberFormat || NumberFormat.Number
   );
   const [numberPrecision, setNumberPrecision] = useState(
     initialTemplate?.numberPrecision || 2
   );
   const [colorPalette, setColorPalette] = useState<ColorPalette>(
-    initialTemplate?.colorPalette || 'hubspot-orange'
+    initialTemplate?.colorPalette || ColorPalette.HubspotOrange
   );
   const [primaryColor, setPrimaryColor] = useState(
-    initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || 'hubspot-orange')
+    initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || ColorPalette.HubspotOrange)
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(
-    initialTemplate?.sortOrder || 'asc'
+    initialTemplate?.sortOrder || SortOrder.Asc
   );
   const [legendPosition, setLegendPosition] = useState<LegendPosition>(
-    (initialTemplate?.legendPosition as LegendPosition) || 'bottom'
+    initialTemplate?.legendPosition || LegendPosition.Bottom
   );
   const [xAxisLabel, setXAxisLabel] = useState(initialTemplate?.xAxisLabel || '');
   const [yAxisLabel, setYAxisLabel] = useState(initialTemplate?.yAxisLabel || '');
@@ -88,26 +88,26 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     initialTemplate?.showRegressionLine ?? false
   );
   const [maxDataPoints, setMaxDataPoints] = useState<number | undefined>(
-    initialTemplate?.maxDataPoints
+    initialTemplate?.maxDataPoints ?? undefined
   );
 
   // KPI fields
-  const [kpiValue, setKpiValue] = useState<number | undefined>(initialTemplate?.kpiValue);
-  const [kpiLabel, setKpiLabel] = useState<string | undefined>(initialTemplate?.kpiLabel);
-  const [kpiSecondaryValue, setKpiSecondaryValue] = useState<number | undefined>(initialTemplate?.kpiSecondaryValue);
-  const [kpiSecondaryLabel, setKpiSecondaryLabel] = useState<string | undefined>(initialTemplate?.kpiSecondaryLabel);
+  const [kpiValue, setKpiValue] = useState<number | undefined>(initialTemplate?.kpiValue ?? undefined);
+  const [kpiLabel, setKpiLabel] = useState<string | undefined>(initialTemplate?.kpiLabel ?? undefined);
+  const [kpiSecondaryValue, setKpiSecondaryValue] = useState<number | undefined>(initialTemplate?.kpiSecondaryValue ?? undefined);
+  const [kpiSecondaryLabel, setKpiSecondaryLabel] = useState<string | undefined>(initialTemplate?.kpiSecondaryLabel ?? undefined);
   const [kpiShowTrend, setKpiShowTrend] = useState<boolean | undefined>(initialTemplate?.kpiShowTrend ?? false);
-  const [kpiTrendPercentage, setKpiTrendPercentage] = useState<number | undefined>(initialTemplate?.kpiTrendPercentage);
+  const [kpiTrendPercentage, setKpiTrendPercentage] = useState<number | undefined>(initialTemplate?.kpiTrendPercentage ?? undefined);
 
   // Data field selections
   const [primaryDimension, setPrimaryDimension] = useState<string | undefined>(
-    initialTemplate?.primaryDimension
+    initialTemplate?.primaryDimension ?? undefined
   );
   const [secondaryDimension, setSecondaryDimension] = useState<string | undefined>(
-    initialTemplate?.secondaryDimension
+    initialTemplate?.secondaryDimension ?? undefined
   );
   const [selectedMeasureField, setSelectedMeasureField] = useState<string | undefined>(
-    initialTemplate?.selectedMeasure
+    initialTemplate?.selectedMeasure ?? undefined
   );
 
   // Create toggle functions using utility
@@ -127,7 +127,7 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setColorPalette(palette);
     // When switching to a preset palette, update primaryColor to first color from that palette
     // When switching to custom, keep existing primaryColor
-    if (palette !== 'custom') {
+    if (palette !== ColorPalette.Custom) {
       setPrimaryColor(getPalettePrimaryColor(palette));
     }
   }, []);
@@ -241,4 +241,4 @@ export function useGraphState(options: UseGraphStateOptions = {}) {
     setSecondaryDimension,
     setSelectedMeasureField,
   };
-}
+};

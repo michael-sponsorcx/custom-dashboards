@@ -65,7 +65,7 @@ export function useGraphDrillDown(template: GridItem): GraphDrillDownResult {
       // Resolve to full qualified name for filter
       currentDimensionField = resolveFullDimensionName(
         currentDimensionField,
-        template.dimensions || []
+        template.dimensions
       );
 
       // Extract value from data point (handles both qualified and simple names)

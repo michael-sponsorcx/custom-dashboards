@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { DaySelector } from './schedule/DaySelector';
 import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../constants/timeOptions';
-import type { DashboardScheduleFormData, DayOfWeek, AttachmentType, FrequencyInterval } from '../../types/dashboard-schedules';
+import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type FrequencyInterval } from '../../types/dashboard-schedules';
 import { createDashboardSchedule } from '../../api';
 
 interface CreateScheduleModalProps {
@@ -37,9 +37,9 @@ const HOUR_INTERVAL_OPTIONS = Array.from({ length: 12 }, (_, i) => {
 
 // Attachment type options
 const ATTACHMENT_TYPE_OPTIONS: Array<{ value: AttachmentType; label: string }> = [
-  { value: 'PDF', label: 'PDF' },
-  { value: 'Excel', label: 'Excel' },
-  { value: 'CSV', label: 'CSV' },
+  { value: AttachmentType.Pdf, label: 'PDF' },
+  { value: AttachmentType.Excel, label: 'Excel' },
+  { value: AttachmentType.Csv, label: 'CSV' },
 ];
 
 /**

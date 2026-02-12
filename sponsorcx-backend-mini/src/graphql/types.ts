@@ -17,55 +17,75 @@ import { GraphQLJSON } from 'graphql-scalars';
 // ============================================================================
 
 // Enums
+// Enum names match their values so GraphQL serializes the same string
+// that is stored in the database and used on the frontend.
 export const ChartTypeEnum = new GraphQLEnumType({
     name: 'ChartType',
     values: {
-        BAR: { value: 'bar' },
-        STACKED_BAR: { value: 'stackedBar' },
-        HORIZONTAL_BAR: { value: 'horizontalBar' },
-        HORIZONTAL_STACKED_BAR: { value: 'horizontalStackedBar' },
-        LINE: { value: 'line' },
-        PIE: { value: 'pie' },
-        AREA: { value: 'area' },
-        SCATTER: { value: 'scatter' },
-        TABLE: { value: 'table' },
-        KPI: { value: 'kpi' },
-        HEATMAP: { value: 'heatmap' },
+        bar: {},
+        stackedBar: {},
+        horizontalBar: {},
+        horizontalStackedBar: {},
+        line: {},
+        pie: {},
+        area: {},
+        scatter: {},
+        table: {},
+        kpi: {},
+        heatmap: {},
     },
 });
 
 export const NumberFormatEnum = new GraphQLEnumType({
     name: 'NumberFormat',
     values: {
-        CURRENCY: { value: 'currency' },
-        PERCENTAGE: { value: 'percentage' },
-        NUMBER: { value: 'number' },
-        ABBREVIATED: { value: 'abbreviated' },
+        currency: {},
+        percentage: {},
+        number: {},
+        abbreviated: {},
     },
 });
 
 export const SortOrderEnum = new GraphQLEnumType({
     name: 'SortOrder',
     values: {
-        ASC: { value: 'asc' },
-        DESC: { value: 'desc' },
+        asc: {},
+        desc: {},
     },
 });
 
 export const LegendPositionEnum = new GraphQLEnumType({
     name: 'LegendPosition',
     values: {
-        TOP: { value: 'top' },
-        BOTTOM: { value: 'bottom' },
-        NONE: { value: 'none' },
+        top: {},
+        bottom: {},
+        none: {},
     },
 });
 
 export const LayoutTypeEnum = new GraphQLEnumType({
     name: 'LayoutType',
     values: {
-        GRID: { value: 'grid' },
-        LIST: { value: 'list' },
+        grid: {},
+        list: {},
+    },
+});
+
+export const ColorPaletteEnum = new GraphQLEnumType({
+    name: 'ColorPalette',
+    values: {
+        hubspotOrange: {},
+        professional: {},
+        vibrant: {},
+        cool: {},
+        warm: {},
+        green: {},
+        purple: {},
+        monochrome: {},
+        professionalMinimalist: {},
+        vibrantDynamic: {},
+        accessibleCalming: {},
+        custom: {},
     },
 });
 
@@ -79,36 +99,36 @@ export const GraphType = new GraphQLObjectType({
         viewName: { type: new GraphQLNonNull(GraphQLString) },
         chartType: { type: new GraphQLNonNull(ChartTypeEnum) },
         chartTitle: { type: new GraphQLNonNull(GraphQLString) },
-        measures: { type: new GraphQLList(GraphQLString) },
-        dimensions: { type: new GraphQLList(GraphQLString) },
-        dates: { type: new GraphQLList(GraphQLString) },
-        filters: { type: GraphQLJSON },
-        orderByField: { type: GraphQLString },
-        orderByDirection: { type: SortOrderEnum },
-        numberFormat: { type: NumberFormatEnum },
-        numberPrecision: { type: GraphQLInt },
-        colorPalette: { type: GraphQLString },
-        primaryColor: { type: GraphQLString },
-        sortOrder: { type: SortOrderEnum },
-        legendPosition: { type: LegendPositionEnum },
+        measures: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))) },
+        dimensions: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))) },
+        dates: { type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))) },
+        filters: { type: new GraphQLNonNull(GraphQLJSON) },
+        orderByField: { type: new GraphQLNonNull(GraphQLString) },
+        orderByDirection: { type: new GraphQLNonNull(SortOrderEnum) },
+        numberFormat: { type: new GraphQLNonNull(NumberFormatEnum) },
+        numberPrecision: { type: new GraphQLNonNull(GraphQLInt) },
+        colorPalette: { type: new GraphQLNonNull(ColorPaletteEnum) },
+        primaryColor: { type: new GraphQLNonNull(GraphQLString) },
+        sortOrder: { type: new GraphQLNonNull(SortOrderEnum) },
+        legendPosition: { type: new GraphQLNonNull(LegendPositionEnum) },
         kpiValue: { type: GraphQLFloat },
         kpiLabel: { type: GraphQLString },
         kpiSecondaryValue: { type: GraphQLFloat },
         kpiSecondaryLabel: { type: GraphQLString },
-        kpiShowTrend: { type: GraphQLBoolean },
+        kpiShowTrend: { type: new GraphQLNonNull(GraphQLBoolean) },
         kpiTrendPercentage: { type: GraphQLFloat },
-        showXAxisGridLines: { type: GraphQLBoolean },
-        showYAxisGridLines: { type: GraphQLBoolean },
-        showGridLines: { type: GraphQLBoolean },
-        showRegressionLine: { type: GraphQLBoolean },
+        showXAxisGridLines: { type: new GraphQLNonNull(GraphQLBoolean) },
+        showYAxisGridLines: { type: new GraphQLNonNull(GraphQLBoolean) },
+        showGridLines: { type: new GraphQLNonNull(GraphQLBoolean) },
+        showRegressionLine: { type: new GraphQLNonNull(GraphQLBoolean) },
         xAxisLabel: { type: GraphQLString },
         yAxisLabel: { type: GraphQLString },
-        maxDataPoints: { type: GraphQLInt },
-        primaryDimension: { type: GraphQLString },
+        maxDataPoints: { type: new GraphQLNonNull(GraphQLInt) },
+        primaryDimension: { type: new GraphQLNonNull(GraphQLString) },
         secondaryDimension: { type: GraphQLString },
-        selectedMeasure: { type: GraphQLString },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        selectedMeasure: { type: new GraphQLNonNull(GraphQLString) },
+        createdAt: { type: new GraphQLNonNull(GraphQLString) },
+        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),
 });
 
@@ -120,8 +140,8 @@ export const DashboardType = new GraphQLObjectType({
         organizationId: { type: GraphQLID },
         name: { type: new GraphQLNonNull(GraphQLString) },
         layout: { type: new GraphQLNonNull(LayoutTypeEnum) },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        createdAt: { type: new GraphQLNonNull(GraphQLString) },
+        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),
 });
 
@@ -132,11 +152,11 @@ export const DashboardGridItemType = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(GraphQLID) },
         dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         graphId: { type: new GraphQLNonNull(GraphQLID) },
-        gridColumn: { type: GraphQLInt },
-        gridRow: { type: GraphQLInt },
-        gridWidth: { type: GraphQLInt },
-        gridHeight: { type: GraphQLInt },
-        displayOrder: { type: GraphQLInt },
+        gridColumn: { type: new GraphQLNonNull(GraphQLInt) },
+        gridRow: { type: new GraphQLNonNull(GraphQLInt) },
+        gridWidth: { type: new GraphQLNonNull(GraphQLInt) },
+        gridHeight: { type: new GraphQLNonNull(GraphQLInt) },
+        displayOrder: { type: new GraphQLNonNull(GraphQLInt) },
         graph: {
             type: GraphType,
         },
@@ -152,8 +172,8 @@ export const DashboardFilterType = new GraphQLObjectType({
         selectedViews: { type: new GraphQLList(GraphQLString) },
         availableFields: { type: GraphQLJSON },
         activeFilters: { type: GraphQLJSON },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        createdAt: { type: new GraphQLNonNull(GraphQLString) },
+        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),
 });
 
@@ -173,7 +193,7 @@ export const GraphInput = new GraphQLInputObjectType({
         orderByDirection: { type: SortOrderEnum },
         numberFormat: { type: NumberFormatEnum },
         numberPrecision: { type: GraphQLInt },
-        colorPalette: { type: GraphQLString },
+        colorPalette: { type: ColorPaletteEnum },
         primaryColor: { type: GraphQLString },
         sortOrder: { type: SortOrderEnum },
         legendPosition: { type: LegendPositionEnum },
@@ -229,20 +249,20 @@ export const DashboardFilterInput = new GraphQLInputObjectType({
 export const FrequencyIntervalEnum = new GraphQLEnumType({
     name: 'FrequencyInterval',
     values: {
-        N_MINUTE: { value: 'n_minute' },
-        HOUR: { value: 'hour' },
-        DAY: { value: 'day' },
-        WEEK: { value: 'week' },
-        MONTH: { value: 'month' },
+        n_minute: {},
+        hour: {},
+        day: {},
+        week: {},
+        month: {},
     },
 });
 
 export const AttachmentTypeEnum = new GraphQLEnumType({
     name: 'AttachmentType',
     values: {
-        PDF: { value: 'PDF' },
-        EXCEL: { value: 'Excel' },
-        CSV: { value: 'CSV' },
+        PDF: {},
+        Excel: {},
+        CSV: {},
     },
 });
 
@@ -402,8 +422,8 @@ export const CubeMetadataType = new GraphQLObjectType({
 export const AlertTypeEnum = new GraphQLEnumType({
     name: 'AlertType',
     values: {
-        SCHEDULE: { value: 'schedule' },
-        THRESHOLD: { value: 'threshold' },
+        schedule: {},
+        threshold: {},
     },
 });
 
@@ -421,8 +441,8 @@ export const KpiAlertType = new GraphQLObjectType({
         comment: { type: GraphQLString },
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        createdAt: { type: new GraphQLNonNull(GraphQLString) },
+        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),
 });
 
@@ -433,12 +453,12 @@ export const KpiAlertType = new GraphQLObjectType({
 export const ThresholdConditionEnum = new GraphQLEnumType({
     name: 'ThresholdCondition',
     values: {
-        GREATER_THAN: { value: 'GREATER_THAN' },
-        GREATER_THAN_OR_EQUAL: { value: 'GREATER_THAN_OR_EQUAL' },
-        LESS_THAN: { value: 'LESS_THAN' },
-        LESS_THAN_OR_EQUAL: { value: 'LESS_THAN_OR_EQUAL' },
-        EQUAL_TO: { value: 'EQUAL_TO' },
-        NOT_EQUAL_TO: { value: 'NOT_EQUAL_TO' },
+        GREATER_THAN: {},
+        GREATER_THAN_OR_EQUAL: {},
+        LESS_THAN: {},
+        LESS_THAN_OR_EQUAL: {},
+        EQUAL_TO: {},
+        NOT_EQUAL_TO: {},
     },
 });
 
@@ -499,8 +519,8 @@ export const DashboardScheduleType = new GraphQLObjectType({
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
         cronExpression: { type: GraphQLString },
-        createdAt: { type: GraphQLString },
-        updatedAt: { type: GraphQLString },
+        createdAt: { type: new GraphQLNonNull(GraphQLString) },
+        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),
 });
 

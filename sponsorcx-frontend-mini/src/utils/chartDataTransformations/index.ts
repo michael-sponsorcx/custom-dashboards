@@ -13,14 +13,12 @@ import {
   TransformationResult,
   ChartSpecificTransformOptions,
 } from './types';
+import { ChartType } from '../../types/backend-graphql';
 import { barChartTransformation } from './transformations/barChart';
 import { barStackedTransformation } from './transformations/barStacked';
 import { lineChartTransformation, areaChartTransformation } from './transformations/lineChart';
 import { pieChartTransformation } from './transformations/pieChart';
 import { kpiChartTransformation } from './transformations/kpi';
-
-// Re-export types for convenience
-export type { ChartType, TransformationResult, TransformChartDataOptions } from './types';
 
 /**
  * Transforms Cube GraphQL response to the appropriate format for any visualization type.
@@ -60,8 +58,8 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
     return viewData as Record<string, unknown>;
   });
 
-  // Step 2: For 'table' type, return raw parsed data without further transformation
-  if (chartType === 'table') {
+  // Step 2: For table type, return raw parsed data without further transformation
+  if (chartType === ChartType.Table) {
     return {
       data: chartData,
       dimensionField: undefined,
@@ -81,17 +79,17 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
   };
 
   switch (chartType) {
-    case 'bar':
+    case ChartType.Bar:
       return barChartTransformation(transformOptions);
-    case 'bar_stacked':
+    case ChartType.StackedBar:
       return barStackedTransformation(transformOptions);
-    case 'line':
+    case ChartType.Line:
       return lineChartTransformation(transformOptions);
-    case 'area':
+    case ChartType.Area:
       return areaChartTransformation(transformOptions);
-    case 'pie':
+    case ChartType.Pie:
       return pieChartTransformation(transformOptions);
-    case 'kpi':
+    case ChartType.Kpi:
       return kpiChartTransformation(transformOptions);
     default:
       // Unknown chart type - return raw parsed data

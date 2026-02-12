@@ -1,18 +1,16 @@
 import { Text } from '@mantine/core';
-import { ChartType } from '../../utils/chartDataAnalyzer';
+import { ChartType, NumberFormat, LegendPosition, ColorPalette } from '../../types/backend-graphql';
 import { KPI } from './charts/KPI';
 import { MantineLineChart } from './charts/MantineLineChart';
 import { MantineBarChart } from './charts/MantineBarChart';
 import { MantinePieChart } from './charts/MantinePieChart';
 import { ReportTable } from './tables/ReportTable';
 import { SortOrder } from '../create_graph/settings/OrderByControl';
-import type { LegendPosition } from '../../types/graph';
-import type { ColorPalette } from '../../constants/colorPalettes';
 
 interface ChartRendererProps {
   queryResult: any;
   selectedChartType: ChartType;
-  numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
+  numberFormat: NumberFormat;
   numberPrecision: number;
   primaryColor: string;
   colorPalette?: ColorPalette;
@@ -56,8 +54,8 @@ export function ChartRenderer({
   numberFormat,
   numberPrecision,
   primaryColor,
-  colorPalette = 'hubspot-orange',
-  sortOrder = 'desc',
+  colorPalette = ColorPalette.HubspotOrange,
+  sortOrder = SortOrder.Desc,
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
@@ -69,7 +67,7 @@ export function ChartRenderer({
   showYAxisGridLines = true,
   showRegressionLine = false,
   maxDataPoints,
-  legendPosition = 'bottom',
+  legendPosition = LegendPosition.Bottom,
   kpiValue,
   kpiLabel,
   kpiSecondaryValue,
@@ -78,7 +76,7 @@ export function ChartRenderer({
   kpiTrendPercentage,
 }: ChartRendererProps) {
   switch (selectedChartType) {
-    case 'kpi':
+    case ChartType.Kpi:
       return (
         <KPI
           userDefinedValue={kpiValue}
@@ -94,7 +92,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'line':
+    case ChartType.Line:
       return (
         <MantineLineChart
           queryResult={queryResult}
@@ -115,7 +113,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'bar':
+    case ChartType.Bar:
       return (
         <MantineBarChart
           queryResult={queryResult}
@@ -140,7 +138,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'stackedBar':
+    case ChartType.StackedBar:
       return (
         <MantineBarChart
           queryResult={queryResult}
@@ -165,7 +163,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'horizontalBar':
+    case ChartType.HorizontalBar:
       return (
         <MantineBarChart
           queryResult={queryResult}
@@ -190,7 +188,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'horizontalStackedBar':
+    case ChartType.HorizontalStackedBar:
       return (
         <MantineBarChart
           queryResult={queryResult}
@@ -215,7 +213,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'pie':
+    case ChartType.Pie:
       return (
         <MantinePieChart
           queryResult={queryResult}
@@ -230,7 +228,7 @@ export function ChartRenderer({
         />
       );
 
-    case 'table':
+    case ChartType.Table:
       return (
         <ReportTable
           queryResult={queryResult}

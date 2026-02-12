@@ -7,16 +7,7 @@
 import { executeBackendGraphQL } from '../../core/client';
 import type { GraphUI } from '../../../types/graph';
 import type { Graph as BackendGraph } from '../../../types/backend-graphql';
-import { toGraphInput, mapBackendChartType } from './mappers';
-
-/**
- * Map backend Graph response to frontend GraphUI format
- * Converts chartType from backend enum (uppercase) to frontend format (lowercase)
- */
-const mapGraphResponse = (graph: BackendGraph): GraphUI => ({
-  ...(graph as unknown as GraphUI),
-  chartType: mapBackendChartType(graph.chartType),
-});
+import { toGraphInput } from './mappers';
 
 // GraphQL fragments for reusability
 const GRAPH_FIELDS = `
@@ -61,7 +52,7 @@ const GRAPH_FIELDS = `
 /**
  * Fetch all graphs for an organization
  */
-export async function fetchGraphs(organizationId?: string): Promise<GraphUI[]> {
+export const fetchGraphs = async (organizationId?: string): Promise<GraphUI[]> => {
   const query = `
     query FetchGraphs($organizationId: ID) {
       graphs(organizationId: $organizationId) {
@@ -74,13 +65,13 @@ export async function fetchGraphs(organizationId?: string): Promise<GraphUI[]> {
     organizationId,
   });
 
-  return (response.data?.graphs || []).map(mapGraphResponse);
-}
+  return (response.data?.graphs || []) as unknown as GraphUI[];
+};
 
 /**
  * Fetch a single graph by ID
  */
-export async function fetchGraph(id: string): Promise<GraphUI | null> {
+export const fetchGraph = async (id: string): Promise<GraphUI | null> => {
   const query = `
     query FetchGraph($id: ID!) {
       graph(id: $id) {
@@ -91,16 +82,16 @@ export async function fetchGraph(id: string): Promise<GraphUI | null> {
 
   const response = await executeBackendGraphQL<{ graph: BackendGraph | null }>(query, { id });
 
-  return response.data?.graph ? mapGraphResponse(response.data.graph) : null;
-}
+  return (response.data?.graph as unknown as GraphUI) ?? null;
+};
 
 /**
  * Create a new graph
  */
-export async function createGraph(
+export const createGraph = async (
   input: Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'>,
   organizationId?: string
-): Promise<GraphUI> {
+): Promise<GraphUI> => {
   const query = `
     mutation CreateGraph($input: GraphInput!, $organizationId: ID) {
       createGraph(input: $input, organizationId: $organizationId) {
@@ -109,7 +100,6 @@ export async function createGraph(
     }
   `;
 
-  // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
   const response = await executeBackendGraphQL<{ createGraph: BackendGraph }>(query, {
@@ -121,16 +111,16 @@ export async function createGraph(
     throw new Error('Failed to create graph');
   }
 
-  return mapGraphResponse(response.data.createGraph);
-}
+  return response.data.createGraph as unknown as GraphUI;
+};
 
 /**
  * Update an existing graph
  */
-export async function updateGraph(
+export const updateGraph = async (
   id: string,
   input: Omit<GraphUI, 'id' | 'createdAt' | 'updatedAt'>
-): Promise<GraphUI> {
+): Promise<GraphUI> => {
   const query = `
     mutation UpdateGraph($id: ID!, $input: GraphInput!) {
       updateGraph(id: $id, input: $input) {
@@ -139,7 +129,6 @@ export async function updateGraph(
     }
   `;
 
-  // Convert frontend GraphUI format to backend GraphInput format
   const graphInput = toGraphInput(input);
 
   const response = await executeBackendGraphQL<{ updateGraph: BackendGraph }>(query, {
@@ -151,13 +140,13 @@ export async function updateGraph(
     throw new Error('Failed to update graph');
   }
 
-  return mapGraphResponse(response.data.updateGraph);
-}
+  return response.data.updateGraph as unknown as GraphUI;
+};
 
 /**
  * Delete a graph
  */
-export async function deleteGraph(id: string): Promise<boolean> {
+export const deleteGraph = async (id: string): Promise<boolean> => {
   const query = `
     mutation DeleteGraph($id: ID!) {
       deleteGraph(id: $id) {
@@ -169,4 +158,4 @@ export async function deleteGraph(id: string): Promise<boolean> {
   const response = await executeBackendGraphQL<{ deleteGraph: { id: string } | null }>(query, { id });
 
   return !!response.data?.deleteGraph;
-}
+};

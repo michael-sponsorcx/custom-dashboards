@@ -5,19 +5,8 @@
  * Based on HubSpot's design system with accessibility and distinguishability in mind
  */
 
-export type ColorPalette =
-  | 'hubspot-orange'
-  | 'professional'
-  | 'vibrant'
-  | 'cool'
-  | 'warm'
-  | 'green'
-  | 'purple'
-  | 'monochrome'
-  | 'professionalMinimalist'
-  | 'vibrantDynamic'
-  | 'accessibleCalming'
-  | 'custom';
+import { ColorPalette } from '../types/backend-graphql';
+export { ColorPalette };
 
 export interface PaletteDefinition {
   name: string;
@@ -26,7 +15,7 @@ export interface PaletteDefinition {
 }
 
 export const COLOR_PALETTES: Record<Exclude<ColorPalette, 'custom'>, PaletteDefinition> = {
-  'hubspot-orange': {
+  hubspotOrange: {
     name: 'HubSpot Orange',
     colors: [
       '#FF7A59',
@@ -181,7 +170,7 @@ export const COLOR_PALETTES: Record<Exclude<ColorPalette, 'custom'>, PaletteDefi
  * Get all colors from a palette
  */
 export function getPaletteColors(paletteName: ColorPalette): string[] {
-  if (paletteName === 'custom') {
+  if (paletteName === ColorPalette.Custom) {
     return [];
   }
   return COLOR_PALETTES[paletteName].colors;
@@ -204,7 +193,7 @@ export function getPaletteColor(paletteName: ColorPalette, index: number): strin
  * Get preview colors for UI display (5 colors)
  */
 export function getPalettePreview(paletteName: ColorPalette): string[] {
-  if (paletteName === 'custom') {
+  if (paletteName === ColorPalette.Custom) {
     return [];
   }
   return COLOR_PALETTES[paletteName].preview;
@@ -214,7 +203,7 @@ export function getPalettePreview(paletteName: ColorPalette): string[] {
  * Get palette name for display
  */
 export function getPaletteName(paletteName: ColorPalette): string {
-  if (paletteName === 'custom') {
+  if (paletteName === ColorPalette.Custom) {
     return 'Custom';
   }
   return COLOR_PALETTES[paletteName].name;
@@ -224,7 +213,7 @@ export function getPaletteName(paletteName: ColorPalette): string {
  * Get first color from palette (used for single-series charts)
  */
 export function getPalettePrimaryColor(paletteName: ColorPalette): string {
-  if (paletteName === 'custom') {
+  if (paletteName === ColorPalette.Custom) {
     return '#3b82f6'; // Default fallback
   }
   return COLOR_PALETTES[paletteName].colors[0];
@@ -236,7 +225,7 @@ export function getPalettePrimaryColor(paletteName: ColorPalette): string {
 export function getAllPalettes(): ColorPalette[] {
   return [
     ...(Object.keys(COLOR_PALETTES) as ColorPalette[]),
-    'custom',
+    ColorPalette.Custom,
   ];
 }
 

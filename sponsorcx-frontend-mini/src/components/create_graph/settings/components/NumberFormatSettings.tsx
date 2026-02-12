@@ -1,8 +1,9 @@
 import { Stack, Select, NumberInput, Divider } from '@mantine/core';
+import { NumberFormat } from '../../../../types/backend-graphql';
 
 interface NumberFormatSettingsProps {
-  numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
-  onNumberFormatChange: (format: 'currency' | 'percentage' | 'number' | 'abbreviated') => void;
+  numberFormat: NumberFormat;
+  onNumberFormatChange: (format: NumberFormat) => void;
   numberPrecision: number;
   onNumberPrecisionChange: (precision: number) => void;
 }
@@ -33,7 +34,7 @@ export function NumberFormatSettings({
           label="Number Format"
           data={NUMBER_FORMAT_OPTIONS}
           value={numberFormat}
-          onChange={(value) => onNumberFormatChange(value as any)}
+          onChange={(value) => onNumberFormatChange(value as NumberFormat)}
         />
 
         <NumberInput

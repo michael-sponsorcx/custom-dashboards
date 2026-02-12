@@ -90,8 +90,13 @@ export function useGraphData(
 
   // Auto-fetch effect: runs on mount + when query or refreshKey changes
   useEffect(() => {
+    if (!query) {
+      setLoading(false);
+      setError('Empty query');
+      return;
+    }
     fetchData(false);
-  }, [fetchData, refreshKey]);
+  }, [fetchData, refreshKey, query]);
 
   return {
     queryResult,

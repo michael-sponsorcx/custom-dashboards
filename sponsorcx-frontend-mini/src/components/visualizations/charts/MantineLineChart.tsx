@@ -5,8 +5,7 @@ import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { NumberFormatType } from '../../../utils/numberFormatter';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
-import type { LegendPosition } from '../../../types/graph';
-import type { ColorPalette } from '../../../constants/colorPalettes';
+import { ChartType, LegendPosition, ColorPalette } from '../../../types/backend-graphql';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';
@@ -44,8 +43,8 @@ interface MantineLineChartProps {
 export const MantineLineChart = memo(function MantineLineChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = 'hubspot-orange',
-  sortOrder = 'desc',
+  colorPalette = ColorPalette.HubspotOrange,
+  sortOrder = SortOrder.Desc,
   primaryDimension,
   selectedMeasure,
   numberFormat = 'number',
@@ -56,7 +55,7 @@ export const MantineLineChart = memo(function MantineLineChart({
   showYAxisGridLines = true,
   showRegressionLine = false,
   maxDataPoints,
-  legendPosition = 'bottom',
+  legendPosition = LegendPosition.Bottom,
 }: MantineLineChartProps) {
   // Create color function based on palette (or use default chart colors for 'custom')
   const getColorFn = useMemo(() => {
@@ -69,7 +68,7 @@ export const MantineLineChart = memo(function MantineLineChart({
   const transformationResult = useMemo(
     () =>
       transformChartData({
-        chartType: 'line',
+        chartType: ChartType.Line,
         cubeData: queryResult,
         primaryColor,
         getColorFn,

@@ -2,7 +2,7 @@
  * Shared types for chart data transformations
  */
 
-export type ChartType = 'bar' | 'bar_stacked' | 'line' | 'area' | 'pie' | 'kpi' | 'table';
+import { ChartType } from '../../types/backend-graphql';
 
 export type ChartDataPoint = Record<string, string | number>;
 

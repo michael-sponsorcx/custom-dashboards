@@ -1,4 +1,4 @@
-import type { LegendPosition } from '../../../../types/graph';
+import { LegendPosition } from '../../../../types/backend-graphql';
 
 /**
  * Legend props configuration for Mantine/Recharts charts
@@ -32,7 +32,7 @@ export interface LegendPropsConfig {
  * // Output: null (legend won't show)
  * const props = getLegendProps('none');
  */
-export function getLegendProps(legendPosition: LegendPosition = 'bottom'): LegendPropsConfig | null {
+export const getLegendProps = (legendPosition: LegendPosition = LegendPosition.Bottom): LegendPropsConfig | null => {
   switch (legendPosition) {
     case 'top':
       return { verticalAlign: 'top' as const, height: 50 };
@@ -61,6 +61,6 @@ export function getLegendProps(legendPosition: LegendPosition = 'bottom'): Legen
  * // Output: false
  * shouldShowLegend('none');
  */
-export function shouldShowLegend(legendPosition: LegendPosition = 'bottom'): boolean {
+export const shouldShowLegend = (legendPosition: LegendPosition = LegendPosition.Bottom): boolean => {
   return legendPosition !== 'none';
 }

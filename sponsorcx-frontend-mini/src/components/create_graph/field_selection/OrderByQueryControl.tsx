@@ -1,14 +1,15 @@
 import { Paper, Stack, Title, Select } from '@mantine/core';
-import { CubeMeasure, CubeDimension } from '../../../types/cube';
+import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
+import { SortOrder } from '../settings/OrderByControl';
 
 interface OrderByQueryControlProps {
-  measures?: CubeMeasure[];
-  dimensions?: CubeDimension[];
-  dates?: CubeDimension[];
+  measures?: CubeMeasureUI[];
+  dimensions?: CubeDimensionUI[];
+  dates?: CubeDimensionUI[];
   orderByField?: string;
-  orderByDirection?: 'asc' | 'desc';
+  orderByDirection?: SortOrder;
   onOrderByFieldChange: (field: string | undefined) => void;
-  onOrderByDirectionChange: (direction: 'asc' | 'desc') => void;
+  onOrderByDirectionChange: (direction: SortOrder) => void;
 }
 
 /**
@@ -20,7 +21,7 @@ export function OrderByQueryControl({
   dimensions,
   dates,
   orderByField,
-  orderByDirection = 'asc',
+  orderByDirection = SortOrder.Asc,
   onOrderByFieldChange,
   onOrderByDirectionChange,
 }: OrderByQueryControlProps) {
@@ -94,13 +95,13 @@ export function OrderByQueryControl({
           label="Direction"
           data={['Ascending (A → Z, 1 → 9)', 'Descending (Z → A, 9 → 1)']}
           value={
-            orderByDirection === 'asc' ? 'Ascending (A → Z, 1 → 9)' : 'Descending (Z → A, 9 → 1)'
+            orderByDirection === SortOrder.Asc ? 'Ascending (A → Z, 1 → 9)' : 'Descending (Z → A, 9 → 1)'
           }
           onChange={(value) => {
             if (value === 'Ascending (A → Z, 1 → 9)') {
-              onOrderByDirectionChange('asc');
+              onOrderByDirectionChange(SortOrder.Asc);
             } else if (value === 'Descending (Z → A, 9 → 1)') {
-              onOrderByDirectionChange('desc');
+              onOrderByDirectionChange(SortOrder.Desc);
             }
           }}
           disabled={!orderByField}

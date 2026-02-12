@@ -2,7 +2,7 @@
  * Shared types for Cube API services
  */
 
-import type { CubeMeasure, CubeDimension } from '../../types/cube';
+import type { CubeMeasureUI, CubeDimensionUI } from '../../types/cube';
 
 /**
  * Configuration for Cube API client
@@ -96,8 +96,8 @@ export interface CubeMetadata {
   cubes: Array<{
     name: string;
     title?: string;
-    measures: CubeMeasure[];
-    dimensions: CubeDimension[];
+    measures: CubeMeasureUI[];
+    dimensions: CubeDimensionUI[];
   }>;
 }
 

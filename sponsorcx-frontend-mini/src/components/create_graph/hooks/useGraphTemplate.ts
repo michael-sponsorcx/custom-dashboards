@@ -21,7 +21,7 @@ import {
 import { useOrganizationStore } from '../../../store';
 import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';
-import { ChartType } from '../../../utils/chartDataAnalyzer';
+import { ChartType, SortOrder, LegendPosition } from '../../../types/backend-graphql';
 
 interface UseGraphUIOptions {
   editingGraph?: GraphUI;
@@ -34,7 +34,7 @@ interface SaveGraphParams {
   selectedDates: Set<string>;
   filters: FilterRule[];
   orderByField?: string;
-  orderByDirection?: 'asc' | 'desc';
+  orderByDirection?: SortOrder;
   queryResult: unknown;
   chartConfig: ChartConfig;
 }
@@ -66,8 +66,8 @@ export function useGraphUI(options: UseGraphUIOptions = {}) {
         dimensions: Array.from(selectedDimensions),
         dates: Array.from(selectedDates),
         filters,
-        orderByField,
-        orderByDirection,
+        orderByField: orderByField ?? '',
+        orderByDirection: orderByDirection ?? SortOrder.Desc,
         chartType: chartConfig.chartType as ChartType,
         chartTitle: chartConfig.chartTitle,
         numberFormat: chartConfig.numberFormat,
@@ -75,24 +75,25 @@ export function useGraphUI(options: UseGraphUIOptions = {}) {
         colorPalette: chartConfig.colorPalette,
         primaryColor: chartConfig.primaryColor,
         sortOrder: chartConfig.sortOrder,
-        legendPosition: chartConfig.legendPosition,
+        legendPosition: chartConfig.legendPosition ?? LegendPosition.Bottom,
         // Axis & grid
         xAxisLabel: chartConfig.xAxisLabel,
         yAxisLabel: chartConfig.yAxisLabel,
-        showXAxisGridLines: chartConfig.showXAxisGridLines,
-        showYAxisGridLines: chartConfig.showYAxisGridLines,
-        showRegressionLine: chartConfig.showRegressionLine,
-        maxDataPoints: chartConfig.maxDataPoints,
+        showGridLines: true,
+        showXAxisGridLines: chartConfig.showXAxisGridLines ?? true,
+        showYAxisGridLines: chartConfig.showYAxisGridLines ?? true,
+        showRegressionLine: chartConfig.showRegressionLine ?? false,
+        maxDataPoints: chartConfig.maxDataPoints ?? 50,
         // KPI
         kpiValue: chartConfig.kpiValue,
         kpiLabel: chartConfig.kpiLabel,
         kpiSecondaryValue: chartConfig.kpiSecondaryValue,
         kpiSecondaryLabel: chartConfig.kpiSecondaryLabel,
-        kpiShowTrend: chartConfig.kpiShowTrend,
+        kpiShowTrend: chartConfig.kpiShowTrend ?? false,
         kpiTrendPercentage: chartConfig.kpiTrendPercentage,
-        primaryDimension: chartConfig.primaryDimension,
+        primaryDimension: chartConfig.primaryDimension ?? '',
         secondaryDimension: chartConfig.secondaryDimension,
-        selectedMeasure: chartConfig.selectedMeasure,
+        selectedMeasure: chartConfig.selectedMeasure ?? '',
       };
     },
     []

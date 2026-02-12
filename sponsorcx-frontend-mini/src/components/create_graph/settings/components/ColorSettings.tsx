@@ -1,5 +1,5 @@
 import { ColorInput, Stack } from '@mantine/core';
-import { ColorPalette } from '../../../../constants/colorPalettes';
+import { ColorPalette } from '../../../../types/backend-graphql';
 import { PaletteSelector } from './PaletteSelector';
 
 interface ColorSettingsProps {

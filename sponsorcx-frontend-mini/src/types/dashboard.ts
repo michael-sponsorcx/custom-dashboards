@@ -1,26 +1,22 @@
-import { GraphUI } from './graph';
+import type { Dashboard } from './backend-graphql';
+import type { GraphUI } from './graph';
 
 /**
- * Frontend dashboard configuration with UI-specific fields.
- * Distinct from the backend `Dashboard` type in backend-graphql.ts which represents the API contract.
+ * Frontend dashboard configuration.
+ * Extends the generated backend Dashboard type with UI-specific fields.
  */
-export interface DashboardUI {
-  id: string;
-  name: string;
-  layout: 'grid' | 'list';
+export interface DashboardUI extends Omit<Dashboard, '__typename' | 'organizationId'> {
   graphIds: string[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 /**
  * Grid layout properties for positioning items in the dashboard grid
  */
 export interface GridLayout {
-  gridColumn?: number; // Starting column (1-6)
-  gridRow?: number; // Starting row (1-based)
-  gridWidth?: number; // Width in columns (1-6)
-  gridHeight?: number; // Height in rows (1+)
+  gridColumn: number; // Starting column (1-6)
+  gridRow: number; // Starting row (1-based)
+  gridWidth: number; // Width in columns (1-6)
+  gridHeight: number; // Height in rows (1+)
 }
 
 /**

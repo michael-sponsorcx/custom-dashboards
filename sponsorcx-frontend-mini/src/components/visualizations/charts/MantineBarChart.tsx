@@ -4,9 +4,8 @@ import { transformChartData } from '../../../utils/chartDataTransformations';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { NumberFormatType } from '../../../utils/numberFormatter';
-import type { LegendPosition } from '../../../types/graph';
+import { ChartType, LegendPosition, ColorPalette } from '../../../types/backend-graphql';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
-import type { ColorPalette } from '../../../constants/colorPalettes';
 import type { ChartDataPoint } from '../../../utils/chartDataTransformations/types';
 import type { CubeQueryResult } from '../../../api';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
@@ -21,7 +20,7 @@ interface MantineBarChartProps {
   primaryColor?: string;
   colorPalette?: ColorPalette;
   orientation?: 'vertical' | 'horizontal';
-  type?: BarChartType;
+  type?: BarChartType | 'stacked';
   sortOrder?: SortOrder;
   // User-selected dimensions and measure
   primaryDimension?: string;
@@ -51,10 +50,10 @@ interface MantineBarChartProps {
 export const MantineBarChart = memo(function MantineBarChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = 'hubspot-orange',
+  colorPalette = ColorPalette.HubspotOrange,
   orientation = 'vertical',
   type = 'default',
-  sortOrder = 'desc',
+  sortOrder = SortOrder.Desc,
   primaryDimension,
   secondaryDimension,
   selectedMeasure,
@@ -67,7 +66,7 @@ export const MantineBarChart = memo(function MantineBarChart({
   showXAxisGridLines = true,
   showYAxisGridLines = true,
   maxDataPoints,
-  legendPosition = 'bottom',
+  legendPosition = LegendPosition.Bottom,
 }: MantineBarChartProps) {
   // Use drill-down hook to manage state and available dimensions
   const {
@@ -88,7 +87,7 @@ export const MantineBarChart = memo(function MantineBarChart({
   // Use the transformation utility to handle all data transformation
   // Pass raw Cube data directly - transformation happens inside the utility
   // Memoize to prevent unnecessary re-transformations
-  const chartType = type === 'stacked' ? 'bar_stacked' : 'bar';
+  const chartType = type === 'stacked' ? ChartType.StackedBar : ChartType.Bar;
 
   const transformationResult = useMemo(() => {
     return transformChartData({

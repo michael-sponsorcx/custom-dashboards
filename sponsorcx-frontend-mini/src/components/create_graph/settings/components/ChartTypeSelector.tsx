@@ -1,5 +1,5 @@
 import { Box, Group, SimpleGrid, Text, Tooltip, useMantineTheme } from '@mantine/core';
-import { ChartType } from '../../../../utils/chartDataAnalyzer';
+import { ChartType } from '../../../../types/backend-graphql';
 
 interface ChartTypeSelectorProps {
   selectedChartType: ChartType | null;
@@ -16,6 +16,9 @@ const CHART_TYPE_LABELS: Record<ChartType, string> = {
   horizontalStackedBar: 'Horizontal Stacked Bar',
   pie: 'Pie Chart',
   table: 'Table',
+  area: 'Area Chart',
+  scatter: 'Scatter Plot',
+  heatmap: 'Heatmap',
 };
 
 function ChartTypeIcon({ type, color }: { type: ChartType; color: string }) {
@@ -137,14 +140,14 @@ export function ChartTypeSelector({
 
   // Show all chart types, but disable incompatible ones
   const allChartTypes: ChartType[] = [
-    'kpi',
-    'line',
-    'bar',
-    'stackedBar',
-    'horizontalBar',
-    'horizontalStackedBar',
-    'pie',
-    'table',
+    ChartType.Kpi,
+    ChartType.Line,
+    ChartType.Bar,
+    ChartType.StackedBar,
+    ChartType.HorizontalBar,
+    ChartType.HorizontalStackedBar,
+    ChartType.Pie,
+    ChartType.Table,
   ];
 
   const isDisabled = (type: ChartType) => !compatibleCharts.includes(type);

@@ -9,19 +9,11 @@
  */
 
 import type { DayOfWeek } from './schedule-common';
+import { AttachmentType, type FrequencyInterval } from './backend-graphql';
 
 // Re-export for convenience
-export type { DayOfWeek };
-
-/**
- * Attachment file format options (dashboard schedules only)
- */
-export type AttachmentType = 'PDF' | 'Excel' | 'CSV';
-
-/**
- * Frequency interval type
- */
-export type FrequencyInterval = 'n_minute' | 'hour' | 'day' | 'week' | 'month';
+export { AttachmentType };
+export type { DayOfWeek, FrequencyInterval };
 
 /**
  * Dashboard Schedule Form Data structure

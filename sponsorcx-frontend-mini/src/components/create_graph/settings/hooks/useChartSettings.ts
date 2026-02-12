@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
-import { ChartType } from '../../../../utils/chartDataAnalyzer';
 import { SortOrder } from '../OrderByControl';
-import { ColorPalette, getPalettePrimaryColor } from '../../../../constants/colorPalettes';
+import { NumberFormat, ColorPalette, ChartType } from '../../../../types/backend-graphql';
+import { getPalettePrimaryColor } from '../../../../constants/colorPalettes';
 
 interface ChartSettings {
   chartType: ChartType | null;
   chartTitle: string;
-  numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
+  numberFormat: NumberFormat;
   numberPrecision: number;
   colorPalette: ColorPalette;
   primaryColor: string;
@@ -33,11 +33,11 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
   const [settings, setSettings] = useState<ChartSettings>({
     chartType: initialSettings.chartType ?? null,
     chartTitle: initialSettings.chartTitle ?? '',
-    numberFormat: initialSettings.numberFormat ?? 'number',
+    numberFormat: initialSettings.numberFormat ?? NumberFormat.Number,
     numberPrecision: initialSettings.numberPrecision ?? 2,
-    colorPalette: initialSettings.colorPalette ?? 'hubspot-orange',
+    colorPalette: initialSettings.colorPalette ?? ColorPalette.HubspotOrange,
     primaryColor: initialSettings.primaryColor ?? '#FF7A59', // HubSpot orange
-    sortOrder: initialSettings.sortOrder ?? 'desc',
+    sortOrder: initialSettings.sortOrder ?? SortOrder.Desc,
     primaryDimension: initialSettings.primaryDimension,
     secondaryDimension: initialSettings.secondaryDimension,
     selectedMeasure: initialSettings.selectedMeasure,
@@ -69,7 +69,7 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
   );
 
   const setNumberFormat = useCallback(
-    (numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated') => {
+    (numberFormat: NumberFormat) => {
       updateSettings({ numberFormat });
     },
     [updateSettings]

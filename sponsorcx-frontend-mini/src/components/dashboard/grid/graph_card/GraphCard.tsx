@@ -155,29 +155,29 @@ export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, 
           <ChartRenderer
             queryResult={queryResult}
             selectedChartType={template.chartType}
-            numberFormat={template.numberFormat || 'number'}
-            numberPrecision={template.numberPrecision || 2}
-            primaryColor={template.primaryColor || '#3b82f6'}
+            numberFormat={template.numberFormat}
+            numberPrecision={template.numberPrecision}
+            primaryColor={template.primaryColor}
             colorPalette={template.colorPalette}
             sortOrder={template.sortOrder}
             primaryDimension={effectivePrimaryDimension}
-            secondaryDimension={template.secondaryDimension}
+            secondaryDimension={template.secondaryDimension ?? undefined}
             selectedMeasure={template.selectedMeasure}
             availableDimensions={template.dimensions}
             onDrillDown={handleDrillDown}
-            xAxisLabel={template.xAxisLabel}
-            yAxisLabel={template.yAxisLabel}
+            xAxisLabel={template.xAxisLabel ?? undefined}
+            yAxisLabel={template.yAxisLabel ?? undefined}
             showXAxisGridLines={template.showXAxisGridLines}
             showYAxisGridLines={template.showYAxisGridLines}
             showRegressionLine={template.showRegressionLine}
             maxDataPoints={template.maxDataPoints}
             legendPosition={template.legendPosition}
-            kpiValue={template.kpiValue}
-            kpiLabel={template.kpiLabel}
-            kpiSecondaryValue={template.kpiSecondaryValue}
-            kpiSecondaryLabel={template.kpiSecondaryLabel}
+            kpiValue={template.kpiValue ?? undefined}
+            kpiLabel={template.kpiLabel ?? undefined}
+            kpiSecondaryValue={template.kpiSecondaryValue ?? undefined}
+            kpiSecondaryLabel={template.kpiSecondaryLabel ?? undefined}
             kpiShowTrend={template.kpiShowTrend}
-            kpiTrendPercentage={template.kpiTrendPercentage}
+            kpiTrendPercentage={template.kpiTrendPercentage ?? undefined}
           />
         )}
       </div>

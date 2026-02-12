@@ -2,19 +2,19 @@
  * Shared types for CreateGraph component and its hooks
  */
 
-import { CubeMeasure, CubeDimension } from '../../types/cube';
-import { ChartType } from '../../utils/chartDataAnalyzer';
+import { CubeMeasureUI, CubeDimensionUI } from '../../types/cube';
+import { ChartType } from '../../types/backend-graphql';
 import { SortOrder } from './settings/OrderByControl';
-import type { LegendPosition } from '../../types/graph';
-import type { ColorPalette } from '../../constants/colorPalettes';
+import type { LegendPosition, NumberFormat } from '../../types/backend-graphql';
+import type { ColorPalette } from '../../types/backend-graphql';
 
 /**
  * View fields structure
  */
 export interface ViewFields {
-  measures: CubeMeasure[];
-  dimensions: CubeDimension[];
-  dates: CubeDimension[];
+  measures: CubeMeasureUI[];
+  dimensions: CubeDimensionUI[];
+  dates: CubeDimensionUI[];
 }
 
 /**
@@ -23,7 +23,7 @@ export interface ViewFields {
 export interface ChartConfig {
   chartType: ChartType | null;
   chartTitle: string;
-  numberFormat: 'currency' | 'percentage' | 'number' | 'abbreviated';
+  numberFormat: NumberFormat;
   numberPrecision: number;
   colorPalette: ColorPalette;
   primaryColor: string;

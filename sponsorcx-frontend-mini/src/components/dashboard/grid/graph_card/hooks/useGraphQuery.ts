@@ -31,7 +31,7 @@ export function useGraphQuery(
   // Combine all filter sources
   const effectiveFilters = useMemo(() => {
     return combineAllFilters(
-      template.filters || [],
+      template.filters as FilterRule[],
       dashboardFilters,
       drillDownFilters
     );
@@ -41,7 +41,7 @@ export function useGraphQuery(
   const query = useMemo(() => {
     return buildQueryFromTemplate({
       ...template,
-      primaryDimension: effectivePrimaryDimension,
+      ...(effectivePrimaryDimension !== undefined && { primaryDimension: effectivePrimaryDimension }),
       filters: effectiveFilters,
     });
   }, [

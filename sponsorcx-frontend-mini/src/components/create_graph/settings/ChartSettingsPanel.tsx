@@ -10,9 +10,9 @@ import {
   Group,
   Text as MantineText,
 } from '@mantine/core';
-import { ChartType } from '../../../utils/chartDataAnalyzer';
-import type { LegendPosition } from '../../../types/graph';
-import { ColorPalette } from '../../../constants/colorPalettes';
+import { ChartType } from '../../../types/backend-graphql';
+import { LegendPosition, NumberFormat } from '../../../types/backend-graphql';
+import { ColorPalette } from '../../../types/backend-graphql';
 import { OrderByControl, SortOrder } from './OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
 import {
@@ -33,8 +33,8 @@ interface ChartSettingsPanelProps {
   onChartTitleChange: (title: string) => void;
 
   // Number tile specific settings
-  numberFormat?: 'currency' | 'percentage' | 'number' | 'abbreviated';
-  onNumberFormatChange?: (format: 'currency' | 'percentage' | 'number' | 'abbreviated') => void;
+  numberFormat?: NumberFormat;
+  onNumberFormatChange?: (format: NumberFormat) => void;
   numberPrecision?: number;
   onNumberPrecisionChange?: (precision: number) => void;
 
@@ -99,22 +99,22 @@ interface ChartSettingsPanelProps {
 
 // Chart types that support dimensions (for showing order by control)
 const CHARTS_WITH_DIMENSIONS: ChartType[] = [
-  'bar',
-  'stackedBar',
-  'horizontalBar',
-  'horizontalStackedBar',
-  'line',
+  ChartType.Bar,
+  ChartType.StackedBar,
+  ChartType.HorizontalBar,
+  ChartType.HorizontalStackedBar,
+  ChartType.Line,
 ];
 
 // Chart types that support stacking (for secondary dimension)
-const STACKED_CHART_TYPES: ChartType[] = ['stackedBar', 'horizontalStackedBar'];
+const STACKED_CHART_TYPES: ChartType[] = [ChartType.StackedBar, ChartType.HorizontalStackedBar];
 
 // Chart types that only display a single color (allow custom color option)
 // These charts show only one data series/color at a time
 const SINGLE_COLOR_CHART_TYPES: ChartType[] = [
-  'kpi', // KPI - single value display
-  'bar', // Shows one measure at a time
-  'horizontalBar', // Shows one measure at a time
+  ChartType.Kpi, // KPI - single value display
+  ChartType.Bar, // Shows one measure at a time
+  ChartType.HorizontalBar, // Shows one measure at a time
   // Note: 'line', 'stackedBar', 'horizontalStackedBar', 'pie' can show multiple series with different colors
 ];
 
@@ -130,17 +130,17 @@ export function ChartSettingsPanel({
   onChartTypeChange,
   chartTitle,
   onChartTitleChange,
-  numberFormat = 'number',
+  numberFormat = NumberFormat.Number,
   onNumberFormatChange,
   numberPrecision = 2,
   onNumberPrecisionChange,
-  colorPalette = 'hubspot-orange',
+  colorPalette = ColorPalette.HubspotOrange,
   onColorPaletteChange,
   primaryColor = '#FF7A59',
   onPrimaryColorChange,
-  sortOrder = 'desc',
+  sortOrder = SortOrder.Desc,
   onSortOrderChange,
-  legendPosition = 'bottom',
+  legendPosition = LegendPosition.Bottom,
   onLegendPositionChange,
   kpiValue,
   onKpiValueChange,
@@ -224,7 +224,7 @@ export function ChartSettingsPanel({
         )}
 
         {/* Max Data Points / Series Limit */}
-        {selectedChartType && selectedChartType !== 'kpi' && onMaxDataPointsChange && (
+        {selectedChartType && selectedChartType !== ChartType.Kpi && onMaxDataPointsChange && (
           <>
             <Divider />
             <Stack gap="xs">
@@ -282,15 +282,15 @@ export function ChartSettingsPanel({
 
         {/* Legend Position */}
         {selectedChartType &&
-          selectedChartType !== 'kpi' &&
-          selectedChartType !== 'pie' &&
+          selectedChartType !== ChartType.Kpi &&
+          selectedChartType !== ChartType.Pie &&
           onLegendPositionChange && (
             <Select
               label="Legend Position"
               data={[
-                { value: 'top' satisfies LegendPosition, label: 'Top' },
-                { value: 'bottom' satisfies LegendPosition, label: 'Bottom' },
-                { value: 'none' satisfies LegendPosition, label: 'None' },
+                { value: LegendPosition.Top, label: 'Top' },
+                { value: LegendPosition.Bottom, label: 'Bottom' },
+                { value: LegendPosition.None, label: 'None' },
               ]}
               value={legendPosition}
               onChange={(v) => v && onLegendPositionChange(v as LegendPosition)}
@@ -298,7 +298,7 @@ export function ChartSettingsPanel({
           )}
 
         {/* KPI Settings - for KPI charts */}
-        {selectedChartType === 'kpi' && (
+        {selectedChartType === ChartType.Kpi && (
           <>
             <Divider />
             <Title order={6}>KPI Settings</Title>
@@ -353,8 +353,8 @@ export function ChartSettingsPanel({
 
         {/* Axis Settings - for charts with axes */}
         {selectedChartType &&
-          selectedChartType !== 'kpi' &&
-          selectedChartType !== 'pie' &&
+          selectedChartType !== ChartType.Kpi &&
+          selectedChartType !== ChartType.Pie &&
           (() => {
             return (
               <>

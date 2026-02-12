@@ -5,19 +5,15 @@ export interface DashboardGridItemRow {
     id: string;
     dashboard_id: string;
     graph_id: string;
-    grid_column: number | null;
-    grid_row: number | null;
-    grid_width: number | null;
-    grid_height: number | null;
+    grid_column: number;
+    grid_row: number;
+    grid_width: number;
+    grid_height: number;
     display_order: number;
 }
 
 /**
  * Resolved DashboardGridItem type (camelCase for GraphQL).
- * Overrides: displayOrder (non-null from DB), graph excluded (resolved field, not a DB column)
+ * graph is excluded because it's a resolved field, not a DB column.
  */
-type DashboardGridItemOverrides = {
-    displayOrder: number;
-};
-
-export type DashboardGridItem = Omit<CodegenDashboardGridItem, '__typename' | 'graph' | keyof DashboardGridItemOverrides> & DashboardGridItemOverrides;
+export type DashboardGridItem = Omit<CodegenDashboardGridItem, '__typename' | 'graph'>;

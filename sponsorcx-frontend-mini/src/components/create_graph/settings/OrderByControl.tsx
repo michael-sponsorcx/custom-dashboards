@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { Group, Text, ActionIcon } from '@mantine/core';
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
+import { SortOrder } from '../../../types/backend-graphql';
 
-export type SortOrder = 'asc' | 'desc';
+export { SortOrder };
 
 export interface OrderByControlProps {
   /** Current sort order */
@@ -25,7 +26,7 @@ export function OrderByControl({
   label = 'Order By',
 }: OrderByControlProps) {
   const handleToggle = () => {
-    onSortOrderChange(sortOrder === 'asc' ? 'desc' : 'asc');
+    onSortOrderChange(sortOrder === SortOrder.Asc ? SortOrder.Desc : SortOrder.Asc);
   };
 
   return (
@@ -37,9 +38,9 @@ export function OrderByControl({
         variant="light"
         size="lg"
         onClick={handleToggle}
-        aria-label={`Sort ${sortOrder === 'asc' ? 'ascending' : 'descending'}`}
+        aria-label={`Sort ${sortOrder === SortOrder.Asc ? 'ascending' : 'descending'}`}
       >
-        {sortOrder === 'asc' ? <IconSortAscending size={18} /> : <IconSortDescending size={18} />}
+        {sortOrder === SortOrder.Asc ? <IconSortAscending size={18} /> : <IconSortDescending size={18} />}
       </ActionIcon>
     </Group>
   );
@@ -72,21 +73,21 @@ export function useSortedChartData<T extends Record<string, any>>(
 
       // Handle undefined/null values
       if (aValue == null && bValue == null) return 0;
-      if (aValue == null) return sortOrder === 'asc' ? 1 : -1;
-      if (bValue == null) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue == null) return sortOrder === SortOrder.Asc ? 1 : -1;
+      if (bValue == null) return sortOrder === SortOrder.Asc ? -1 : 1;
 
       // Sort based on type
       if (typeof aValue === 'string' && typeof bValue === 'string') {
         // String comparison (case-insensitive)
         const comparison = aValue.toLowerCase().localeCompare(bValue.toLowerCase());
-        return sortOrder === 'asc' ? comparison : -comparison;
+        return sortOrder === SortOrder.Asc ? comparison : -comparison;
       } else if (typeof aValue === 'number' && typeof bValue === 'number') {
         // Numeric comparison
-        return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+        return sortOrder === SortOrder.Asc ? aValue - bValue : bValue - aValue;
       } else {
         // Fallback to string comparison
         const comparison = String(aValue).localeCompare(String(bValue));
-        return sortOrder === 'asc' ? comparison : -comparison;
+        return sortOrder === SortOrder.Asc ? comparison : -comparison;
       }
     });
 

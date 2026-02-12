@@ -1,12 +1,6 @@
-export type ChartType =
-  | 'kpi'
-  | 'line'
-  | 'bar'
-  | 'stackedBar'
-  | 'horizontalBar'
-  | 'horizontalStackedBar'
-  | 'pie'
-  | 'table';
+import { ChartType } from '../types/backend-graphql';
+
+export { ChartType };
 
 export interface ChartCompatibility {
   compatibleCharts: ChartType[];
@@ -37,7 +31,7 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
         measures: [],
         dimensions: [],
       },
-      recommendation: 'kpi',
+      recommendation: ChartType.Kpi,
     };
   }
 
@@ -74,39 +68,39 @@ export function analyzeChartCompatibility(data: any): ChartCompatibility {
   const compatibleCharts: ChartType[] = [];
 
   // Rule 0: Table is always available (can display any data structure)
-  compatibleCharts.push('table');
+  compatibleCharts.push(ChartType.Table);
 
   // Rule 1: KPI is always available if there's at least one measure
   if (measureCount >= 1) {
-    compatibleCharts.push('kpi');
+    compatibleCharts.push(ChartType.Kpi);
   }
 
   // Rule 2: Multiple rows with at least 1 measure and 1 dimension → Line and all Bar variants + Pie
   if (rowCount > 1 && measureCount >= 1 && dimensionCount >= 1) {
-    compatibleCharts.push('line', 'bar', 'horizontalBar', 'pie');
+    compatibleCharts.push(ChartType.Line, ChartType.Bar, ChartType.HorizontalBar, ChartType.Pie);
 
     // Stacked variants available if multiple measures OR multiple dimensions
     // Multiple dimensions allow stacking by category (e.g., revenue by year AND region)
     if (measureCount > 1 || dimensionCount > 1) {
-      compatibleCharts.push('stackedBar', 'horizontalStackedBar');
+      compatibleCharts.push(ChartType.StackedBar, ChartType.HorizontalStackedBar);
     }
   }
   // Rule 3: Multiple rows with measures but no dimensions → Bar chart variants
   else if (rowCount > 1 && measureCount >= 1 && dimensionCount === 0) {
-    compatibleCharts.push('bar', 'horizontalBar');
+    compatibleCharts.push(ChartType.Bar, ChartType.HorizontalBar);
     if (measureCount > 1) {
-      compatibleCharts.push('stackedBar', 'horizontalStackedBar');
+      compatibleCharts.push(ChartType.StackedBar, ChartType.HorizontalStackedBar);
     }
   }
 
   // Default recommendation logic
-  let recommendation: ChartType = 'kpi';
-  if (compatibleCharts.includes('line')) {
-    recommendation = 'line'; // Prefer line for time series
-  } else if (compatibleCharts.includes('bar')) {
-    recommendation = 'bar';
-  } else if (compatibleCharts.includes('kpi')) {
-    recommendation = 'kpi';
+  let recommendation: ChartType = ChartType.Kpi;
+  if (compatibleCharts.includes(ChartType.Line)) {
+    recommendation = ChartType.Line; // Prefer line for time series
+  } else if (compatibleCharts.includes(ChartType.Bar)) {
+    recommendation = ChartType.Bar;
+  } else if (compatibleCharts.includes(ChartType.Kpi)) {
+    recommendation = ChartType.Kpi;
   }
 
   return {

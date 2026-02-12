@@ -12,4 +12,4 @@ export {
   deleteGraph,
 } from './crud';
 
-export { toGraphInput, mapBackendChartType } from './mappers';
+export { toGraphInput } from './mappers';

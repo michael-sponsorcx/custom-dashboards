@@ -2,8 +2,8 @@ import { useMemo, memo } from 'react';
 import { PieChart } from '@mantine/charts';
 import { transformChartData } from '../../../utils/chartDataTransformations';
 import { NumberFormatType } from '../../../utils/numberFormatter';
-import type { LegendPosition } from '../../../types/graph';
-import type { ColorPalette } from '../../../constants/colorPalettes';
+import type { LegendPosition } from '../../../types/backend-graphql';
+import { ChartType, ColorPalette } from '../../../types/backend-graphql';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';
 import { EmptyState } from '../utils/EmptyState';
@@ -30,7 +30,7 @@ interface MantinePieChartProps {
 export const MantinePieChart = memo(function MantinePieChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = 'hubspot-orange',
+  colorPalette = ColorPalette.HubspotOrange,
   primaryDimension,
   selectedMeasure,
   numberFormat = 'number',
@@ -48,7 +48,7 @@ export const MantinePieChart = memo(function MantinePieChart({
   const transformationResult = useMemo(
     () =>
       transformChartData({
-        chartType: 'pie',
+        chartType: ChartType.Pie,
         cubeData: queryResult,
         primaryColor,
         getColorFn,

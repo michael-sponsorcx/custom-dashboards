@@ -3,13 +3,13 @@ export interface CubeView {
   title?: string;
 }
 
-export interface CubeMeasure {
+export interface CubeMeasureUI {
   name: string;
   title?: string;
   type: string;
 }
 
-export interface CubeDimension {
+export interface CubeDimensionUI {
   name: string;
   title?: string;
   type: string;

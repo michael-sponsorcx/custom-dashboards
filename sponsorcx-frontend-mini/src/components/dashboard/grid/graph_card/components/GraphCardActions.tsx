@@ -9,7 +9,7 @@ import {
   IconBell,
 } from '@tabler/icons-react';
 import type { DrillDownState } from '../hooks/useGraphDrillDown';
-import type { ChartType } from '../../../../../utils/chartDataAnalyzer';
+import type { ChartType } from '../../../../../types/backend-graphql';
 
 /**
  * Props for GraphCardActions component
