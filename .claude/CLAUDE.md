@@ -67,6 +67,22 @@ The backend uses uppercase GraphQL enum values (e.g., `ChartType.Bar`, `SortOrde
 - Example: `'asc'` → `SortOrder.Asc`, `'bar'` → `ChartType.Bar`, `'horizontalStackedBar'` → `ChartType.Bar`
 - The graph API services already use this mapper, so you don't need to worry about enum conversion when using those services
 
+## Architecture Rules
+
+**IMPORTANT:** Enums must be shared across the entire frontend and backend. Never define enums independently on either side.
+
+- All enums are defined once in the backend GraphQL schema (`sponsorcx-backend-mini/src/graphql/types.ts`)
+- TypeScript enums are auto-generated via `yarn codegen` and synced to the frontend via `yarn codegen:sync`
+- The frontend must import enums from `sponsorcx-frontend-mini/src/types/backend-graphql.ts` — never define duplicate or parallel enum types
+- When a new enum is needed, add it to the backend schema first, then run `yarn codegen:sync`
+
+**IMPORTANT:** All frontend API calls must conform to the GraphQL backend schema.
+
+- The generated types in `backend-graphql.ts` are the single source of truth for request/response shapes
+- Frontend service functions must use the generated input types (e.g., `GraphInput`, `DashboardInput`) for mutations
+- Frontend must use the generated output types (e.g., `Graph`, `Dashboard`) for query responses
+- Do not create ad-hoc request/response types that diverge from the schema
+
 ## SQL Schema Guidelines
 
 **IMPORTANT:** Follow these conventions when creating or editing database schema files.
