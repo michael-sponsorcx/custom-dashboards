@@ -10,7 +10,8 @@
  */
 
 import { executeBackendGraphQL } from '../../core/client';
-import type { DashboardScheduleFormData, FrequencyInterval } from '../../../types/dashboard-schedules';
+import { FrequencyInterval, AttachmentType } from '../../../types/backend-graphql';
+import type { DashboardScheduleFormData } from '../../../types/dashboard-schedules';
 
 /**
  * Dashboard Schedule type returned from the API
@@ -34,7 +35,7 @@ export interface DashboardSchedule {
   timeZone?: string;
   hasGatingCondition?: boolean;
   gatingCondition?: Record<string, unknown>;
-  attachmentType?: string;
+  attachmentType?: AttachmentType;
   recipients?: string[];
   isActive?: boolean;
   cronExpression?: string;
@@ -50,7 +51,7 @@ export interface DashboardScheduleInput {
   createdById: string;
   scheduleName: string;
   comment?: string;
-  frequencyInterval: string;
+  frequencyInterval: FrequencyInterval;
   minuteInterval?: number;
   hourInterval?: number;
   scheduleHour?: number;
@@ -61,7 +62,7 @@ export interface DashboardScheduleInput {
   timeZone?: string;
   hasGatingCondition?: boolean;
   gatingCondition?: Record<string, unknown>;
-  attachmentType?: string;
+  attachmentType?: AttachmentType;
   recipients?: string[];
   isActive?: boolean;
 }
@@ -110,30 +111,12 @@ const toDashboardScheduleInput = (
         .filter((n: number) => !isNaN(n))
     : undefined;
 
-  // Map frontend frequency interval to backend enum format
-  const frequencyIntervalMap: Record<string, string> = {
-    n_minute: 'N_MINUTE',
-    hour: 'HOUR',
-    day: 'DAY',
-    week: 'WEEK',
-    month: 'MONTH',
-  };
-
-  // Map frontend attachment type to backend enum format
-  const attachmentTypeMap: Record<string, string> = {
-    PDF: 'PDF',
-    Excel: 'EXCEL',
-    CSV: 'CSV',
-  };
-
   return {
     dashboardId,
     createdById,
     scheduleName: formData.scheduleName || '',
     comment: formData.addComment ? formData.comment : undefined,
-    frequencyInterval: formData.frequencyInterval
-      ? frequencyIntervalMap[formData.frequencyInterval] || formData.frequencyInterval.toUpperCase()
-      : 'DAY',
+    frequencyInterval: formData.frequencyInterval ?? FrequencyInterval.Day,
     minuteInterval: formData.minuteInterval ? parseInt(formData.minuteInterval, 10) : undefined,
     hourInterval: formData.hourInterval ? parseInt(formData.hourInterval, 10) : undefined,
     scheduleHour: formData.hour ? parseInt(formData.hour, 10) : undefined,
@@ -143,9 +126,7 @@ const toDashboardScheduleInput = (
     monthDates,
     timeZone: formData.timeZone,
     hasGatingCondition: formData.addGatingCondition,
-    attachmentType: formData.attachmentType
-      ? attachmentTypeMap[formData.attachmentType] || formData.attachmentType
-      : undefined,
+    attachmentType: formData.attachmentType,
     recipients: formData.recipients,
     isActive: true,
   };
