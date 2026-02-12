@@ -5,7 +5,8 @@
  * Routes to the appropriate service based on alert type.
  */
 
-import type { KPIFormData, KPIAlertType } from '../../../types/kpi-alerts';
+import type { KPIFormData } from '../../../types/kpi-alerts';
+import { AlertType } from '../../../types/backend-graphql';
 import type { KpiSchedule, KpiThreshold } from '../../../types/backend-graphql';
 import { createKpiSchedule } from './schedules';
 import { createKpiThreshold } from './thresholds';
@@ -20,9 +21,9 @@ export const createKpiAlert = async (
   dashboardId: string,
   createdById: string
 ): Promise<KpiSchedule | KpiThreshold> => {
-  const alertType: KPIAlertType = formData.alertType || 'threshold';
+  const alertType = formData.alertType || AlertType.Threshold;
 
-  if (alertType === 'scheduled') {
+  if (alertType === AlertType.Schedule) {
     return createKpiSchedule(graphId, formData, organizationId, dashboardId, createdById);
   } else {
     return createKpiThreshold(graphId, formData, organizationId, dashboardId, createdById);

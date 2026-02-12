@@ -1,4 +1,4 @@
-import type { Graph as CodegenGraph } from '../../generated/graphql';
+import type { ChartType, SortOrder, NumberFormat, ColorPalette, LegendPosition } from '../../generated/graphql';
 
 /** Database row type for graphs table (snake_case) */
 export interface GraphRow {
@@ -6,20 +6,20 @@ export interface GraphRow {
     organization_id: string | null;
     name: string;
     view_name: string | null;
-    chart_type: string;
+    chart_type: ChartType;
     chart_title: string | null;
     measures: string[];
     dimensions: string[];
     dates: string[];
     filters: unknown;
     order_by_field: string;
-    order_by_direction: string;
-    number_format: string;
+    order_by_direction: SortOrder;
+    number_format: NumberFormat;
     number_precision: number;
-    color_palette: string;
+    color_palette: ColorPalette;
     primary_color: string;
-    sort_order: string;
-    legend_position: string;
+    sort_order: SortOrder;
+    legend_position: LegendPosition;
     kpi_value: string | null;
     kpi_label: string | null;
     kpi_secondary_value: string | null;
@@ -40,36 +40,42 @@ export interface GraphRow {
     updated_at: Date;
 }
 
-/**
- * Resolved Graph type (camelCase for GraphQL).
- *
- * Based on codegen Graph with overrides for fields where the DB representation
- * differs from the GraphQL schema type:
- * - Date fields: pg returns Date objects, GraphQL serializes to string
- * - Enum fields: DB stores plain strings, codegen uses enum types
- * - Nullability: DB columns may be nullable where schema marks required
- * - filters: DB returns unknown, codegen expects Record<string, unknown>
- */
-type GraphOverrides = {
+/** Resolved Graph type (camelCase for GraphQL) */
+export interface Graph {
+    id: string;
+    organizationId: string | null;
+    name: string;
     viewName: string | null;
-    chartType: string;
+    chartType: ChartType;
     chartTitle: string | null;
     measures: string[];
     dimensions: string[];
     dates: string[];
     filters: unknown;
-    orderByDirection: string;
-    numberFormat: string;
-    colorPalette: string;
-    sortOrder: string;
-    legendPosition: string;
+    orderByField: string;
+    orderByDirection: SortOrder;
+    numberFormat: NumberFormat;
+    numberPrecision: number;
+    colorPalette: ColorPalette;
+    primaryColor: string;
+    sortOrder: SortOrder;
+    legendPosition: LegendPosition;
+    kpiValue: number | null;
+    kpiLabel: string | null;
+    kpiSecondaryValue: number | null;
+    kpiSecondaryLabel: string | null;
     kpiShowTrend: boolean;
+    kpiTrendPercentage: number | null;
     showXAxisGridLines: boolean;
     showYAxisGridLines: boolean;
     showGridLines: boolean;
     showRegressionLine: boolean;
+    xAxisLabel: string | null;
+    yAxisLabel: string | null;
+    maxDataPoints: number;
+    primaryDimension: string;
+    secondaryDimension: string | null;
+    selectedMeasure: string;
     createdAt: Date;
     updatedAt: Date;
-};
-
-export type Graph = Omit<CodegenGraph, '__typename' | keyof GraphOverrides> & GraphOverrides;
+}

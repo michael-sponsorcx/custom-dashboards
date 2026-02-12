@@ -1,5 +1,3 @@
-import type { Dashboard as CodegenDashboard } from '../../generated/graphql';
-
 /** Database row type for dashboards table (snake_case) */
 export interface DashboardRow {
     id: string;
@@ -10,14 +8,12 @@ export interface DashboardRow {
     updated_at: Date;
 }
 
-/**
- * Resolved Dashboard type (camelCase for GraphQL).
- * Overrides: date fields (pg Date vs codegen string), layout (string vs LayoutType enum)
- */
-type DashboardOverrides = {
+/** Resolved Dashboard type (camelCase for GraphQL) */
+export interface Dashboard {
+    id: string;
+    organizationId: string | null;
+    name: string;
     layout: string;
     createdAt: Date;
     updatedAt: Date;
-};
-
-export type Dashboard = Omit<CodegenDashboard, '__typename' | keyof DashboardOverrides> & DashboardOverrides;
+}

@@ -8,5 +8,4 @@ export {
   calculateNextExecution,
   generateCronExpression,
   type KpiScheduleRecord,
-  type FrequencyInterval,
 } from './calculateNextExecution';

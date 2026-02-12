@@ -2,6 +2,7 @@
  * Shared types for GraphQL utilities (builder and validator)
  */
 
+import type { SortOrder } from '../../types/backend-graphql';
 import { FilterRule } from '../../types/filters';
 
 /**
@@ -12,7 +13,7 @@ export interface QueryBuilderParams {
   measures: string[];
   dimensions: string[];
   timeDimensions: string[];
-  orderBy?: { field: string; direction: 'asc' | 'desc' };
+  orderBy?: { field: string; direction: SortOrder };
   limit?: number;
   timezone?: string;
   filters?: FilterRule[];

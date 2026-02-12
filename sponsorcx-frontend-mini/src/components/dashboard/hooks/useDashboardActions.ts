@@ -82,21 +82,17 @@ export function useDashboardActions({
         throw new Error('No dashboard selected');
       }
 
-      // Find the grid item ID for this graph
       const gridItems = await fetchDashboardGridItems(dashboardId);
       const gridItem = gridItems.find((item) => item.graphId === graphId);
 
       if (gridItem) {
         await updateDashboardGridItem(gridItem.id, graphId, {
-          gridColumn: gridItem.gridColumn,
-          gridRow: gridItem.gridRow,
           gridWidth: width,
           gridHeight: height,
         });
       }
     } catch (error) {
       console.error('Failed to update graph size:', error);
-      // Don't show alert for resize failures to avoid annoying the user
     }
   };
 
@@ -112,7 +108,6 @@ export function useDashboardActions({
         throw new Error('No dashboard selected');
       }
 
-      // Find the grid item ID for this graph
       const gridItems = await fetchDashboardGridItems(dashboardId);
       const gridItem = gridItems.find((item) => item.graphId === graphId);
 
@@ -120,13 +115,10 @@ export function useDashboardActions({
         await updateDashboardGridItem(gridItem.id, graphId, {
           gridColumn: column,
           gridRow: row,
-          gridWidth: gridItem.gridWidth,
-          gridHeight: gridItem.gridHeight,
         });
       }
     } catch (error) {
       console.error('Failed to update graph position:', error);
-      // Don't show alert for move failures to avoid annoying the user
     }
   };
 

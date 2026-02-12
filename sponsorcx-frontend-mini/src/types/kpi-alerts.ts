@@ -6,18 +6,8 @@
  * and related data structures.
  */
 
-import { FrequencyInterval, ThresholdCondition } from './backend-graphql';
+import { AlertType, FrequencyInterval, ThresholdCondition } from './backend-graphql';
 import type { DayOfWeek } from './schedule-common';
-
-/**
- * Type of KPI alert
- */
-export type KPIAlertType =
-  | 'threshold'
-  | 'scheduled';
-  // | 'attribute-threshold'
-  // | 'attribute-scheduled'
-  // | 'anomaly';
 
 /**
  * Alert details for threshold-based alerts
@@ -56,9 +46,9 @@ export interface ScheduledAlertDetails {
 /**
  * KPI Alert Type Definition for UI selection
  */
-export interface KPIAlertTypeDefinition {
+export interface AlertTypeDefinition {
   /** Unique identifier for the alert type */
-  id: KPIAlertType;
+  id: AlertType;
   /** Display title for the alert type */
   title: string;
   /** Example description of what this alert does */
@@ -104,7 +94,7 @@ export interface KPIAlertTileProps {
  */
 export interface KPIFormData {
   /** Type of alert being configured */
-  alertType?: KPIAlertType;
+  alertType?: AlertType;
   /** Alert-specific details (varies by alert type) */
   alertDetails?: ThresholdAlertDetails | ScheduledAlertDetails;
   /** Optional custom message to include in alert notifications */

@@ -49,16 +49,28 @@ export interface CacheConfig {
 }
 
 /**
- * Default cache key generator
- * Combines method, URL, and params to create unique cache key
+ * Simple string hash (djb2) for generating short, deterministic cache keys.
+ * Avoids storing entire request bodies as localStorage keys.
  */
-function defaultKeyGenerator(config: InternalAxiosRequestConfig): string {
+const hashString = (str: string): string => {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0).toString(36);
+};
+
+/**
+ * Default cache key generator
+ * Hashes the combination of method, URL, params, and data to produce a short key
+ */
+const defaultKeyGenerator = (config: InternalAxiosRequestConfig): string => {
   const method = config.method?.toUpperCase() || 'GET';
   const url = config.url || '';
   const params = config.params ? JSON.stringify(config.params) : '';
   const data = config.data ? JSON.stringify(config.data) : '';
-  return `${method}:${url}:${params}:${data}`;
-}
+  return hashString(`${method}:${url}:${params}:${data}`);
+};
 
 /**
  * Cache store for axios responses using localStorage
@@ -154,6 +166,49 @@ class AxiosCache {
   }
 
   /**
+   * Evict expired cache entries, then oldest entries if needed to free space.
+   */
+  private evict(): void {
+    const now = Date.now();
+    const entries: Array<{ key: string; timestamp: number; expired: boolean }> = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key?.startsWith(this.storagePrefix)) continue;
+
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const entry: CacheEntry<unknown> = JSON.parse(raw);
+        const expired = now - entry.timestamp > entry.ttl;
+        entries.push({ key, timestamp: entry.timestamp, expired });
+      } catch {
+        // Corrupt entry — remove it
+        localStorage.removeItem(key);
+      }
+    }
+
+    // Remove all expired entries first
+    const expired = entries.filter((e) => e.expired);
+    expired.forEach((e) => localStorage.removeItem(e.key));
+
+    if (showCacheLogs && expired.length > 0) {
+      console.log(`🗑️ [AxiosCache] Evicted ${expired.length} expired entries`);
+    }
+
+    // If no expired entries were removed, remove the oldest entry to make room
+    if (expired.length === 0) {
+      const oldest = entries.sort((a, b) => a.timestamp - b.timestamp)[0];
+      if (oldest) {
+        localStorage.removeItem(oldest.key);
+        if (showCacheLogs) {
+          console.log(`🗑️ [AxiosCache] Evicted oldest entry to free space`);
+        }
+      }
+    }
+  }
+
+  /**
    * Set response in cache with custom or default TTL
    */
   set(key: string, response: AxiosResponse, ttl?: number): void {
@@ -162,26 +217,30 @@ class AxiosCache {
     }
 
     const cacheTTL = ttl ?? this.config.defaultTTL;
+    const storageKey = this.getStorageKey(key);
+    const serialized = JSON.stringify({
+      data: response,
+      timestamp: Date.now(),
+      ttl: cacheTTL,
+    } satisfies CacheEntry<AxiosResponse>);
 
     try {
-      const storageKey = this.getStorageKey(key);
-
-      const entry: CacheEntry<AxiosResponse> = {
-        data: response,
-        timestamp: Date.now(),
-        ttl: cacheTTL,
-      };
-
-      localStorage.setItem(storageKey, JSON.stringify(entry));
-
-      if (showCacheLogs) {
-        console.log(`💾 [AxiosCache] Cached (TTL: ${cacheTTL}ms) ${key.slice(0, 100)}`);
+      localStorage.setItem(storageKey, serialized);
+    } catch {
+      // Quota exceeded — evict stale/old entries and retry once
+      this.evict();
+      try {
+        localStorage.setItem(storageKey, serialized);
+      } catch {
+        if (showCacheLogs) {
+          console.warn('❗ [AxiosCache] Cache write failed after eviction — skipping');
+        }
+        return;
       }
-    } catch (error) {
-      // If localStorage fails, fail silently
-      if (showCacheLogs) {
-        console.error('❗ [AxiosCache] Cache write failed:', error);
-      }
+    }
+
+    if (showCacheLogs) {
+      console.log(`💾 [AxiosCache] Cached (TTL: ${cacheTTL}ms) key: ${key}`);
     }
   }
 

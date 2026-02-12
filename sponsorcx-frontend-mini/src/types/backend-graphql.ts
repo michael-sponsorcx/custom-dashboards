@@ -198,13 +198,13 @@ export type DashboardFilterInput = {
 export type DashboardGridItem = {
   __typename?: 'DashboardGridItem';
   dashboardId: Scalars['ID']['output'];
-  displayOrder: Scalars['Int']['output'];
+  displayOrder?: Maybe<Scalars['Int']['output']>;
   graph?: Maybe<Graph>;
   graphId: Scalars['ID']['output'];
-  gridColumn: Scalars['Int']['output'];
-  gridHeight: Scalars['Int']['output'];
-  gridRow: Scalars['Int']['output'];
-  gridWidth: Scalars['Int']['output'];
+  gridColumn?: Maybe<Scalars['Int']['output']>;
+  gridHeight?: Maybe<Scalars['Int']['output']>;
+  gridRow?: Maybe<Scalars['Int']['output']>;
+  gridWidth?: Maybe<Scalars['Int']['output']>;
   id: Scalars['ID']['output'];
 };
 
@@ -806,13 +806,13 @@ export type DashboardFilterResolvers<ContextType = any, ParentType extends Resol
 
 export type DashboardGridItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['DashboardGridItem'] = ResolversParentTypes['DashboardGridItem']> = ResolversObject<{
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  displayOrder?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  displayOrder?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType>;
   graphId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  gridColumn?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  gridHeight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  gridRow?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  gridWidth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gridColumn?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  gridHeight?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  gridRow?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  gridWidth?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 

@@ -3,20 +3,21 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { KPIAlertTile } from './KPIAlertTile';
 import { KPIAlertModalConfigureTab } from './KPIAlertModalConfigureTab';
-import type { KPIAlertModalProps, KPIAlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
+import type { KPIAlertModalProps, AlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
+import { AlertType } from '../../types/backend-graphql';
 import { createKpiAlert } from '../../api/app/kpi';
 
 /**
  * Fixed list of KPI alert types available to users
  */
-const KPI_ALERT_TYPES: KPIAlertTypeDefinition[] = [
+const KPI_ALERT_TYPES: AlertTypeDefinition[] = [
   {
-    id: 'threshold',
+    id: AlertType.Threshold,
     title: 'KPI crosses a set limit',
     example: 'Receive an alert when monthly sales is less than 50,000',
   },
   {
-    id: 'scheduled',
+    id: AlertType.Schedule,
     title: 'Regular KPI updates',
     example: 'Receive a weekly update from monthly sales every Monday at 9 a.m.',
   },
@@ -49,7 +50,7 @@ const KPI_ALERT_TYPES: KPIAlertTypeDefinition[] = [
  * - Footer: Cancel and Next buttons
  */
 export const KPIAlertModal = ({ opened, onClose, graphId, organizationId, dashboardId, userId }: KPIAlertModalProps) => {
-  const [selectedAlertType, setSelectedAlertType] = useState<KPIAlertTypeDefinition | null>(null);
+  const [selectedAlertType, setSelectedAlertType] = useState<AlertTypeDefinition | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>('select-type');
   const [kpiFormData, setKpiFormData] = useState<KPIFormData>({});
 

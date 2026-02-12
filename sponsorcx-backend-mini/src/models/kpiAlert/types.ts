@@ -1,4 +1,4 @@
-import type { KpiAlert as CodegenKpiAlert } from '../../generated/graphql';
+import type { AlertType } from '../../generated/graphql';
 
 /** Base alert input fields common to schedules and thresholds */
 export interface BaseAlertInput {
@@ -18,7 +18,7 @@ export interface NormalizedAlertInput {
     dashboardId: string | null;
     createdById: string | null;
     alertName: string;
-    alertType: 'schedule' | 'threshold';
+    alertType: AlertType;
     comment: string | null;
     recipients: string[];
     isActive: boolean;
@@ -33,7 +33,7 @@ export interface AlertRowColumns {
     dashboard_id: string | null;
     created_by_id: string | null;
     alert_name: string;
-    alert_type: string;
+    alert_type: AlertType;
     comment: string | null;
     recipients: string[];
     is_active: boolean;
@@ -41,21 +41,34 @@ export interface AlertRowColumns {
     updated_at: Date;
 }
 
-/**
- * Resolved KpiAlert type (camelCase for GraphQL).
- * Overrides: date fields, nullable IDs, alertType (string vs enum),
- * recipients (non-null array), isActive (non-null boolean)
- */
-type KpiAlertOverrides = {
+/** Resolved KpiAlert type (camelCase for GraphQL) */
+export interface KpiAlert {
+    id: string;
+    cronJobId: string;
     organizationId: string | null;
     graphId: string | null;
     dashboardId: string | null;
     createdById: string | null;
-    alertType: string;
+    alertName: string;
+    alertType: AlertType;
+    comment: string | null;
     recipients: string[];
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
-};
+}
 
-export type KpiAlert = Omit<CodegenKpiAlert, '__typename' | keyof KpiAlertOverrides> & KpiAlertOverrides;
+/** Base kpi_alerts DB row (snake_case, uses kpi_alert_id alias) */
+export interface KpiAlertRow {
+    cron_job_id: string;
+    kpi_alert_id: string;
+    organization_id: string | null;
+    graph_id: string | null;
+    dashboard_id: string | null;
+    created_by_id: string | null;
+    alert_name: string;
+    alert_type: AlertType;
+    comment: string | null;
+    recipients: string[];
+    is_active: boolean;
+}

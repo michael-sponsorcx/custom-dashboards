@@ -14,9 +14,10 @@ import { executeCubeGraphQL } from '../../../api';
 import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
 import { analyzeChartCompatibility } from '../../../utils/chartDataAnalyzer';
 import { ChartType } from '../../../types/backend-graphql';
+import type { SortOrder } from '../../../types/backend-graphql';
 import { ViewFields } from '../types';
 import { FilterRule } from '../../../types/filters';
-import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
+import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 
 interface UseQueryExecutionOptions {
   selectedView: string | null;
@@ -26,7 +27,7 @@ interface UseQueryExecutionOptions {
   selectedDates: Set<string>;
   filters: FilterRule[];
   orderByField?: string;
-  orderByDirection?: 'asc' | 'desc';
+  orderByDirection?: SortOrder;
   isEditing: boolean;
   selectedChartType: ChartType | null;
   setSelectedChartType: (type: ChartType | null) => void;
@@ -68,14 +69,14 @@ export function useQueryExecution(options: UseQueryExecutionOptions) {
     if (!selectedView) return '';
 
     const selectedMeasuresList = viewFields.measures
-      .filter((m: CubeMeasureUI) => selectedMeasures.has(m.name))
-      .map((m: CubeMeasureUI) => m.name);
+      .filter((m: CubeMeasureMeta) => selectedMeasures.has(m.name))
+      .map((m: CubeMeasureMeta) => m.name);
     const selectedDimensionsList = viewFields.dimensions
-      .filter((d: CubeDimensionUI) => selectedDimensions.has(d.name))
-      .map((d: CubeDimensionUI) => d.name);
+      .filter((d: CubeDimensionMeta) => selectedDimensions.has(d.name))
+      .map((d: CubeDimensionMeta) => d.name);
     const selectedDatesList = viewFields.dates
-      .filter((d: CubeDimensionUI) => selectedDates.has(d.name))
-      .map((d: CubeDimensionUI) => d.name);
+      .filter((d: CubeDimensionMeta) => selectedDates.has(d.name))
+      .map((d: CubeDimensionMeta) => d.name);
 
     // Only generate query if at least one field is selected
     if (

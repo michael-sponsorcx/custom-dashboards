@@ -2,7 +2,7 @@
  * Shared types for CreateGraph component and its hooks
  */
 
-import { CubeMeasureUI, CubeDimensionUI } from '../../types/cube';
+import { CubeMeasureMeta, CubeDimensionMeta } from '../../types/cube';
 import { ChartType } from '../../types/backend-graphql';
 import { SortOrder } from './settings/OrderByControl';
 import type { LegendPosition, NumberFormat } from '../../types/backend-graphql';
@@ -12,9 +12,9 @@ import type { ColorPalette } from '../../types/backend-graphql';
  * View fields structure
  */
 export interface ViewFields {
-  measures: CubeMeasureUI[];
-  dimensions: CubeDimensionUI[];
-  dates: CubeDimensionUI[];
+  measures: CubeMeasureMeta[];
+  dimensions: CubeDimensionMeta[];
+  dates: CubeDimensionMeta[];
 }
 
 /**

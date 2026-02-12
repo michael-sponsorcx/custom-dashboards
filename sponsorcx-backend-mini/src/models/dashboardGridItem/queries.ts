@@ -32,28 +32,48 @@ export const addGridItem = async (dashboardId: string, input: DashboardGridItemI
         input.gridRow ?? null,
         input.gridWidth ?? null,
         input.gridHeight ?? null,
-        input.displayOrder ?? 0,
+        input.displayOrder ?? null,
     ];
     const result = await typedQuery<DashboardGridItemRow>(sql, params);
     return dashboardGridItemToCamelCase(result.rows[0]);
 };
 
 export const updateGridItem = async (id: string, input: DashboardGridItemInput): Promise<DashboardGridItem | null> => {
+    const setClauses: string[] = [];
+    const params: (string | number | null)[] = [id];
+    let paramIndex = 2;
+
+    if (input.gridColumn != null) {
+        setClauses.push(`grid_column = $${paramIndex++}`);
+        params.push(input.gridColumn);
+    }
+    if (input.gridRow != null) {
+        setClauses.push(`grid_row = $${paramIndex++}`);
+        params.push(input.gridRow);
+    }
+    if (input.gridWidth != null) {
+        setClauses.push(`grid_width = $${paramIndex++}`);
+        params.push(input.gridWidth);
+    }
+    if (input.gridHeight != null) {
+        setClauses.push(`grid_height = $${paramIndex++}`);
+        params.push(input.gridHeight);
+    }
+    if (input.displayOrder != null) {
+        setClauses.push(`display_order = $${paramIndex++}`);
+        params.push(input.displayOrder);
+    }
+
+    if (setClauses.length === 0) {
+        return null;
+    }
+
     const sql = `
         UPDATE dashboard_grid_items
-        SET grid_column = $2, grid_row = $3, grid_width = $4,
-            grid_height = $5, display_order = $6
+        SET ${setClauses.join(', ')}
         WHERE id = $1
         RETURNING *
     `;
-    const params = [
-        id,
-        input.gridColumn ?? null,
-        input.gridRow ?? null,
-        input.gridWidth ?? null,
-        input.gridHeight ?? null,
-        input.displayOrder ?? 0,
-    ];
     const result = await typedQuery<DashboardGridItemRow>(sql, params);
     return result.rows[0] ? dashboardGridItemToCamelCase(result.rows[0]) : null;
 };

@@ -1,65 +1,11 @@
 import { CronJob } from 'cron';
 import { pool } from '../db/connection';
 import { logger } from './cronService';
-import type { CronJobRow } from '../models';
+import type { CronJobRow, KpiAlertRow, KpiScheduleAlertRow, KpiThresholdTableRow } from '../models';
+import { ThresholdCondition, FrequencyInterval, AlertType } from '../generated/graphql';
 import { fetchKpiValue } from './kpiValueFetcher';
 
 const showCronLogs = process.env.SHOW_CRON_LOGS === 'true';
-
-interface AlertData {
-    cron_job_id: string;
-    kpi_alert_id: bigint;
-    organization_id: bigint;
-    graph_id: bigint | null;
-    dashboard_id: bigint;
-    created_by_id: bigint;
-    alert_name: string;
-    alert_type: 'schedule' | 'threshold';
-    comment: string | null;
-    recipients: string[];
-    is_active: boolean;
-}
-
-interface KpiSchedule {
-    id: bigint;
-    kpi_alert_id: bigint;
-    frequency_interval: 'n_minute' | 'hour' | 'day' | 'week' | 'month';
-    minute_interval: number | null;
-    hour_interval: number | null;
-    schedule_hour: number | null;
-    schedule_minute: number | null;
-    selected_days: string[];
-    exclude_weekends: boolean;
-    month_dates: number[];
-    time_zone: string;
-    has_gating_condition: boolean;
-    gating_condition: Record<string, unknown> | null;
-    attachment_type: 'PDF' | 'Excel' | 'CSV' | null;
-    cron_expression: string | null;
-}
-
-interface KpiThreshold {
-    id: bigint;
-    kpi_alert_id: bigint;
-    condition: 'GREATER_THAN' | 'GREATER_THAN_OR_EQUAL' | 'LESS_THAN' | 'LESS_THAN_OR_EQUAL' | 'EQUAL_TO' | 'NOT_EQUAL_TO';
-    threshold_value: number;
-    time_zone: string;
-}
-
-interface ScheduleAlertWithConfig extends AlertData {
-    frequency_interval: 'n_minute' | 'hour' | 'day' | 'week' | 'month';
-    minute_interval: number | null;
-    hour_interval: number | null;
-    schedule_hour: number | null;
-    schedule_minute: number | null;
-    selected_days: string[];
-    exclude_weekends: boolean;
-    month_dates: number[];
-    time_zone: string;
-    has_gating_condition: boolean;
-    gating_condition: Record<string, unknown> | null;
-    attachment_type: 'PDF' | 'Excel' | 'CSV' | null;
-}
 
 // Track registered cron jobs for cleanup
 const registeredCronJobs = new Map<string, CronJob>();
@@ -67,33 +13,33 @@ const registeredCronJobs = new Map<string, CronJob>();
 /**
  * Generate cron expression from schedule configuration
  */
-const generateCronExpression = (schedule: Pick<ScheduleAlertWithConfig, 'frequency_interval' | 'minute_interval' | 'hour_interval' | 'schedule_hour' | 'schedule_minute' | 'selected_days' | 'month_dates'>): string => {
+const generateCronExpression = (schedule: Pick<KpiScheduleAlertRow, 'frequency_interval' | 'minute_interval' | 'hour_interval' | 'schedule_hour' | 'schedule_minute' | 'selected_days' | 'month_dates'>): string => {
     const { frequency_interval, minute_interval, hour_interval, schedule_hour,
             schedule_minute, selected_days, month_dates } = schedule;
 
     switch (frequency_interval) {
-        case 'n_minute':
+        case FrequencyInterval.NMinute:
             // Every N minutes: */5, */10, */15, etc.
             if (!minute_interval) {
                 throw new Error('minute_interval is required for n_minute frequency');
             }
             return `*/${minute_interval} * * * *`;
 
-        case 'hour':
+        case FrequencyInterval.Hour:
             // Every N hours at minute 0: 0 */2 * * *
             if (!hour_interval) {
                 throw new Error('hour_interval is required for hour frequency');
             }
             return `0 */${hour_interval} * * *`;
 
-        case 'day':
+        case FrequencyInterval.Day:
             // Daily at specific time: 30 9 * * * (9:30 AM daily)
             if (schedule_hour === null || schedule_minute === null) {
                 throw new Error('schedule_hour and schedule_minute are required for day frequency');
             }
             return `${schedule_minute} ${schedule_hour} * * *`;
 
-        case 'week':
+        case FrequencyInterval.Week:
             // Specific days of week at specific time
             // selected_days: ['M', 'W', 'F'] → 1,3,5
             if (schedule_hour === null || schedule_minute === null) {
@@ -106,7 +52,7 @@ const generateCronExpression = (schedule: Pick<ScheduleAlertWithConfig, 'frequen
             const days = selected_days.map(d => dayMap[d]).join(',');
             return `${schedule_minute} ${schedule_hour} * * ${days}`;
 
-        case 'month':
+        case FrequencyInterval.Month:
             // Specific dates of month at specific time
             // month_dates: [1, 15] → 0 9 1,15 * *
             if (schedule_hour === null || schedule_minute === null) {
@@ -126,7 +72,7 @@ const generateCronExpression = (schedule: Pick<ScheduleAlertWithConfig, 'frequen
 /**
  * Register a single schedule alert wrapper with its own cron expression
  */
-export const registerScheduleAlertWrapper = (alert: ScheduleAlertWithConfig): void => {
+export const registerScheduleAlertWrapper = (alert: KpiScheduleAlertRow): void => {
     try {
         const cronExpression = generateCronExpression(alert);
 
@@ -188,7 +134,7 @@ const registerScheduleAlertsWrappers = async (): Promise<void> => {
     const client = await pool.connect();
     try {
         // Query all active schedule alerts with their schedule config
-        const result = await client.query<ScheduleAlertWithConfig>(`
+        const result = await client.query<KpiScheduleAlertRow>(`
             SELECT
                 ka.cron_job_id,
                 ka.id as kpi_alert_id,
@@ -215,7 +161,7 @@ const registerScheduleAlertsWrappers = async (): Promise<void> => {
                 ks.attachment_type
             FROM kpi_alerts ka
             INNER JOIN kpi_schedules ks ON ks.kpi_alert_id = ka.id
-            WHERE ka.alert_type = 'schedule' AND ka.is_active = true
+            WHERE ka.alert_type = '${AlertType.Schedule}' AND ka.is_active = true
         `);
 
         for (const alert of result.rows) {
@@ -248,7 +194,7 @@ export const initializeKpiAlertsCronJobs = async (): Promise<void> => {
 /**
  * Process a single scheduled alert (called by individual wrapper)
  */
-const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<void> => {
+const processScheduledAlert = async (alert: KpiScheduleAlertRow): Promise<void> => {
     if (showCronLogs) console.log(`[1-scheduled] processScheduledAlert() started for "${alert.alert_name}"`);
     const client = await pool.connect();
 
@@ -308,7 +254,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
                      VALUES ($1, $2, $3, $4, $5, $6)`,
                     [
                         cronJob.id,
-                        JSON.stringify({ alert_type: 'schedule', message: 'Gating condition not met' }),
+                        JSON.stringify({ alert_type: AlertType.Schedule, message: 'Gating condition not met' }),
                         true,
                         new Date(),
                         'cron',
@@ -338,7 +284,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
              VALUES ($1, $2, $3, $4, $5, $6)`,
             [
                 cronJob.id,
-                JSON.stringify({ alert_type: 'schedule', message: 'Completed successfully' }),
+                JSON.stringify({ alert_type: AlertType.Schedule, message: 'Completed successfully' }),
                 true,
                 new Date(),
                 'cron',
@@ -371,7 +317,7 @@ const processScheduledAlert = async (alert: ScheduleAlertWithConfig): Promise<vo
                  VALUES ($1, $2, $3, $4, $5, $6)`,
                 [
                     cronJobId,
-                    JSON.stringify({ alert_type: 'schedule', message: `Failed: ${errorMessage}` }),
+                    JSON.stringify({ alert_type: AlertType.Schedule, message: `Failed: ${errorMessage}` }),
                     false,
                     new Date(),
                     'cron',
@@ -397,7 +343,7 @@ const processAllThresholdAlerts = async (): Promise<void> => {
 
     try {
         // Query all active threshold alerts
-        const result = await client.query<AlertData>(`
+        const result = await client.query<KpiAlertRow>(`
             SELECT
                 ka.cron_job_id,
                 ka.id as kpi_alert_id,
@@ -411,7 +357,7 @@ const processAllThresholdAlerts = async (): Promise<void> => {
                 ka.recipients,
                 ka.is_active
             FROM kpi_alerts ka
-            WHERE ka.alert_type = 'threshold' AND ka.is_active = true
+            WHERE ka.alert_type = '${AlertType.Threshold}' AND ka.is_active = true
         `);
 
         if (showCronLogs) console.log(`[5-threshold] Query complete - found ${result.rows.length} active threshold alerts`);
@@ -438,7 +384,7 @@ const processAllThresholdAlerts = async (): Promise<void> => {
 /**
  * Process a single threshold alert
  */
-const processThresholdAlert = async (alert: AlertData): Promise<void> => {
+const processThresholdAlert = async (alert: KpiAlertRow): Promise<void> => {
     if (showCronLogs) console.log(`[7-threshold] processThresholdAlert() started for "${alert.alert_name}"`);
     const client = await pool.connect();
 
@@ -475,7 +421,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
 
         // 3. Fetch threshold config
         if (showCronLogs) console.log(`[11-threshold] Fetching kpi_thresholds with kpi_alert_id: ${alert.kpi_alert_id}`);
-        const thresholdResult = await client.query<KpiThreshold>(
+        const thresholdResult = await client.query<KpiThresholdTableRow>(
             'SELECT * FROM kpi_thresholds WHERE kpi_alert_id = $1',
             [alert.kpi_alert_id]
         );
@@ -559,7 +505,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
             [
                 cronJob.id,
                 JSON.stringify({
-                    alert_type: 'threshold',
+                    alert_type: AlertType.Threshold,
                     message: 'Threshold breached, alert sent',
                     condition: threshold.condition,
                     threshold_value: threshold.threshold_value,
@@ -598,7 +544,7 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
                  VALUES ($1, $2, $3, $4, $5, $6)`,
                 [
                     alert.cron_job_id,
-                    JSON.stringify({ alert_type: 'threshold', message: `Failed: ${errorMessage}` }),
+                    JSON.stringify({ alert_type: AlertType.Threshold, message: `Failed: ${errorMessage}` }),
                     false,
                     new Date(),
                     'cron',
@@ -621,24 +567,22 @@ const processThresholdAlert = async (alert: AlertData): Promise<void> => {
  */
 const evaluateThresholdCondition = (
     currentValue: number,
-    condition: string,
+    condition: ThresholdCondition,
     thresholdValue: number
 ): boolean => {
     switch (condition) {
-        case 'GREATER_THAN':
+        case ThresholdCondition.GreaterThan:
             return currentValue > thresholdValue;
-        case 'GREATER_THAN_OR_EQUAL':
+        case ThresholdCondition.GreaterThanOrEqual:
             return currentValue >= thresholdValue;
-        case 'LESS_THAN':
+        case ThresholdCondition.LessThan:
             return currentValue < thresholdValue;
-        case 'LESS_THAN_OR_EQUAL':
+        case ThresholdCondition.LessThanOrEqual:
             return currentValue <= thresholdValue;
-        case 'EQUAL_TO':
+        case ThresholdCondition.EqualTo:
             return currentValue === thresholdValue;
-        case 'NOT_EQUAL_TO':
+        case ThresholdCondition.NotEqualTo:
             return currentValue !== thresholdValue;
-        default:
-            throw new Error(`Unknown condition: ${condition}`);
     }
 };
 
@@ -646,7 +590,7 @@ const evaluateThresholdCondition = (
  * Evaluate a gating condition for a scheduled alert
  */
 const evaluateGatingCondition = async (
-    alert: AlertData,
+    alert: KpiAlertRow,
     condition: Record<string, unknown>
 ): Promise<boolean> => {
     // TODO: Implement gating condition evaluation logic

@@ -7,7 +7,7 @@
 import { executeBackendGraphQL } from '../../core/client';
 import { LayoutType, type DashboardGridItem } from '../../../types/backend-graphql';
 import type { DashboardUI, GridItem, GridLayout } from '../../../types/dashboard';
-import type { GraphUI } from '../../../types/graph';
+import type { FilterRule } from '../../../types/filters';
 
 // GraphQL fragments
 const DASHBOARD_FIELDS = `
@@ -238,13 +238,49 @@ export const fetchGridItems = async (dashboardId: string): Promise<GridItem[]> =
 
   return gridItems.flatMap((item) => {
     if (!item.graph) return [];
-    return [{
-      ...(item.graph as unknown as GraphUI),
-      gridColumn: item.gridColumn,
-      gridRow: item.gridRow,
-      gridWidth: item.gridWidth,
-      gridHeight: item.gridHeight,
-    }];
+    const graph = item.graph;
+    const gridItem: GridItem = {
+      id: graph.id,
+      name: graph.name,
+      viewName: graph.viewName,
+      chartType: graph.chartType,
+      chartTitle: graph.chartTitle,
+      measures: graph.measures,
+      dimensions: graph.dimensions,
+      dates: graph.dates,
+      filters: graph.filters as unknown as FilterRule[],
+      orderByField: graph.orderByField,
+      orderByDirection: graph.orderByDirection,
+      numberFormat: graph.numberFormat,
+      numberPrecision: graph.numberPrecision,
+      colorPalette: graph.colorPalette,
+      primaryColor: graph.primaryColor,
+      sortOrder: graph.sortOrder,
+      legendPosition: graph.legendPosition,
+      kpiValue: graph.kpiValue,
+      kpiLabel: graph.kpiLabel,
+      kpiSecondaryValue: graph.kpiSecondaryValue,
+      kpiSecondaryLabel: graph.kpiSecondaryLabel,
+      kpiShowTrend: graph.kpiShowTrend,
+      kpiTrendPercentage: graph.kpiTrendPercentage,
+      showXAxisGridLines: graph.showXAxisGridLines,
+      showYAxisGridLines: graph.showYAxisGridLines,
+      showGridLines: graph.showGridLines,
+      showRegressionLine: graph.showRegressionLine,
+      xAxisLabel: graph.xAxisLabel,
+      yAxisLabel: graph.yAxisLabel,
+      maxDataPoints: graph.maxDataPoints,
+      primaryDimension: graph.primaryDimension,
+      secondaryDimension: graph.secondaryDimension,
+      selectedMeasure: graph.selectedMeasure,
+      createdAt: graph.createdAt,
+      updatedAt: graph.updatedAt,
+      gridColumn: item.gridColumn ?? 1,
+      gridRow: item.gridRow ?? 1,
+      gridWidth: item.gridWidth ?? 1,
+      gridHeight: item.gridHeight ?? 1,
+    };
+    return [gridItem];
   });
 };
 
@@ -293,7 +329,7 @@ export const addGraphToDashboard = async (
 export const updateDashboardGridItem = async (
   gridItemId: string,
   graphId: string,
-  gridLayout: GridLayout
+  gridLayout: Partial<GridLayout>
 ): Promise<DashboardGridItem> => {
   const query = `
     mutation UpdateDashboardGridItem($id: ID!, $input: DashboardGridItemInput!) {
@@ -305,11 +341,7 @@ export const updateDashboardGridItem = async (
 
   const input = {
     graphId,
-    gridColumn: gridLayout.gridColumn || null,
-    gridRow: gridLayout.gridRow || null,
-    gridWidth: gridLayout.gridWidth || null,
-    gridHeight: gridLayout.gridHeight || null,
-    displayOrder: 0,
+    ...gridLayout,
   };
 
   const response = await executeBackendGraphQL<{

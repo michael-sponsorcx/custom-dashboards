@@ -6,10 +6,11 @@
 
 import { describe, it, expect } from 'vitest';
 import { calculateNextExecution, generateCronExpression, KpiScheduleRecord } from './calculateNextExecution';
+import { FrequencyInterval } from '../../generated/graphql';
 
 // Helper to create a base schedule with defaults
 const createSchedule = (overrides: Partial<KpiScheduleRecord>): KpiScheduleRecord => ({
-  frequency_interval: 'day',
+  frequency_interval: FrequencyInterval.Day,
   minute_interval: null,
   hour_interval: null,
   schedule_hour: 9,
@@ -26,7 +27,7 @@ describe('calculateNextExecution', () => {
   describe('n_minute frequency', () => {
     it('should add minute_interval to current time', () => {
       const schedule = createSchedule({
-        frequency_interval: 'n_minute',
+        frequency_interval: FrequencyInterval.NMinute,
         minute_interval: 15,
         selected_days: [],
       });
@@ -39,7 +40,7 @@ describe('calculateNextExecution', () => {
 
     it('should skip days not in selected_days', () => {
       const schedule = createSchedule({
-        frequency_interval: 'n_minute',
+        frequency_interval: FrequencyInterval.NMinute,
         minute_interval: 30,
         selected_days: ['M', 'T', 'W', 'Th', 'F'], // Weekdays only
         time_zone: 'UTC',
@@ -56,7 +57,7 @@ describe('calculateNextExecution', () => {
 
     it('should use default 5 minutes if minute_interval is null', () => {
       const schedule = createSchedule({
-        frequency_interval: 'n_minute',
+        frequency_interval: FrequencyInterval.NMinute,
         minute_interval: null,
         selected_days: [],
       });
@@ -71,7 +72,7 @@ describe('calculateNextExecution', () => {
   describe('hour frequency', () => {
     it('should add hour_interval to current time', () => {
       const schedule = createSchedule({
-        frequency_interval: 'hour',
+        frequency_interval: FrequencyInterval.Hour,
         hour_interval: 3,
         selected_days: [],
       });
@@ -84,7 +85,7 @@ describe('calculateNextExecution', () => {
 
     it('should skip days not in selected_days', () => {
       const schedule = createSchedule({
-        frequency_interval: 'hour',
+        frequency_interval: FrequencyInterval.Hour,
         hour_interval: 2,
         selected_days: ['M', 'T', 'W', 'Th', 'F'], // Weekdays only
         time_zone: 'UTC',
@@ -103,7 +104,7 @@ describe('calculateNextExecution', () => {
   describe('day frequency', () => {
     it('should schedule for next day at specified time', () => {
       const schedule = createSchedule({
-        frequency_interval: 'day',
+        frequency_interval: FrequencyInterval.Day,
         schedule_hour: 9,
         schedule_minute: 30,
       });
@@ -119,7 +120,7 @@ describe('calculateNextExecution', () => {
 
     it('should schedule for today if scheduled time has not passed', () => {
       const schedule = createSchedule({
-        frequency_interval: 'day',
+        frequency_interval: FrequencyInterval.Day,
         schedule_hour: 14,
         schedule_minute: 0,
       });
@@ -133,7 +134,7 @@ describe('calculateNextExecution', () => {
 
     it('should skip weekends when exclude_weekends is true', () => {
       const schedule = createSchedule({
-        frequency_interval: 'day',
+        frequency_interval: FrequencyInterval.Day,
         schedule_hour: 9,
         schedule_minute: 0,
         exclude_weekends: true,
@@ -152,7 +153,7 @@ describe('calculateNextExecution', () => {
   describe('week frequency', () => {
     it('should schedule for next occurrence of selected day', () => {
       const schedule = createSchedule({
-        frequency_interval: 'week',
+        frequency_interval: FrequencyInterval.Week,
         schedule_hour: 10,
         schedule_minute: 0,
         selected_days: ['M', 'W', 'F'], // Monday, Wednesday, Friday
@@ -168,7 +169,7 @@ describe('calculateNextExecution', () => {
 
     it('should schedule for same day if time has not passed', () => {
       const schedule = createSchedule({
-        frequency_interval: 'week',
+        frequency_interval: FrequencyInterval.Week,
         schedule_hour: 14,
         schedule_minute: 0,
         selected_days: ['M', 'W', 'F'],
@@ -185,7 +186,7 @@ describe('calculateNextExecution', () => {
 
     it('should wrap to next week if no more days this week', () => {
       const schedule = createSchedule({
-        frequency_interval: 'week',
+        frequency_interval: FrequencyInterval.Week,
         schedule_hour: 10,
         schedule_minute: 0,
         selected_days: ['M'], // Monday only
@@ -203,7 +204,7 @@ describe('calculateNextExecution', () => {
   describe('month frequency', () => {
     it('should schedule for next occurrence of month_dates', () => {
       const schedule = createSchedule({
-        frequency_interval: 'month',
+        frequency_interval: FrequencyInterval.Month,
         schedule_hour: 9,
         schedule_minute: 0,
         month_dates: [1, 15],
@@ -219,7 +220,7 @@ describe('calculateNextExecution', () => {
 
     it('should wrap to next month if no more dates this month', () => {
       const schedule = createSchedule({
-        frequency_interval: 'month',
+        frequency_interval: FrequencyInterval.Month,
         schedule_hour: 9,
         schedule_minute: 0,
         month_dates: [1, 15],
@@ -235,7 +236,7 @@ describe('calculateNextExecution', () => {
 
     it('should skip invalid dates (e.g., Feb 30)', () => {
       const schedule = createSchedule({
-        frequency_interval: 'month',
+        frequency_interval: FrequencyInterval.Month,
         schedule_hour: 9,
         schedule_minute: 0,
         month_dates: [30, 31],
@@ -253,7 +254,7 @@ describe('calculateNextExecution', () => {
   describe('timezone handling', () => {
     it('should respect timezone for day frequency', () => {
       const schedule = createSchedule({
-        frequency_interval: 'day',
+        frequency_interval: FrequencyInterval.Day,
         schedule_hour: 9,
         schedule_minute: 0,
         time_zone: 'America/Los_Angeles', // PST/PDT
@@ -272,7 +273,7 @@ describe('calculateNextExecution', () => {
 describe('generateCronExpression', () => {
   it('should generate correct cron for n_minute', () => {
     const schedule = createSchedule({
-      frequency_interval: 'n_minute',
+      frequency_interval: FrequencyInterval.NMinute,
       minute_interval: 15,
     });
 
@@ -281,7 +282,7 @@ describe('generateCronExpression', () => {
 
   it('should generate correct cron for hour', () => {
     const schedule = createSchedule({
-      frequency_interval: 'hour',
+      frequency_interval: FrequencyInterval.Hour,
       hour_interval: 4,
     });
 
@@ -290,7 +291,7 @@ describe('generateCronExpression', () => {
 
   it('should generate correct cron for day', () => {
     const schedule = createSchedule({
-      frequency_interval: 'day',
+      frequency_interval: FrequencyInterval.Day,
       schedule_hour: 9,
       schedule_minute: 30,
     });
@@ -300,7 +301,7 @@ describe('generateCronExpression', () => {
 
   it('should generate correct cron for day with exclude_weekends', () => {
     const schedule = createSchedule({
-      frequency_interval: 'day',
+      frequency_interval: FrequencyInterval.Day,
       schedule_hour: 9,
       schedule_minute: 0,
       exclude_weekends: true,
@@ -311,7 +312,7 @@ describe('generateCronExpression', () => {
 
   it('should generate correct cron for week', () => {
     const schedule = createSchedule({
-      frequency_interval: 'week',
+      frequency_interval: FrequencyInterval.Week,
       schedule_hour: 10,
       schedule_minute: 0,
       selected_days: ['M', 'W', 'F'],
@@ -322,7 +323,7 @@ describe('generateCronExpression', () => {
 
   it('should generate correct cron for month', () => {
     const schedule = createSchedule({
-      frequency_interval: 'month',
+      frequency_interval: FrequencyInterval.Month,
       schedule_hour: 8,
       schedule_minute: 0,
       month_dates: [1, 15],

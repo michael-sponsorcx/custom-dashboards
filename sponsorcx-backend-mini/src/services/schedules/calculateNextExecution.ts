@@ -7,6 +7,8 @@
  * Used by the cron job that polls kpi_schedules every 5 minutes.
  */
 
+import { FrequencyInterval } from '../../generated/graphql';
+
 // Day of week mapping: JS getDay() returns 0=Sunday, 1=Monday, etc.
 const DAY_MAP: Record<string, number> = {
   Su: 0,
@@ -28,8 +30,6 @@ const DAY_CODE_MAP: Record<number, string> = {
   5: 'F',
   6: 'S',
 };
-
-export type FrequencyInterval = 'n_minute' | 'hour' | 'day' | 'week' | 'month';
 
 export interface KpiScheduleRecord {
   frequency_interval: FrequencyInterval;
@@ -58,15 +58,15 @@ export const calculateNextExecution = (
   const now = referenceTime ?? new Date();
 
   switch (schedule.frequency_interval) {
-    case 'n_minute':
+    case FrequencyInterval.NMinute:
       return calculateNextNMinute(schedule, now);
-    case 'hour':
+    case FrequencyInterval.Hour:
       return calculateNextHour(schedule, now);
-    case 'day':
+    case FrequencyInterval.Day:
       return calculateNextDay(schedule, now);
-    case 'week':
+    case FrequencyInterval.Week:
       return calculateNextWeek(schedule, now);
-    case 'month':
+    case FrequencyInterval.Month:
       return calculateNextMonth(schedule, now);
     default:
       throw new Error(`Unknown frequency interval: ${schedule.frequency_interval}`);
@@ -372,13 +372,13 @@ const calculateNextMonth = (schedule: KpiScheduleRecord, now: Date): Date => {
  */
 export const generateCronExpression = (schedule: KpiScheduleRecord): string => {
   switch (schedule.frequency_interval) {
-    case 'n_minute':
+    case FrequencyInterval.NMinute:
       return `*/${schedule.minute_interval ?? 5} * * * *`;
 
-    case 'hour':
+    case FrequencyInterval.Hour:
       return `0 */${schedule.hour_interval ?? 1} * * *`;
 
-    case 'day': {
+    case FrequencyInterval.Day: {
       const hour = schedule.schedule_hour ?? 0;
       const minute = schedule.schedule_minute ?? 0;
       if (schedule.exclude_weekends) {
@@ -387,7 +387,7 @@ export const generateCronExpression = (schedule: KpiScheduleRecord): string => {
       return `${minute} ${hour} * * *`;
     }
 
-    case 'week': {
+    case FrequencyInterval.Week: {
       const hour = schedule.schedule_hour ?? 0;
       const minute = schedule.schedule_minute ?? 0;
       const days = schedule.selected_days
@@ -397,7 +397,7 @@ export const generateCronExpression = (schedule: KpiScheduleRecord): string => {
       return `${minute} ${hour} * * ${days || '*'}`;
     }
 
-    case 'month': {
+    case FrequencyInterval.Month: {
       const hour = schedule.schedule_hour ?? 0;
       const minute = schedule.schedule_minute ?? 0;
       const dates = schedule.month_dates.sort((a, b) => a - b).join(',');

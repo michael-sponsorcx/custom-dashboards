@@ -1,12 +1,12 @@
 import { Accordion, Stack, Group, Checkbox, Text, Title, ActionIcon } from '@mantine/core';
 import { IconFilter } from '@tabler/icons-react';
-import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
+import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 import { FieldType } from '../../../types/filters';
 
 interface FieldSelectionAccordionProps {
-  measures: CubeMeasureUI[];
-  dimensions: CubeDimensionUI[];
-  dates: CubeDimensionUI[];
+  measures: CubeMeasureMeta[];
+  dimensions: CubeDimensionMeta[];
+  dates: CubeDimensionMeta[];
   selectedMeasures: Set<string>;
   selectedDimensions: Set<string>;
   selectedDates: Set<string>;

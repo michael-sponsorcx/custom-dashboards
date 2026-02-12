@@ -1,6 +1,6 @@
 import { Stack, Text, Group, ScrollArea, Alert } from '@mantine/core';
 import { ModelSelector } from '../../shared/ModelSelector';
-import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
+import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 
 interface DataSourceSelectionProps {
   selectedViews: string[];
@@ -8,9 +8,9 @@ interface DataSourceSelectionProps {
 }
 
 interface ViewFields {
-  measures: CubeMeasureUI[];
-  dimensions: CubeDimensionUI[];
-  dates: CubeDimensionUI[];
+  measures: CubeMeasureMeta[];
+  dimensions: CubeDimensionMeta[];
+  dates: CubeDimensionMeta[];
 }
 
 /**

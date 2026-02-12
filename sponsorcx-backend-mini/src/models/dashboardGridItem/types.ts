@@ -5,11 +5,11 @@ export interface DashboardGridItemRow {
     id: string;
     dashboard_id: string;
     graph_id: string;
-    grid_column: number;
-    grid_row: number;
-    grid_width: number;
-    grid_height: number;
-    display_order: number;
+    grid_column: number | null;
+    grid_row: number | null;
+    grid_width: number | null;
+    grid_height: number | null;
+    display_order: number | null;
 }
 
 /**

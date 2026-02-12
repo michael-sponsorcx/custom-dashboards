@@ -1,5 +1,3 @@
-import type { DashboardFilter as CodegenDashboardFilter } from '../../generated/graphql';
-
 /** Database row type for dashboard_filters table (snake_case) */
 export interface DashboardFilterRow {
     id: string;
@@ -11,17 +9,13 @@ export interface DashboardFilterRow {
     updated_at: Date;
 }
 
-/**
- * Resolved DashboardFilter type (camelCase for GraphQL).
- * Overrides: date fields, selectedViews (non-null array from DB),
- * availableFields/activeFilters (unknown from DB vs Record<string, unknown>)
- */
-type DashboardFilterOverrides = {
+/** Resolved DashboardFilter type (camelCase for GraphQL) */
+export interface DashboardFilter {
+    id: string;
+    dashboardId: string;
     selectedViews: string[];
     availableFields: unknown;
     activeFilters: unknown;
     createdAt: Date;
     updatedAt: Date;
-};
-
-export type DashboardFilter = Omit<CodegenDashboardFilter, '__typename' | keyof DashboardFilterOverrides> & DashboardFilterOverrides;
+}

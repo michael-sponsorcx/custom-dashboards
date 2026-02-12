@@ -1,11 +1,11 @@
 import { Paper, Stack, Title, Select } from '@mantine/core';
-import { CubeMeasureUI, CubeDimensionUI } from '../../../types/cube';
+import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 import { SortOrder } from '../settings/OrderByControl';
 
 interface OrderByQueryControlProps {
-  measures?: CubeMeasureUI[];
-  dimensions?: CubeDimensionUI[];
-  dates?: CubeDimensionUI[];
+  measures?: CubeMeasureMeta[];
+  dimensions?: CubeDimensionMeta[];
+  dates?: CubeDimensionMeta[];
   orderByField?: string;
   orderByDirection?: SortOrder;
   onOrderByFieldChange: (field: string | undefined) => void;

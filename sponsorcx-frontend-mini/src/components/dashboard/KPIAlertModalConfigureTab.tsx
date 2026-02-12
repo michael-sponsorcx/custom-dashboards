@@ -1,6 +1,7 @@
 import { Stack, Text, Title, Textarea, TextInput, Badge, CloseButton, Group } from '@mantine/core';
 import { useState } from 'react';
-import type { KPIAlertType, KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../types/kpi-alerts';
+import type { KPIFormData, ThresholdAlertDetails as ThresholdAlertDetailsType, ScheduledAlertDetails as ScheduledAlertDetailsType } from '../../types/kpi-alerts';
+import { AlertType } from '../../types/backend-graphql';
 import { ThresholdAlertDetails } from './alert_details/ThresholdAlertDetails';
 import { ScheduledAlertDetails } from './alert_details/ScheduledAlertDetails';
 // import { AttributeThresholdAlertDetails } from './alert_details/AttributeThresholdAlertDetails';
@@ -11,7 +12,7 @@ import { ScheduledAlertDetails } from './alert_details/ScheduledAlertDetails';
  */
 interface KPIAlertModalConfigureTabProps {
   /** ID of the selected alert type */
-  alertTypeId: KPIAlertType;
+  alertTypeId: AlertType;
   /** Function to update KPI form data */
   setKpiFormData: (data: KPIFormData | ((prev: KPIFormData) => KPIFormData)) => void;
 }
@@ -96,10 +97,10 @@ export const KPIAlertModalConfigureTab = ({ alertTypeId, setKpiFormData }: KPIAl
         </Stack>
 
         {/* Alert Type Specific Details */}
-        {alertTypeId === 'threshold' && (
+        {alertTypeId === AlertType.Threshold && (
           <ThresholdAlertDetails setKpiFormData={setKpiFormData} />
         )}
-        {alertTypeId === 'scheduled' && <ScheduledAlertDetails setKpiFormData={setKpiFormData} />}
+        {alertTypeId === AlertType.Schedule && <ScheduledAlertDetails setKpiFormData={setKpiFormData} />}
         {/* {alertTypeId === 'attribute-threshold' && <AttributeThresholdAlertDetails />}
         {alertTypeId === 'attribute-scheduled' && <AttributeScheduledAlertDetails />}
         {alertTypeId === 'anomaly' && (

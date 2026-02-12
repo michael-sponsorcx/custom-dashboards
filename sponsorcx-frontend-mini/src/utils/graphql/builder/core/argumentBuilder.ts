@@ -4,6 +4,7 @@
  * Builds GraphQL arguments for cube queries.
  */
 
+import type { SortOrder } from '../../../../types/backend-graphql';
 import { buildFilterWhereClause } from './filterBuilder';
 import { FilterRule } from '../../../../types/filters';
 
@@ -54,7 +55,7 @@ export function buildCubeArguments(
  */
 export function buildCubeNameArguments(orderBy?: {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: SortOrder;
 }): string {
   if (!orderBy || !orderBy.field || !orderBy.direction) return '';
 

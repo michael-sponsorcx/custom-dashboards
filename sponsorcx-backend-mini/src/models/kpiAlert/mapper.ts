@@ -1,4 +1,5 @@
 import type { BaseAlertInput, NormalizedAlertInput, AlertRowColumns, KpiAlert } from './types';
+import { AlertType } from '../../generated/graphql';
 
 /**
  * Normalize base alert input with defaults.
@@ -6,7 +7,7 @@ import type { BaseAlertInput, NormalizedAlertInput, AlertRowColumns, KpiAlert } 
  */
 export const normalizeAlertInput = (
     input: BaseAlertInput,
-    alertType: 'schedule' | 'threshold'
+    alertType: AlertType
 ): NormalizedAlertInput => ({
     graphId: input.graphId ?? null,
     dashboardId: input.dashboardId ?? null,

@@ -2,6 +2,7 @@ import { typedQuery, withTransaction } from '../../db/connection';
 import type { KpiScheduleRow, KpiSchedule } from './types';
 import { kpiScheduleToCamelCase } from './mapper';
 import { normalizeAlertInput } from '../kpiAlert';
+import { AlertType } from '../../generated/graphql';
 import type { CreateKpiScheduleInput } from '../../generated/graphql';
 import {
     generateCronExpression,
@@ -40,7 +41,7 @@ const SELECT_SCHEDULE_SQL = `
         a.updated_at
     FROM kpi_schedules s
     JOIN kpi_alerts a ON a.id = s.kpi_alert_id
-    WHERE a.alert_type = 'schedule'
+    WHERE a.alert_type = '${AlertType.Schedule}'
 `;
 
 /** Create a KpiScheduleRecord for next execution calculation */
@@ -89,7 +90,7 @@ export const createKpiSchedule = async (
             ) VALUES ($1, $2, $3, $4, $5, $6, 'schedule', $7, $8, $9)
             RETURNING id
         `;
-        const normalized = normalizeAlertInput(input, 'schedule');
+        const normalized = normalizeAlertInput(input, AlertType.Schedule);
         const alertParams = [
             cronJobId,
             organizationId,

@@ -2,6 +2,7 @@ import { typedQuery, withTransaction } from '../../db/connection';
 import type { KpiThresholdRow, KpiThreshold } from './types';
 import { kpiThresholdToCamelCase } from './mapper';
 import { normalizeAlertInput } from '../kpiAlert';
+import { AlertType } from '../../generated/graphql';
 import type { CreateKpiThresholdInput } from '../../generated/graphql';
 
 const SELECT_THRESHOLD_SQL = `
@@ -58,7 +59,7 @@ export const createKpiThreshold = async (
             ) VALUES ($1, $2, $3, $4, $5, $6, 'threshold', $7, $8, $9)
             RETURNING id
         `;
-        const normalized = normalizeAlertInput(input, 'threshold');
+        const normalized = normalizeAlertInput(input, AlertType.Threshold);
         const alertParams = [
             cronJobId,
             organizationId,
