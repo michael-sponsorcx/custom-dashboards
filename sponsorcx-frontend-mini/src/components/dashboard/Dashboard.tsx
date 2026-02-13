@@ -1,12 +1,12 @@
-import { Container, Button, Title, Stack, Text, Group } from '@mantine/core';
+import { Container, Button, Title, Stack, Text, Group, Loader, Center } from '@mantine/core';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { useDashboardState, useDashboardActions } from './hooks';
 import { DashboardGrid } from './grid';
 // import { GraphFilterModal } from './GraphFilterModal';
 import { KPIAlertModal } from './KPIAlertModal';
-import { CreateScheduleModal } from './CreateScheduleModal';
-import { ManageSchedulesModal } from './ManageSchedulesModal';
+import { CreateScheduleModal } from './schedule/CreateScheduleModal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
@@ -23,6 +23,8 @@ import { useOrganizationStore, useDashboardFilterStore } from '../../store';
  * Uses modular custom hooks for clean separation of concerns.
  */
 export function Dashboard() {
+  const navigate = useNavigate();
+
   // Load dashboard filters when dashboardId changes
   const { dashboardId, organizationId, userId } = useOrganizationStore();
   const { loadFilters } = useDashboardFilterStore();
@@ -57,9 +59,8 @@ export function Dashboard() {
   const [kpiAlertModalOpen, setKpiAlertModalOpen] = useState(false);
   const [selectedKPIAlertGraphId, setSelectedKPIAlertGraphId] = useState<string | null>(null);
 
-  // Schedule modal states
+  // Schedule modal state
   const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
-  const [manageSchedulesModalOpen, setManageSchedulesModalOpen] = useState(false);
 
   // Dashboard filter modal state
   const [dashboardFilterModalOpen, setDashboardFilterModalOpen] = useState(false);
@@ -145,11 +146,7 @@ export function Dashboard() {
   };
 
   const handleManageSchedules = () => {
-    setManageSchedulesModalOpen(true);
-  };
-
-  const handleCloseManageSchedules = () => {
-    setManageSchedulesModalOpen(false);
+    navigate('/schedules');
   };
 
   const handleRefreshAll = () => {
@@ -201,7 +198,9 @@ export function Dashboard() {
   if (loading) {
     return (
       <Container size="xl" py="xl">
-        <Text>Loading...</Text>
+        <Center h="50vh">
+          <Loader size="xl" />
+        </Center>
       </Container>
     );
   }
@@ -283,9 +282,6 @@ export function Dashboard() {
         dashboardId={dashboardId}
         userId={userId}
       />
-
-      {/* Manage Schedules Modal */}
-      <ManageSchedulesModal opened={manageSchedulesModalOpen} onClose={handleCloseManageSchedules} />
 
       {/* Dashboard Filter Modal */}
       <DashboardFilterModal

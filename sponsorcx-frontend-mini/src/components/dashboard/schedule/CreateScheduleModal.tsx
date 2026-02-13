@@ -1,10 +1,10 @@
 import { Modal, Title, Button, Divider, Group, ScrollArea, Stack, Text, TextInput, Checkbox, Select, Flex, Badge, CloseButton } from '@mantine/core';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { DaySelector } from './schedule/DaySelector';
-import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../constants/timeOptions';
-import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type FrequencyInterval } from '../../types/dashboard-schedules';
-import { createDashboardSchedule } from '../../api';
+import { DaySelector } from './DaySelector';
+import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../../constants/timeOptions';
+import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type FrequencyInterval } from '../../../types/dashboard-schedules';
+import { createDashboardSchedule } from '../../../api';
 
 interface CreateScheduleModalProps {
   opened: boolean;
