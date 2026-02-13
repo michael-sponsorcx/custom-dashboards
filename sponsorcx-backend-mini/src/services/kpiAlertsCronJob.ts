@@ -156,8 +156,6 @@ const registerScheduleAlertsWrappers = async (): Promise<void> => {
                 ks.exclude_weekends,
                 ks.month_dates,
                 ks.time_zone,
-                ks.has_gating_condition,
-                ks.gating_condition,
                 ks.attachment_type
             FROM kpi_alerts ka
             INNER JOIN kpi_schedules ks ON ks.kpi_alert_id = ka.id
@@ -241,32 +239,7 @@ const processScheduledAlert = async (alert: KpiScheduleAlertRow): Promise<void> 
             [currentDate, currentHour, currentMinute, cronJob.id]
         );
 
-        // 4. Check gating condition (if applicable)
-        if (alert.has_gating_condition && alert.gating_condition) {
-            if (showCronLogs) console.log('[6-scheduled] Evaluating gating condition...');
-            const shouldExecute = await evaluateGatingCondition(alert, alert.gating_condition);
-            if (!shouldExecute) {
-                if (showCronLogs) console.log('[6a-scheduled] Gating condition NOT met - SKIPPING');
-                logger.info(`Gating condition not met for alert ${alert.kpi_alert_id}, skipping`);
-                await client.query(
-                    `INSERT INTO cron_job_results (cron_job_id, notes, completed,
-                     job_start_timestamp, trigger, organization_id)
-                     VALUES ($1, $2, $3, $4, $5, $6)`,
-                    [
-                        cronJob.id,
-                        JSON.stringify({ alert_type: AlertType.Schedule, message: 'Gating condition not met' }),
-                        true,
-                        new Date(),
-                        'cron',
-                        alert.organization_id,
-                    ]
-                );
-                await client.query('COMMIT');
-                return;
-            }
-        }
-
-        // 5. Fetch dashboard/graph data and generate report
+        // 4. Fetch dashboard/graph data and generate report
         // TODO: Implement data fetching and report generation
         if (showCronLogs) console.log(`[7-scheduled] TODO: SEND EMAIL to ${alert.recipients.length} recipients: ${JSON.stringify(alert.recipients)}`);
         if (showCronLogs) console.log(`[7a-scheduled] Email details: attachmentType=${alert.attachment_type}`);
@@ -586,15 +559,3 @@ const evaluateThresholdCondition = (
     }
 };
 
-/**
- * Evaluate a gating condition for a scheduled alert
- */
-const evaluateGatingCondition = async (
-    alert: KpiAlertRow,
-    condition: Record<string, unknown>
-): Promise<boolean> => {
-    // TODO: Implement gating condition evaluation logic
-    // This would check if the current data meets the condition specified
-    logger.info(`Evaluating gating condition for alert ${alert.kpi_alert_id}`, { condition });
-    return true; // Placeholder
-};

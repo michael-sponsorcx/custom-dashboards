@@ -281,8 +281,6 @@ export const KpiScheduleType = new GraphQLObjectType({
         excludeWeekends: { type: GraphQLBoolean },
         monthDates: { type: new GraphQLList(GraphQLInt) },
         timeZone: { type: GraphQLString },
-        hasGatingCondition: { type: GraphQLBoolean },
-        gatingCondition: { type: GraphQLJSON },
         attachmentType: { type: AttachmentTypeEnum },
         cronExpression: { type: GraphQLString },
         alert: { type: new GraphQLNonNull(KpiAlertType) },
@@ -311,8 +309,6 @@ export const CreateKpiScheduleInput = new GraphQLInputObjectType({
         excludeWeekends: { type: GraphQLBoolean },
         monthDates: { type: new GraphQLList(GraphQLInt) },
         timeZone: { type: GraphQLString },
-        hasGatingCondition: { type: GraphQLBoolean },
-        gatingCondition: { type: GraphQLJSON },
         attachmentType: { type: AttachmentTypeEnum },
     },
 });

@@ -66,9 +66,7 @@ export type CreateKpiScheduleInput = {
   dashboardId: Scalars['ID']['input'];
   excludeWeekends?: InputMaybe<Scalars['Boolean']['input']>;
   frequencyInterval: FrequencyInterval;
-  gatingCondition?: InputMaybe<Scalars['JSON']['input']>;
   graphId?: InputMaybe<Scalars['ID']['input']>;
-  hasGatingCondition?: InputMaybe<Scalars['Boolean']['input']>;
   hourInterval?: InputMaybe<Scalars['Int']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   minuteInterval?: InputMaybe<Scalars['Int']['input']>;
@@ -329,8 +327,6 @@ export type KpiSchedule = {
   cronExpression?: Maybe<Scalars['String']['output']>;
   excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
   frequencyInterval: FrequencyInterval;
-  gatingCondition?: Maybe<Scalars['JSON']['output']>;
-  hasGatingCondition?: Maybe<Scalars['Boolean']['output']>;
   hourInterval?: Maybe<Scalars['Int']['output']>;
   id: Scalars['ID']['output'];
   kpiAlertId: Scalars['ID']['output'];
@@ -881,8 +877,6 @@ export type KpiScheduleResolvers<ContextType = any, ParentType extends Resolvers
   cronExpression?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   frequencyInterval?: Resolver<ResolversTypes['FrequencyInterval'], ParentType, ContextType>;
-  gatingCondition?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  hasGatingCondition?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   hourInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   kpiAlertId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

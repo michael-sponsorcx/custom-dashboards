@@ -32,8 +32,6 @@ export const KPI_SCHEDULE_FIELDS = `
     excludeWeekends
     monthDates
     timeZone
-    hasGatingCondition
-    gatingCondition
     attachmentType
     cronExpression
     alert {

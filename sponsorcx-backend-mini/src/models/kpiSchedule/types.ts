@@ -14,8 +14,6 @@ export interface KpiScheduleRow extends AlertRowColumns {
     exclude_weekends: boolean;
     month_dates: number[];
     time_zone: string;
-    has_gating_condition: boolean;
-    gating_condition: unknown;
     attachment_type: AttachmentType | null;
     cron_expression: string | null;
 }
@@ -34,8 +32,6 @@ export interface KpiSchedule {
     excludeWeekends: boolean;
     monthDates: number[];
     timeZone: string;
-    hasGatingCondition: boolean;
-    gatingCondition: unknown;
     attachmentType: AttachmentType | null;
     cronExpression: string | null;
 }
@@ -51,7 +47,5 @@ export interface KpiScheduleAlertRow extends KpiAlertRow {
     exclude_weekends: boolean;
     month_dates: number[];
     time_zone: string;
-    has_gating_condition: boolean;
-    gating_condition: Record<string, unknown> | null;
     attachment_type: AttachmentType | null;
 }

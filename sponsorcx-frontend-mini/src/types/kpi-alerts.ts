@@ -114,8 +114,6 @@ export interface KPIFormData {
 export interface KpiScheduleFormData {
   /** User-defined name for the schedule */
   scheduleName?: string;
-  /** Whether to add a comment */
-  addComment?: boolean;
   /** Comment text */
   comment?: string;
   /** Frequency interval type */
@@ -136,8 +134,6 @@ export interface KpiScheduleFormData {
   monthDates?: string;
   /** IANA timezone identifier (e.g., 'America/New_York') */
   timeZone?: string;
-  /** Whether to add a gating condition */
-  addGatingCondition?: boolean;
   /** List of recipient email addresses */
   recipients?: string[];
 }

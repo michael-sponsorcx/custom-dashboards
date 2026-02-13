@@ -75,13 +75,6 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
     }));
   };
 
-  const handleAddCommentChange = (checked: boolean) => {
-    setScheduleFormData((prev) => ({
-      ...prev,
-      addComment: checked,
-    }));
-  };
-
   const handleCommentChange = (value: string) => {
     setScheduleFormData((prev) => ({
       ...prev,
@@ -281,20 +274,16 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
             />
           </Stack>
 
-          {/* Add Comment */}
+          {/* Comment */}
           <Stack gap="xs">
-            <Checkbox
-              label="Add Comment"
-              checked={scheduleFormData.addComment || false}
-              onChange={(event) => handleAddCommentChange(event.currentTarget.checked)}
+            <Text size="sm" fw={500}>
+              Comment
+            </Text>
+            <TextInput
+              placeholder="Ex. Confidential. Do not share."
+              value={scheduleFormData.comment || ''}
+              onChange={(event) => handleCommentChange(event.currentTarget.value)}
             />
-            {scheduleFormData.addComment && (
-              <TextInput
-                placeholder="Ex. Confidential. Do not share."
-                value={scheduleFormData.comment || ''}
-                onChange={(event) => handleCommentChange(event.currentTarget.value)}
-              />
-            )}
           </Stack>
 
           {/* Schedule Frequency Section */}

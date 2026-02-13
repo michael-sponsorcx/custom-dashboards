@@ -22,8 +22,6 @@ const SELECT_SCHEDULE_SQL = `
         s.exclude_weekends,
         s.month_dates,
         s.time_zone,
-        s.has_gating_condition,
-        s.gating_condition,
         s.attachment_type,
         s.cron_expression,
         a.id as alert_id,
@@ -110,9 +108,8 @@ export const createKpiSchedule = async (
             INSERT INTO kpi_schedules (
                 kpi_alert_id, frequency_interval, minute_interval, hour_interval,
                 schedule_hour, schedule_minute, selected_days, exclude_weekends,
-                month_dates, time_zone, has_gating_condition, gating_condition,
-                attachment_type, cron_expression
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                month_dates, time_zone, attachment_type, cron_expression
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `;
         const scheduleParams = [
             id,
@@ -125,8 +122,6 @@ export const createKpiSchedule = async (
             input.excludeWeekends ?? false,
             (input.monthDates ?? []).filter((d): d is number => d !== null),
             input.timeZone ?? 'UTC',
-            input.hasGatingCondition ?? false,
-            input.gatingCondition ? JSON.stringify(input.gatingCondition) : null,
             input.attachmentType ?? null,
             cronExpression,
         ];

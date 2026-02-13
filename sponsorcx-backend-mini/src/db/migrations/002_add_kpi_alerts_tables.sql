@@ -60,8 +60,6 @@ CREATE TABLE kpi_schedules (
     exclude_weekends BOOLEAN DEFAULT false,
     month_dates INTEGER[] DEFAULT '{}',
     time_zone VARCHAR(100) DEFAULT 'UTC',
-    has_gating_condition BOOLEAN DEFAULT false,
-    gating_condition JSONB DEFAULT NULL,
     attachment_type VARCHAR(10) CHECK (attachment_type IN ('PDF', 'Excel', 'CSV')),
     cron_expression VARCHAR(100)
 );

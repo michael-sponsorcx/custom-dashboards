@@ -115,7 +115,7 @@ const toDashboardScheduleInput = (
     dashboardId,
     createdById,
     scheduleName: formData.scheduleName || '',
-    comment: formData.addComment ? formData.comment : undefined,
+    comment: formData.comment || undefined,
     frequencyInterval: formData.frequencyInterval ?? FrequencyInterval.Day,
     minuteInterval: formData.minuteInterval ? parseInt(formData.minuteInterval, 10) : undefined,
     hourInterval: formData.hourInterval ? parseInt(formData.hourInterval, 10) : undefined,

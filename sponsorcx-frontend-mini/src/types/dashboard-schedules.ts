@@ -22,9 +22,7 @@ export type { DayOfWeek, FrequencyInterval };
 export interface DashboardScheduleFormData {
   /** User-defined name for the schedule */
   scheduleName?: string;
-  /** Whether to add a comment */
-  addComment?: boolean;
-  /** Comment text - shown when addComment is true */
+  /** Comment text */
   comment?: string;
   /** Frequency interval type */
   frequencyInterval?: FrequencyInterval;
