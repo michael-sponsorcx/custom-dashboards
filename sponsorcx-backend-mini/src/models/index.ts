@@ -6,3 +6,4 @@ export * from './kpiAlert';
 export * from './kpiSchedule';
 export * from './kpiThreshold';
 export * from './cronJob';
+export * from './dashboardSchedule';

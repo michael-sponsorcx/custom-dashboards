@@ -1,0 +1,29 @@
+import type { DashboardScheduleRow, DashboardSchedule } from './types';
+
+/** Convert a dashboard_schedules row to camelCase for GraphQL */
+export const dashboardScheduleToCamelCase = (row: DashboardScheduleRow): DashboardSchedule => ({
+    id: row.id,
+    cronJobId: row.cron_job_id,
+    organizationId: row.organization_id,
+    dashboardId: row.dashboard_id,
+    createdById: row.created_by_id,
+    scheduleName: row.schedule_name,
+    comment: row.comment,
+    frequencyInterval: row.frequency_interval,
+    minuteInterval: row.minute_interval,
+    hourInterval: row.hour_interval,
+    scheduleHour: row.schedule_hour,
+    scheduleMinute: row.schedule_minute,
+    selectedDays: row.selected_days,
+    excludeWeekends: row.exclude_weekends,
+    monthDates: row.month_dates,
+    timeZone: row.time_zone,
+    hasGatingCondition: row.has_gating_condition,
+    gatingCondition: row.gating_condition,
+    attachmentType: row.attachment_type,
+    recipients: row.recipients,
+    isActive: row.is_active,
+    cronExpression: row.cron_expression,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+});

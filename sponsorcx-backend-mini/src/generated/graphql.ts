@@ -220,6 +220,55 @@ export type DashboardInput = {
   name: Scalars['String']['input'];
 };
 
+export type DashboardSchedule = {
+  __typename?: 'DashboardSchedule';
+  attachmentType?: Maybe<AttachmentType>;
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  createdById: Scalars['ID']['output'];
+  cronExpression?: Maybe<Scalars['String']['output']>;
+  cronJobId: Scalars['ID']['output'];
+  dashboardId: Scalars['ID']['output'];
+  excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
+  frequencyInterval: FrequencyInterval;
+  gatingCondition?: Maybe<Scalars['JSON']['output']>;
+  hasGatingCondition?: Maybe<Scalars['Boolean']['output']>;
+  hourInterval?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  minuteInterval?: Maybe<Scalars['Int']['output']>;
+  monthDates?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  organizationId: Scalars['ID']['output'];
+  recipients?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  scheduleHour?: Maybe<Scalars['Int']['output']>;
+  scheduleMinute?: Maybe<Scalars['Int']['output']>;
+  scheduleName: Scalars['String']['output'];
+  selectedDays?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  timeZone?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
+};
+
+export type DashboardScheduleInput = {
+  attachmentType?: InputMaybe<AttachmentType>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  createdById: Scalars['ID']['input'];
+  dashboardId: Scalars['ID']['input'];
+  excludeWeekends?: InputMaybe<Scalars['Boolean']['input']>;
+  frequencyInterval: FrequencyInterval;
+  gatingCondition?: InputMaybe<Scalars['JSON']['input']>;
+  hasGatingCondition?: InputMaybe<Scalars['Boolean']['input']>;
+  hourInterval?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  minuteInterval?: InputMaybe<Scalars['Int']['input']>;
+  monthDates?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  recipients?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  scheduleHour?: InputMaybe<Scalars['Int']['input']>;
+  scheduleMinute?: InputMaybe<Scalars['Int']['input']>;
+  scheduleName: Scalars['String']['input'];
+  selectedDays?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  timeZone?: InputMaybe<Scalars['String']['input']>;
+};
+
 export enum FrequencyInterval {
   Day = 'day',
   Hour = 'hour',
@@ -363,10 +412,12 @@ export type Mutation = {
   addDashboardGridItem?: Maybe<DashboardGridItem>;
   clearDashboardFilter?: Maybe<DashboardFilter>;
   createDashboard?: Maybe<Dashboard>;
+  createDashboardSchedule?: Maybe<DashboardSchedule>;
   createGraph?: Maybe<Graph>;
   createKpiSchedule?: Maybe<KpiSchedule>;
   createKpiThreshold?: Maybe<KpiThreshold>;
   deleteDashboard?: Maybe<Dashboard>;
+  deleteDashboardSchedule?: Maybe<Scalars['Boolean']['output']>;
   deleteGraph?: Maybe<Graph>;
   deleteKpiSchedule?: Maybe<Scalars['Boolean']['output']>;
   deleteKpiThreshold?: Maybe<Scalars['Boolean']['output']>;
@@ -376,6 +427,7 @@ export type Mutation = {
   toggleKpiThresholdActive?: Maybe<KpiThreshold>;
   updateDashboard?: Maybe<Dashboard>;
   updateDashboardGridItem?: Maybe<DashboardGridItem>;
+  updateDashboardSchedule?: Maybe<DashboardSchedule>;
   updateGraph?: Maybe<Graph>;
 };
 
@@ -394,6 +446,12 @@ export type MutationClearDashboardFilterArgs = {
 export type MutationCreateDashboardArgs = {
   input: DashboardInput;
   organizationId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationCreateDashboardScheduleArgs = {
+  input: DashboardScheduleInput;
+  organizationId: Scalars['ID']['input'];
 };
 
 
@@ -416,6 +474,11 @@ export type MutationCreateKpiThresholdArgs = {
 
 
 export type MutationDeleteDashboardArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteDashboardScheduleArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -470,6 +533,12 @@ export type MutationUpdateDashboardGridItemArgs = {
 };
 
 
+export type MutationUpdateDashboardScheduleArgs = {
+  id: Scalars['ID']['input'];
+  input: DashboardScheduleInput;
+};
+
+
 export type MutationUpdateGraphArgs = {
   id: Scalars['ID']['input'];
   input: GraphInput;
@@ -491,6 +560,9 @@ export type Query = {
   dashboard?: Maybe<Dashboard>;
   dashboardFilter?: Maybe<DashboardFilter>;
   dashboardGridItems?: Maybe<Array<Maybe<DashboardGridItem>>>;
+  dashboardSchedule?: Maybe<DashboardSchedule>;
+  dashboardSchedules?: Maybe<Array<Maybe<DashboardSchedule>>>;
+  dashboardSchedulesByDashboard?: Maybe<Array<Maybe<DashboardSchedule>>>;
   dashboards?: Maybe<Array<Maybe<Dashboard>>>;
   graph?: Maybe<Graph>;
   graphs?: Maybe<Array<Maybe<Graph>>>;
@@ -523,6 +595,22 @@ export type QueryDashboardFilterArgs = {
 
 
 export type QueryDashboardGridItemsArgs = {
+  dashboardId: Scalars['ID']['input'];
+};
+
+
+export type QueryDashboardScheduleArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryDashboardSchedulesArgs = {
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  organizationId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryDashboardSchedulesByDashboardArgs = {
   dashboardId: Scalars['ID']['input'];
 };
 
@@ -660,6 +748,8 @@ export type ResolversTypes = ResolversObject<{
   DashboardGridItem: ResolverTypeWrapper<DashboardGridItem>;
   DashboardGridItemInput: DashboardGridItemInput;
   DashboardInput: DashboardInput;
+  DashboardSchedule: ResolverTypeWrapper<DashboardSchedule>;
+  DashboardScheduleInput: DashboardScheduleInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   FrequencyInterval: FrequencyInterval;
   Graph: ResolverTypeWrapper<Graph>;
@@ -699,6 +789,8 @@ export type ResolversParentTypes = ResolversObject<{
   DashboardGridItem: DashboardGridItem;
   DashboardGridItemInput: DashboardGridItemInput;
   DashboardInput: DashboardInput;
+  DashboardSchedule: DashboardSchedule;
+  DashboardScheduleInput: DashboardScheduleInput;
   Float: Scalars['Float']['output'];
   Graph: Graph;
   GraphInput: GraphInput;
@@ -811,6 +903,33 @@ export type DashboardGridItemResolvers<ContextType = any, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
+export type DashboardScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['DashboardSchedule'] = ResolversParentTypes['DashboardSchedule']> = ResolversObject<{
+  attachmentType?: Resolver<Maybe<ResolversTypes['AttachmentType']>, ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdById?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  cronExpression?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cronJobId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  frequencyInterval?: Resolver<ResolversTypes['FrequencyInterval'], ParentType, ContextType>;
+  gatingCondition?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  hasGatingCondition?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hourInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  minuteInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  monthDates?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
+  organizationId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  recipients?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  scheduleHour?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  scheduleMinute?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  scheduleName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  selectedDays?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  timeZone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
 export type GraphResolvers<ContextType = any, ParentType extends ResolversParentTypes['Graph'] = ResolversParentTypes['Graph']> = ResolversObject<{
   chartTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   chartType?: Resolver<ResolversTypes['ChartType'], ParentType, ContextType>;
@@ -899,10 +1018,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   addDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationAddDashboardGridItemArgs, 'dashboardId' | 'input'>>;
   clearDashboardFilter?: Resolver<Maybe<ResolversTypes['DashboardFilter']>, ParentType, ContextType, RequireFields<MutationClearDashboardFilterArgs, 'dashboardId'>>;
   createDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationCreateDashboardArgs, 'input'>>;
+  createDashboardSchedule?: Resolver<Maybe<ResolversTypes['DashboardSchedule']>, ParentType, ContextType, RequireFields<MutationCreateDashboardScheduleArgs, 'input' | 'organizationId'>>;
   createGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationCreateGraphArgs, 'input'>>;
   createKpiSchedule?: Resolver<Maybe<ResolversTypes['KpiSchedule']>, ParentType, ContextType, RequireFields<MutationCreateKpiScheduleArgs, 'input' | 'organizationId'>>;
   createKpiThreshold?: Resolver<Maybe<ResolversTypes['KpiThreshold']>, ParentType, ContextType, RequireFields<MutationCreateKpiThresholdArgs, 'input' | 'organizationId'>>;
   deleteDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationDeleteDashboardArgs, 'id'>>;
+  deleteDashboardSchedule?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteDashboardScheduleArgs, 'id'>>;
   deleteGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationDeleteGraphArgs, 'id'>>;
   deleteKpiSchedule?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteKpiScheduleArgs, 'id'>>;
   deleteKpiThreshold?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteKpiThresholdArgs, 'id'>>;
@@ -912,6 +1033,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   toggleKpiThresholdActive?: Resolver<Maybe<ResolversTypes['KpiThreshold']>, ParentType, ContextType, RequireFields<MutationToggleKpiThresholdActiveArgs, 'id' | 'isActive'>>;
   updateDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardArgs, 'id' | 'input'>>;
   updateDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardGridItemArgs, 'id' | 'input'>>;
+  updateDashboardSchedule?: Resolver<Maybe<ResolversTypes['DashboardSchedule']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardScheduleArgs, 'id' | 'input'>>;
   updateGraph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<MutationUpdateGraphArgs, 'id' | 'input'>>;
 }>;
 
@@ -923,6 +1045,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   dashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<QueryDashboardArgs, 'id'>>;
   dashboardFilter?: Resolver<Maybe<ResolversTypes['DashboardFilter']>, ParentType, ContextType, RequireFields<QueryDashboardFilterArgs, 'dashboardId'>>;
   dashboardGridItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['DashboardGridItem']>>>, ParentType, ContextType, RequireFields<QueryDashboardGridItemsArgs, 'dashboardId'>>;
+  dashboardSchedule?: Resolver<Maybe<ResolversTypes['DashboardSchedule']>, ParentType, ContextType, RequireFields<QueryDashboardScheduleArgs, 'id'>>;
+  dashboardSchedules?: Resolver<Maybe<Array<Maybe<ResolversTypes['DashboardSchedule']>>>, ParentType, ContextType, Partial<QueryDashboardSchedulesArgs>>;
+  dashboardSchedulesByDashboard?: Resolver<Maybe<Array<Maybe<ResolversTypes['DashboardSchedule']>>>, ParentType, ContextType, RequireFields<QueryDashboardSchedulesByDashboardArgs, 'dashboardId'>>;
   dashboards?: Resolver<Maybe<Array<Maybe<ResolversTypes['Dashboard']>>>, ParentType, ContextType, Partial<QueryDashboardsArgs>>;
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<QueryGraphArgs, 'id'>>;
   graphs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Graph']>>>, ParentType, ContextType, Partial<QueryGraphsArgs>>;
@@ -944,6 +1069,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Dashboard?: DashboardResolvers<ContextType>;
   DashboardFilter?: DashboardFilterResolvers<ContextType>;
   DashboardGridItem?: DashboardGridItemResolvers<ContextType>;
+  DashboardSchedule?: DashboardScheduleResolvers<ContextType>;
   Graph?: GraphResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   KpiAlert?: KpiAlertResolvers<ContextType>;

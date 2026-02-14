@@ -4,6 +4,7 @@ import { dashboardQueries, dashboardMutations } from './graphql/resolvers/dashbo
 import { cubeProxyQueries } from './graphql/resolvers/cubeProxyResolvers';
 import { kpiScheduleQueries, kpiScheduleMutations } from './graphql/resolvers/kpiScheduleResolvers';
 import { kpiThresholdQueries, kpiThresholdMutations } from './graphql/resolvers/kpiThresholdResolvers';
+import { dashboardScheduleQueries, dashboardScheduleMutations } from './graphql/resolvers/dashboardScheduleResolvers';
 
 // Define Query type with all queries
 const QueryType = new GraphQLObjectType({
@@ -27,6 +28,8 @@ const QueryType = new GraphQLObjectType({
         ...kpiThresholdQueries,
         // Cube API Proxy queries
         ...cubeProxyQueries,
+        // Dashboard Schedule queries
+        ...dashboardScheduleQueries,
     },
 });
 
@@ -42,6 +45,8 @@ const MutationType = new GraphQLObjectType({
         ...kpiScheduleMutations,
         // KPI Threshold mutations
         ...kpiThresholdMutations,
+        // Dashboard Schedule mutations
+        ...dashboardScheduleMutations,
     },
 });
 

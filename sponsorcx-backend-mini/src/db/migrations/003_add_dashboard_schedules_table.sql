@@ -14,7 +14,7 @@ CREATE TABLE dashboard_schedules (
     comment TEXT,
 
     -- Frequency configuration
-    frequency_interval VARCHAR(20) NOT NULL CHECK (frequency_interval IN ('N_MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH')),
+    frequency_interval VARCHAR(20) NOT NULL CHECK (frequency_interval IN ('n_minute', 'hour', 'day', 'week', 'month')),
 
     -- Interval values (used based on frequency_interval)
     minute_interval INTEGER CHECK (minute_interval IS NULL OR (minute_interval >= 5 AND minute_interval <= 45 AND minute_interval % 5 = 0)),
@@ -37,7 +37,7 @@ CREATE TABLE dashboard_schedules (
     gating_condition JSONB DEFAULT NULL,
 
     -- Delivery configuration
-    attachment_type VARCHAR(10) CHECK (attachment_type IS NULL OR attachment_type IN ('PDF', 'EXCEL', 'CSV')),
+    attachment_type VARCHAR(10) CHECK (attachment_type IS NULL OR attachment_type IN ('PDF', 'Excel', 'CSV')),
     recipients TEXT[] DEFAULT '{}',
 
     -- Status and cron
