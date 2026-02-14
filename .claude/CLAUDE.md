@@ -82,6 +82,8 @@ The backend uses uppercase GraphQL enum values (e.g., `ChartType.Bar`, `SortOrde
 - Frontend service functions must use the generated input types (e.g., `GraphInput`, `DashboardInput`) for mutations
 - Frontend must use the generated output types (e.g., `Graph`, `Dashboard`) for query responses
 - Do not create ad-hoc request/response types that diverge from the schema
+- Frontend API service files (`src/api/`) must never define local interfaces that duplicate generated types — import them from `backend-graphql.ts`
+- Frontend-only UI types (form data, table rows) with no backend equivalent may be defined locally
 
 ## SQL Schema Guidelines
 

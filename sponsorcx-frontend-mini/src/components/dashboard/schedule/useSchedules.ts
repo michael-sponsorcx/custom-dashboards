@@ -34,6 +34,7 @@ export const useSchedules = (dashboardId: string, search: string) => {
   };
 
   useEffect(() => {
+    if (!dashboardId) return;
     loadSchedules();
   }, [dashboardId]);
 

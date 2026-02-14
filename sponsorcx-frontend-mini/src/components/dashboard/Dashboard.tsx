@@ -178,7 +178,18 @@ export function Dashboard() {
     return <Present gridItems={gridItems} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
-  // Error state: organizationId, dashboardId, and userId are required for the dashboard to function
+  // Show loader while dashboard data is being fetched (dashboardId may not be set yet)
+  if (loading) {
+    return (
+      <Container size="xl" py="xl">
+        <Center h="50vh">
+          <Loader size="xl" />
+        </Center>
+      </Container>
+    );
+  }
+
+  // Error state: only show after loading completes and required IDs are still missing
   if (!organizationId || !dashboardId || !userId) {
     console.error('Dashboard: Required IDs are not set in the store. This should be set after login.', {
       organizationId,
@@ -191,16 +202,6 @@ export function Dashboard() {
           <Title order={2} c="red">Something went wrong</Title>
           <Text c="dimmed">Unable to load dashboard. Please try refreshing the page or logging in again.</Text>
         </Stack>
-      </Container>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Container size="xl" py="xl">
-        <Center h="50vh">
-          <Loader size="xl" />
-        </Center>
       </Container>
     );
   }
