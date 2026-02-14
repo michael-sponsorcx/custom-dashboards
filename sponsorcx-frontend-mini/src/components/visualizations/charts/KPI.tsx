@@ -188,7 +188,7 @@ export function KPI({
                     fontSize: 'clamp(0.875rem, 1.8vw, 1rem)',
                   }}
                 >
-                  {trendPercentage > 0 ? '▲' : trendPercentage < 0 ? '▼' : '—'}{' '}
+                  {trendPercentage > 0 ? '▲' : trendPercentage < 0 ? '▼' : '-'}{' '}
                   {Math.abs(trendPercentage)}%
                 </Text>
               </Group>

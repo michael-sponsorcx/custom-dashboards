@@ -281,6 +281,22 @@ export type DashboardScheduleInput = {
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type FeatureFlag = {
+  __typename?: 'FeatureFlag';
+  archived: Scalars['Boolean']['output'];
+  createdAt: Scalars['String']['output'];
+  defaultValue: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  name: Scalars['String']['output'];
+  permanent: Scalars['Boolean']['output'];
+  rules?: Maybe<Scalars['JSON']['output']>;
+  tags?: Maybe<Scalars['JSON']['output']>;
+  updatedAt: Scalars['String']['output'];
+};
+
 export enum FrequencyInterval {
   Day = 'day',
   Hour = 'hour',
@@ -577,6 +593,7 @@ export type Query = {
   dashboardSchedules?: Maybe<Array<Maybe<DashboardSchedule>>>;
   dashboardSchedulesByDashboard?: Maybe<Array<Maybe<DashboardSchedule>>>;
   dashboards?: Maybe<Array<Maybe<Dashboard>>>;
+  featureFlag?: Maybe<FeatureFlag>;
   graph?: Maybe<Graph>;
   graphs?: Maybe<Array<Maybe<Graph>>>;
   hello?: Maybe<Scalars['String']['output']>;
@@ -635,6 +652,11 @@ export type QueryDashboardSchedulesByDashboardArgs = {
 
 export type QueryDashboardsArgs = {
   organizationId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QueryFeatureFlagArgs = {
+  key: Scalars['String']['input'];
 };
 
 
@@ -769,6 +791,7 @@ export type ResolversTypes = ResolversObject<{
   DashboardInput: DashboardInput;
   DashboardSchedule: ResolverTypeWrapper<DashboardSchedule>;
   DashboardScheduleInput: DashboardScheduleInput;
+  FeatureFlag: ResolverTypeWrapper<FeatureFlag>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   FrequencyInterval: FrequencyInterval;
   Graph: ResolverTypeWrapper<Graph>;
@@ -811,6 +834,7 @@ export type ResolversParentTypes = ResolversObject<{
   DashboardInput: DashboardInput;
   DashboardSchedule: DashboardSchedule;
   DashboardScheduleInput: DashboardScheduleInput;
+  FeatureFlag: FeatureFlag;
   Float: Scalars['Float']['output'];
   Graph: Graph;
   GraphInput: GraphInput;
@@ -961,6 +985,21 @@ export type DashboardScheduleResolvers<ContextType = any, ParentType extends Res
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
+export type FeatureFlagResolvers<ContextType = any, ParentType extends ResolversParentTypes['FeatureFlag'] = ResolversParentTypes['FeatureFlag']> = ResolversObject<{
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  defaultValue?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  metadata?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  permanent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  rules?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+}>;
+
 export type GraphResolvers<ContextType = any, ParentType extends ResolversParentTypes['Graph'] = ResolversParentTypes['Graph']> = ResolversObject<{
   chartTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   chartType?: Resolver<ResolversTypes['ChartType'], ParentType, ContextType>;
@@ -1081,6 +1120,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   dashboardSchedules?: Resolver<Maybe<Array<Maybe<ResolversTypes['DashboardSchedule']>>>, ParentType, ContextType, Partial<QueryDashboardSchedulesArgs>>;
   dashboardSchedulesByDashboard?: Resolver<Maybe<Array<Maybe<ResolversTypes['DashboardSchedule']>>>, ParentType, ContextType, RequireFields<QueryDashboardSchedulesByDashboardArgs, 'dashboardId'>>;
   dashboards?: Resolver<Maybe<Array<Maybe<ResolversTypes['Dashboard']>>>, ParentType, ContextType, Partial<QueryDashboardsArgs>>;
+  featureFlag?: Resolver<Maybe<ResolversTypes['FeatureFlag']>, ParentType, ContextType, RequireFields<QueryFeatureFlagArgs, 'key'>>;
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType, RequireFields<QueryGraphArgs, 'id'>>;
   graphs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Graph']>>>, ParentType, ContextType, Partial<QueryGraphsArgs>>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1103,6 +1143,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DashboardFilter?: DashboardFilterResolvers<ContextType>;
   DashboardGridItem?: DashboardGridItemResolvers<ContextType>;
   DashboardSchedule?: DashboardScheduleResolvers<ContextType>;
+  FeatureFlag?: FeatureFlagResolvers<ContextType>;
   Graph?: GraphResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   KpiAlert?: KpiAlertResolvers<ContextType>;

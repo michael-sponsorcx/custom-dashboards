@@ -2,7 +2,8 @@ import { Container, Button, Title, Stack, Text, Group, Loader, Center } from '@m
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
-import { useDashboardState, useDashboardActions } from './hooks';
+import { useDashboardState, useDashboardActions, useMaintenanceMode } from './hooks';
+import { MaintenanceMode } from './MaintenanceMode';
 import { DashboardGrid } from './grid';
 // import { GraphFilterModal } from './GraphFilterModal';
 import { KPIAlertModal } from './KPIAlertModal';
@@ -34,6 +35,9 @@ export function Dashboard() {
       loadFilters(dashboardId);
     }
   }, [dashboardId, loadFilters]);
+
+  // Check maintenance mode feature flag
+  const { enabled: maintenanceEnabled, loading: maintenanceLoading } = useMaintenanceMode();
 
   // Use custom hooks to manage state and actions
   const { gridItems, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
@@ -178,8 +182,8 @@ export function Dashboard() {
     return <Present gridItems={gridItems} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
-  // Show loader while dashboard data is being fetched (dashboardId may not be set yet)
-  if (loading) {
+  // Show loader while dashboard data or maintenance status is being fetched
+  if (loading || maintenanceLoading) {
     return (
       <Container size="xl" py="xl">
         <Center h="50vh">
@@ -187,6 +191,11 @@ export function Dashboard() {
         </Center>
       </Container>
     );
+  }
+
+  // Show maintenance page when feature flag is enabled
+  if (maintenanceEnabled) {
+    return <MaintenanceMode />;
   }
 
   // Error state: only show after loading completes and required IDs are still missing

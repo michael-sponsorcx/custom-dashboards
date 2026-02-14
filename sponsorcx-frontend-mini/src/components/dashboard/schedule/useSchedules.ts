@@ -10,7 +10,7 @@ const toScheduleRow = (schedule: DashboardSchedule): ScheduleRow => ({
   createdBy: schedule.createdByName,
   recipients: (schedule.recipients ?? []).filter((r): r is string => r != null),
   frequency: schedule.frequencyInterval,
-  format: schedule.attachmentType ?? '—',
+  format: schedule.attachmentType ?? '-',
 });
 
 export const useSchedules = (dashboardId: string, search: string) => {

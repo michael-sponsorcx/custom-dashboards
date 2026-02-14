@@ -7,3 +7,4 @@ export * from './kpiThresholdResolversTypes';
 export * from './dashboardScheduleResolversTypes';
 export * from './cronJobResultResolversTypes';
 export * from './cubeProxyResolversTypes';
+export * from './featureFlagResolversTypes';

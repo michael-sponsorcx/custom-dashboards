@@ -1,3 +1,8 @@
+/**
+ * Dashboard Resolvers
+ * GraphQL resolvers for managing dashboards, grid items, and dashboard filters
+ */
+
 import { GraphQLNonNull, GraphQLID, GraphQLList } from 'graphql';
 import {
     DashboardType,
@@ -27,7 +32,14 @@ import type {
     MutationClearDashboardFilterArgs,
 } from '../../generated/graphql';
 
+// ============================================================================
+// Queries
+// ============================================================================
+
 export const dashboardQueries = {
+    /**
+     * Fetch all dashboards, optionally filtered by organization
+     */
     dashboards: {
         type: new GraphQLList(DashboardType),
         args: {
@@ -36,6 +48,9 @@ export const dashboardQueries = {
         resolve: async (_: unknown, { organizationId }: QueryDashboardsArgs) =>
             findAllDashboards(organizationId),
     },
+    /**
+     * Fetch a single dashboard by ID
+     */
     dashboard: {
         type: DashboardType,
         args: {
@@ -44,6 +59,9 @@ export const dashboardQueries = {
         resolve: async (_: unknown, { id }: QueryDashboardArgs) =>
             findDashboardById(id),
     },
+    /**
+     * Fetch all grid items for a dashboard (includes graph data via field resolver)
+     */
     dashboardGridItems: {
         type: new GraphQLList(DashboardGridItemType),
         args: {
@@ -52,6 +70,9 @@ export const dashboardQueries = {
         resolve: async (_: unknown, { dashboardId }: QueryDashboardGridItemsArgs) =>
             findGridItemsByDashboard(dashboardId),
     },
+    /**
+     * Fetch the filter configuration for a dashboard
+     */
     dashboardFilter: {
         type: DashboardFilterType,
         args: {
@@ -62,7 +83,14 @@ export const dashboardQueries = {
     },
 };
 
+// ============================================================================
+// Mutations
+// ============================================================================
+
 export const dashboardMutations = {
+    /**
+     * Create a new dashboard
+     */
     createDashboard: {
         type: DashboardType,
         args: {
@@ -72,6 +100,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { input, organizationId }: MutationCreateDashboardArgs) =>
             createDashboard(input, organizationId),
     },
+    /**
+     * Update an existing dashboard by ID
+     */
     updateDashboard: {
         type: DashboardType,
         args: {
@@ -81,6 +112,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { id, input }: MutationUpdateDashboardArgs) =>
             updateDashboard(id, input),
     },
+    /**
+     * Delete a dashboard by ID
+     */
     deleteDashboard: {
         type: DashboardType,
         args: {
@@ -89,6 +123,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { id }: MutationDeleteDashboardArgs) =>
             deleteDashboard(id),
     },
+    /**
+     * Add a grid item (graph placement) to a dashboard
+     */
     addDashboardGridItem: {
         type: DashboardGridItemType,
         args: {
@@ -98,6 +135,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { dashboardId, input }: MutationAddDashboardGridItemArgs) =>
             addGridItem(dashboardId, input),
     },
+    /**
+     * Update a grid item's position or size
+     */
     updateDashboardGridItem: {
         type: DashboardGridItemType,
         args: {
@@ -107,6 +147,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { id, input }: MutationUpdateDashboardGridItemArgs) =>
             updateGridItem(id, input),
     },
+    /**
+     * Remove a grid item from a dashboard
+     */
     removeDashboardGridItem: {
         type: DashboardGridItemType,
         args: {
@@ -115,6 +158,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { id }: MutationRemoveDashboardGridItemArgs) =>
             removeGridItem(id),
     },
+    /**
+     * Save or update a dashboard's filter configuration
+     */
     saveDashboardFilter: {
         type: DashboardFilterType,
         args: {
@@ -124,6 +170,9 @@ export const dashboardMutations = {
         resolve: async (_: unknown, { dashboardId, input }: MutationSaveDashboardFilterArgs) =>
             saveFilter(dashboardId, input),
     },
+    /**
+     * Clear all filters for a dashboard
+     */
     clearDashboardFilter: {
         type: DashboardFilterType,
         args: {
@@ -134,7 +183,11 @@ export const dashboardMutations = {
     },
 };
 
-// Field resolver for DashboardGridItem.graph — loads the associated graph
+// ============================================================================
+// Field Resolvers
+// ============================================================================
+
+// Resolves DashboardGridItem.graph — loads the associated graph for each grid item.
 // This loads graphs one at a time, we may need to consider batching this in the future.
 const graphField = DashboardGridItemType.getFields().graph;
 graphField.resolve = async (parent: DashboardGridItem) => {

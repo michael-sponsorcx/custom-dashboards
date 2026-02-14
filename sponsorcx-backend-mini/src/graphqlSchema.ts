@@ -6,6 +6,7 @@ import { kpiScheduleQueries, kpiScheduleMutations } from './graphql/resolvers/kp
 import { kpiThresholdQueries, kpiThresholdMutations } from './graphql/resolvers/kpiThresholdResolvers';
 import { dashboardScheduleQueries, dashboardScheduleMutations } from './graphql/resolvers/dashboardScheduleResolvers';
 import { cronJobResultQueries } from './graphql/resolvers/cronJobResultResolvers';
+import { featureFlagQueries } from './graphql/resolvers/featureFlagResolvers';
 
 // Define Query type with all queries
 const QueryType = new GraphQLObjectType({
@@ -33,6 +34,8 @@ const QueryType = new GraphQLObjectType({
         ...dashboardScheduleQueries,
         // Cron Job Result queries
         ...cronJobResultQueries,
+        // Feature Flag queries
+        ...featureFlagQueries,
     },
 });
 

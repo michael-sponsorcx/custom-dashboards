@@ -12,3 +12,4 @@ export * from './kpiSchedule';
 export * from './kpiThreshold';
 export * from './kpiAlert';
 export * from './cronJobResult';
+export * from './featureFlags';

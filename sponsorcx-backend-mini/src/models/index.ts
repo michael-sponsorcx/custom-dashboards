@@ -8,3 +8,4 @@ export * from './kpiThreshold';
 export * from './cronJob';
 export * from './cronJobResult';
 export * from './dashboardSchedule';
+export * from './featureFlag';

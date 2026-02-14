@@ -108,7 +108,7 @@ export const ScheduleTable = ({
             <Table.Td>
               {schedule.recipients.length > 0
                 ? schedule.recipients.join(', ')
-                : '—'}
+                : '-'}
             </Table.Td>
             <Table.Td>{schedule.frequency}</Table.Td>
             <Table.Td>{schedule.format}</Table.Td>
