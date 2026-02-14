@@ -1,124 +1,27 @@
 /**
- * Dashboard API Service
+ * Dashboard Mutation Operations
  *
- * Handles all dashboard and dashboard grid item operations via backend GraphQL API
+ * Write operations for dashboards, grid items, and filters.
  */
 
 import { executeBackendGraphQL } from '../../core/client';
 import { LayoutType, type DashboardGridItem } from '../../../types/backend-graphql';
-import type { DashboardUI, GridItem, GridLayout } from '../../../types/dashboard';
+import type { DashboardUI, GridLayout } from '../../../types/dashboard';
+import type { DashboardFilter } from '../../../types/backend-graphql';
 import type { FilterRule } from '../../../types/filters';
+import { DASHBOARD_FIELDS, DASHBOARD_GRID_ITEM_FIELDS } from './fragments';
+import { fetchDashboardGridItems, fetchDashboards } from './queries';
+import type { DashboardFilterField, DashboardFilterState } from './queries';
 
-// GraphQL fragments
-const DASHBOARD_FIELDS = `
-  id
-  organizationId
-  name
-  layout
-  createdAt
-  updatedAt
-`;
-
-const DASHBOARD_GRID_ITEM_FIELDS = `
+const DASHBOARD_FILTER_FIELDS = `
   id
   dashboardId
-  graphId
-  gridColumn
-  gridRow
-  gridWidth
-  gridHeight
-  displayOrder
-`;
-
-const GRAPH_FIELDS = `
-  id
-  organizationId
-  name
-  viewName
-  chartType
-  chartTitle
-  measures
-  dimensions
-  dates
-  filters
-  orderByField
-  orderByDirection
-  numberFormat
-  numberPrecision
-  colorPalette
-  primaryColor
-  sortOrder
-  legendPosition
-  kpiValue
-  kpiLabel
-  kpiSecondaryValue
-  kpiSecondaryLabel
-  kpiShowTrend
-  kpiTrendPercentage
-  showXAxisGridLines
-  showYAxisGridLines
-  showGridLines
-  showRegressionLine
-  xAxisLabel
-  yAxisLabel
-  maxDataPoints
-  primaryDimension
-  secondaryDimension
-  selectedMeasure
+  selectedViews
+  availableFields
+  activeFilters
   createdAt
   updatedAt
 `;
-
-/**
- * Fetch all dashboards for an organization
- */
-export const fetchDashboards = async (organizationId?: string): Promise<DashboardUI[]> => {
-  const query = `
-    query FetchDashboards($organizationId: ID) {
-      dashboards(organizationId: $organizationId) {
-        ${DASHBOARD_FIELDS}
-      }
-    }
-  `;
-
-  const response = await executeBackendGraphQL<{ dashboards: DashboardUI[] }>(query, {
-    organizationId,
-  });
-
-  // Note: Backend doesn't return graphIds array, so we need to fetch grid items separately
-  // to populate the graphIds
-  const dashboards = response.data?.dashboards || [];
-
-  // For now, return empty graphIds - the caller should use fetchDashboardGridItems
-  return dashboards.map((d) => ({ ...d, graphIds: [] }));
-};
-
-/**
- * Fetch a single dashboard by ID
- */
-export const fetchDashboard = async (id: string): Promise<DashboardUI | null> => {
-  const query = `
-    query FetchDashboard($id: ID!) {
-      dashboard(id: $id) {
-        ${DASHBOARD_FIELDS}
-      }
-    }
-  `;
-
-  const response = await executeBackendGraphQL<{ dashboard: DashboardUI | null }>(query, {
-    id,
-  });
-
-  const dashboard = response.data?.dashboard;
-  if (!dashboard) return null;
-
-  // Populate graphIds from grid items
-  const gridItems = await fetchDashboardGridItems(id);
-  return {
-    ...dashboard,
-    graphIds: gridItems.map((item) => item.graphId),
-  };
-};
 
 /**
  * Create a new dashboard
@@ -205,83 +108,6 @@ export const deleteDashboard = async (id: string): Promise<boolean> => {
   );
 
   return !!response.data?.deleteDashboard;
-};
-
-/**
- * Fetch all grid items for a dashboard (with full graph details)
- */
-export const fetchDashboardGridItems = async (dashboardId: string): Promise<DashboardGridItem[]> => {
-  const query = `
-    query FetchDashboardGridItems($dashboardId: ID!) {
-      dashboardGridItems(dashboardId: $dashboardId) {
-        ${DASHBOARD_GRID_ITEM_FIELDS}
-        graph {
-          ${GRAPH_FIELDS}
-        }
-      }
-    }
-  `;
-
-  const response = await executeBackendGraphQL<{
-    dashboardGridItems: DashboardGridItem[];
-  }>(query, { dashboardId });
-
-  return response.data?.dashboardGridItems || [];
-};
-
-/**
- * Fetch all grid items (graphs with grid layout) for a dashboard
- * This combines graph data with grid layout information
- */
-export const fetchGridItems = async (dashboardId: string): Promise<GridItem[]> => {
-  const gridItems = await fetchDashboardGridItems(dashboardId);
-
-  return gridItems.flatMap((item) => {
-    if (!item.graph) return [];
-    const graph = item.graph;
-    const gridItem: GridItem = {
-      id: graph.id,
-      name: graph.name,
-      viewName: graph.viewName,
-      chartType: graph.chartType,
-      chartTitle: graph.chartTitle,
-      measures: graph.measures,
-      dimensions: graph.dimensions,
-      dates: graph.dates,
-      filters: graph.filters as unknown as FilterRule[],
-      orderByField: graph.orderByField,
-      orderByDirection: graph.orderByDirection,
-      numberFormat: graph.numberFormat,
-      numberPrecision: graph.numberPrecision,
-      colorPalette: graph.colorPalette,
-      primaryColor: graph.primaryColor,
-      sortOrder: graph.sortOrder,
-      legendPosition: graph.legendPosition,
-      kpiValue: graph.kpiValue,
-      kpiLabel: graph.kpiLabel,
-      kpiSecondaryValue: graph.kpiSecondaryValue,
-      kpiSecondaryLabel: graph.kpiSecondaryLabel,
-      kpiShowTrend: graph.kpiShowTrend,
-      kpiTrendPercentage: graph.kpiTrendPercentage,
-      showXAxisGridLines: graph.showXAxisGridLines,
-      showYAxisGridLines: graph.showYAxisGridLines,
-      showGridLines: graph.showGridLines,
-      showRegressionLine: graph.showRegressionLine,
-      xAxisLabel: graph.xAxisLabel,
-      yAxisLabel: graph.yAxisLabel,
-      maxDataPoints: graph.maxDataPoints,
-      primaryDimension: graph.primaryDimension,
-      secondaryDimension: graph.secondaryDimension,
-      selectedMeasure: graph.selectedMeasure,
-      createdAt: graph.createdAt,
-      updatedAt: graph.updatedAt,
-      gridColumn: item.gridColumn ?? 1,
-      gridRow: item.gridRow ?? 1,
-      gridWidth: item.gridWidth ?? 1,
-      gridHeight: item.gridHeight ?? 1,
-    };
-    return [gridItem];
-  });
 };
 
 /**
@@ -398,4 +224,63 @@ export const getOrCreateDefaultDashboard = async (
 
   // Create a default dashboard
   return await createDashboard('Main Dashboard', 'grid', organizationId);
+};
+
+/**
+ * Save dashboard filters
+ */
+export const saveDashboardFilter = async (
+  dashboardId: string,
+  state: DashboardFilterState
+): Promise<DashboardFilterState> => {
+  const query = `
+    mutation SaveDashboardFilter($dashboardId: ID!, $input: DashboardFilterInput!) {
+      saveDashboardFilter(dashboardId: $dashboardId, input: $input) {
+        ${DASHBOARD_FILTER_FIELDS}
+      }
+    }
+  `;
+
+  const input = {
+    selectedViews: state.selectedViews || [],
+    availableFields: state.availableFields || [],
+    activeFilters: state.activeFilters || [],
+  };
+
+  const response = await executeBackendGraphQL<{
+    saveDashboardFilter: DashboardFilter;
+  }>(query, {
+    dashboardId,
+    input,
+  });
+
+  const filter = response.data?.saveDashboardFilter;
+  if (!filter) {
+    throw new Error('Failed to save dashboard filters');
+  }
+
+  return {
+    selectedViews: (filter.selectedViews ?? []).filter((v): v is string => v != null),
+    availableFields: (filter.availableFields as unknown as DashboardFilterField[]) || [],
+    activeFilters: (filter.activeFilters as unknown as FilterRule[]) || [],
+  };
+};
+
+/**
+ * Clear dashboard filters
+ */
+export const clearDashboardFilter = async (dashboardId: string): Promise<boolean> => {
+  const query = `
+    mutation ClearDashboardFilter($dashboardId: ID!) {
+      clearDashboardFilter(dashboardId: $dashboardId) {
+        id
+      }
+    }
+  `;
+
+  const response = await executeBackendGraphQL<{
+    clearDashboardFilter: { id: string } | null;
+  }>(query, { dashboardId });
+
+  return !!response.data?.clearDashboardFilter;
 };

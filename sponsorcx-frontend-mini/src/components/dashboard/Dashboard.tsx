@@ -257,7 +257,7 @@ export function Dashboard() {
         )}
       </Stack>
 
-      {/* Graph Filter Modal - Configures permanent graph-level filters (GraphTemplate.filters) */}
+      {/* Graph Filter Modal - Configures permanent graph-level filters (Graph.filters) */}
       {/* <GraphFilterModal
         opened={filterModalOpen}
         onClose={handleCloseGraphFilterModal}

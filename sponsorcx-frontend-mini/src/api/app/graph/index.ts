@@ -1,15 +1,18 @@
 /**
- * Graphs API
+ * Graph API
  *
- * CRUD operations for graph templates.
+ * CRUD operations for graphs.
  */
 
 export {
   fetchGraphs,
   fetchGraph,
+} from './queries';
+
+export {
   createGraph,
   updateGraph,
   deleteGraph,
-} from './crud';
+} from './mutations';
 
 export { toGraphInput } from './mappers';

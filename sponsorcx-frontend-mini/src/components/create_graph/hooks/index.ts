@@ -7,4 +7,4 @@
 export { useGraphState } from './useGraphState';
 export { useFilterManagement } from './useFilterManagement';
 export { useQueryExecution } from './useQueryExecution';
-export { useGraphUI } from './useGraphTemplate';
+export { useGraphUI } from './useGraphUI';

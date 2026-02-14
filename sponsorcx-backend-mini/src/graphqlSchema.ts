@@ -1,5 +1,5 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
-import { graphQueries, graphMutations } from './graphql/resolvers/graphTemplateResolvers';
+import { graphQueries, graphMutations } from './graphql/resolvers/graphResolvers';
 import { dashboardQueries, dashboardMutations } from './graphql/resolvers/dashboardResolvers';
 import { cubeProxyQueries } from './graphql/resolvers/cubeProxyResolvers';
 import { kpiScheduleQueries, kpiScheduleMutations } from './graphql/resolvers/kpiScheduleResolvers';

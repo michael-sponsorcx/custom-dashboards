@@ -15,7 +15,7 @@ export interface DrillDownFilter {
  * **Purpose:** Create complete filter set for Cube.js query
  * **Pattern:** Graph filters → combine with dashboard → add drill-down filters
  *
- * @input graphFilters: FilterRule[] - Filters from graph template
+ * @input graphFilters: FilterRule[] - Filters from graph
  * @input dashboardFilters: FilterRule[] - Global dashboard filters
  * @input drillDownFilters: DrillDownFilter[] - Accumulated drill-down filters
  * @output FilterRule[] - Combined filter array for query

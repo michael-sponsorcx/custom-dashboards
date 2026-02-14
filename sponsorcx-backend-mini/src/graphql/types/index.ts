@@ -1,5 +1,5 @@
 export * from './sharedResolversTypes';
-export * from './graphTemplateResolversTypes';
+export * from './graphResolversTypes';
 export * from './dashboardResolversTypes';
 export * from './kpiAlertResolversTypes';
 export * from './kpiScheduleResolversTypes';

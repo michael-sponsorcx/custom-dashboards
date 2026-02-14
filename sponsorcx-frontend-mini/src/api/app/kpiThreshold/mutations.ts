@@ -1,8 +1,7 @@
 /**
- * KPI Thresholds API Service
+ * KPI Threshold Mutation Operations
  *
- * Handles KPI threshold CRUD operations via backend GraphQL API.
- * KPI thresholds trigger alerts when a KPI value crosses a set limit.
+ * Write operations for KPI thresholds.
  */
 
 import { executeBackendGraphQL } from '../../core/client';
@@ -66,25 +65,6 @@ export const createKpiThreshold = async (
   }
 
   return response.data.createKpiThreshold;
-};
-
-/**
- * Fetch KPI thresholds for a graph
- */
-export const fetchKpiThresholdsByGraph = async (graphId: string): Promise<KpiThreshold[]> => {
-  const query = `
-    query KpiThresholdsByGraph($graphId: ID!) {
-      kpiThresholdsByGraph(graphId: $graphId) {
-        ${KPI_THRESHOLD_FIELDS}
-      }
-    }
-  `;
-
-  const response = await executeBackendGraphQL<{ kpiThresholdsByGraph: KpiThreshold[] }>(query, {
-    graphId,
-  });
-
-  return response.data?.kpiThresholdsByGraph || [];
 };
 
 /**

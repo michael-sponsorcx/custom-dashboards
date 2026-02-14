@@ -3,8 +3,8 @@
  *
  * Manages graph creation and saving:
  * - Determines if editing or creating
- * - Builds template from current state
- * - Saves template to backend
+ * - Builds graph data from current state
+ * - Saves graph to backend
  * - Shows notifications
  * - Navigates after save
  */

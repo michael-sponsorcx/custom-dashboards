@@ -1,4 +1,4 @@
-import { Modal, Title, ScrollArea } from '@mantine/core';
+import { Modal, Text, ScrollArea } from '@mantine/core';
 import { RunHistoryTable } from './RunHistoryTable';
 import { useRunHistory } from './useRunHistory';
 
@@ -21,7 +21,7 @@ export const RunHistoryModal = ({
       onClose={onClose}
       size="xl"
       centered
-      title={<Title order={3}>Run History — {scheduleName}</Title>}
+      title={<Text fw={600} size="lg">Run History — {scheduleName}</Text>}
     >
       <ScrollArea style={{ minHeight: 200 }}>
         <RunHistoryTable runs={runs} loading={loading} />

@@ -1,8 +1,7 @@
 /**
- * KPI Schedules API Service
+ * KPI Schedule Mutation Operations
  *
- * Handles KPI schedule CRUD operations via backend GraphQL API.
- * KPI schedules send individual KPI values to recipients on a cadence.
+ * Write operations for KPI schedules.
  */
 
 import { executeBackendGraphQL } from '../../core/client';
@@ -68,25 +67,6 @@ export const createKpiSchedule = async (
   }
 
   return response.data.createKpiSchedule;
-};
-
-/**
- * Fetch KPI schedules for a graph
- */
-export const fetchKpiSchedulesByGraph = async (graphId: string): Promise<KpiSchedule[]> => {
-  const query = `
-    query KpiSchedulesByGraph($graphId: ID!) {
-      kpiSchedulesByGraph(graphId: $graphId) {
-        ${KPI_SCHEDULE_FIELDS}
-      }
-    }
-  `;
-
-  const response = await executeBackendGraphQL<{ kpiSchedulesByGraph: KpiSchedule[] }>(query, {
-    graphId,
-  });
-
-  return response.data?.kpiSchedulesByGraph || [];
 };
 
 /**

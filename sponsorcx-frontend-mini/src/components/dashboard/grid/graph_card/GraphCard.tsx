@@ -41,7 +41,7 @@ interface GraphCardProps {
  * - Individual refresh capability
  *
  * **Filter Architecture:**
- * - Graph-level filters (GraphTemplate.filters): Permanent filters configured via modal
+ * - Graph-level filters (Graph.filters): Permanent filters configured via modal
  * - Dashboard-level filters (DashboardFilterContext): Temporary filters applied to ALL graphs
  * - Drill-down filters: Ephemeral filters from clicking chart elements
  *
@@ -50,7 +50,7 @@ interface GraphCardProps {
  *
  * @example
  * <GraphCard
- *   template={graphTemplate}
+ *   template={graph}
  *   onDelete={handleDelete}
  *   onEdit={handleEdit}
  *   onOpenGraphFilterModal={handleOpenFilterModal}

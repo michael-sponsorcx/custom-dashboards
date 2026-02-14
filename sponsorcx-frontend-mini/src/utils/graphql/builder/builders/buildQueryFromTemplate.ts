@@ -11,7 +11,7 @@ import { buildSimpleCubeQuery } from './cubeQuery';
 /**
  * Build a GraphQL query from a GraphUI
  *
- * @param template - Graph template containing view, measures, dimensions, etc.
+ * @param template - Graph containing view, measures, dimensions, etc.
  * @returns GraphQL query string
  */
 export const buildQueryFromTemplate = (template: GraphUI): string => {

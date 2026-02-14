@@ -1,5 +1,5 @@
 /**
- * KPI Alerts API Service
+ * KPI Alert Mutation Operations
  *
  * Router for creating KPI alerts (schedules or thresholds).
  * Routes to the appropriate service based on alert type.
@@ -8,8 +8,8 @@
 import type { KPIFormData } from '../../../types/kpi-alerts';
 import { AlertType } from '../../../types/backend-graphql';
 import type { KpiSchedule, KpiThreshold } from '../../../types/backend-graphql';
-import { createKpiSchedule } from './schedules';
-import { createKpiThreshold } from './thresholds';
+import { createKpiSchedule } from '../kpiSchedule';
+import { createKpiThreshold } from '../kpiThreshold';
 
 /**
  * Create a new KPI alert (schedule or threshold based on alertType)

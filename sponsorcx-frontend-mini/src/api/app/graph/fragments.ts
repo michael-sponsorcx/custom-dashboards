@@ -1,0 +1,42 @@
+/**
+ * Graph GraphQL Fragments
+ */
+
+export const GRAPH_FIELDS = `
+  id
+  organizationId
+  name
+  viewName
+  chartType
+  chartTitle
+  measures
+  dimensions
+  dates
+  filters
+  orderByField
+  orderByDirection
+  numberFormat
+  numberPrecision
+  colorPalette
+  primaryColor
+  sortOrder
+  legendPosition
+  kpiValue
+  kpiLabel
+  kpiSecondaryValue
+  kpiSecondaryLabel
+  kpiShowTrend
+  kpiTrendPercentage
+  showXAxisGridLines
+  showYAxisGridLines
+  showGridLines
+  showRegressionLine
+  xAxisLabel
+  yAxisLabel
+  maxDataPoints
+  primaryDimension
+  secondaryDimension
+  selectedMeasure
+  createdAt
+  updatedAt
+`;

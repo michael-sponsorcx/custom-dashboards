@@ -1,10 +1,8 @@
 /**
- * KPI GraphQL Fragments
- *
- * Shared GraphQL fragments for KPI alerts, schedules, and thresholds
+ * KPI Schedule GraphQL Fragments
  */
 
-export const KPI_ALERT_FIELDS = `
+const KPI_ALERT_FIELDS = `
     id
     cronJobId
     organizationId
@@ -33,17 +31,6 @@ export const KPI_SCHEDULE_FIELDS = `
     monthDates
     timeZone
     attachmentType
-    alert {
-        ${KPI_ALERT_FIELDS}
-    }
-`;
-
-export const KPI_THRESHOLD_FIELDS = `
-    id
-    kpiAlertId
-    condition
-    thresholdValue
-    timeZone
     alert {
         ${KPI_ALERT_FIELDS}
     }

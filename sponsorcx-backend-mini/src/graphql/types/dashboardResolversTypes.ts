@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-scalars';
 import { LayoutTypeEnum } from './sharedResolversTypes';
-import { GraphType } from './graphTemplateResolversTypes';
+import { GraphType } from './graphResolversTypes';
 
 export const DashboardType = new GraphQLObjectType({
     name: 'Dashboard',

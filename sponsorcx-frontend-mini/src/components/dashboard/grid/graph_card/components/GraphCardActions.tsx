@@ -49,7 +49,7 @@ interface GraphCardActionsProps {
  * **Purpose:** All action buttons (reset, refresh, filter, download, edit, delete)
  * **Pattern:** Group of icon buttons with tooltips and conditional visibility
  *
- * **Filter Button:** Opens a modal to configure graph-level permanent filters (GraphTemplate.filters).
+ * **Filter Button:** Opens a modal to configure graph-level permanent filters (Graph.filters).
  * This is separate from dashboard-level filters which apply to ALL graphs.
  *
  * @input drillDownState, various handlers
