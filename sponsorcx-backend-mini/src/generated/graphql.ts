@@ -226,7 +226,6 @@ export type DashboardSchedule = {
   comment?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
   createdById: Scalars['ID']['output'];
-  cronExpression?: Maybe<Scalars['String']['output']>;
   cronJobId: Scalars['ID']['output'];
   dashboardId: Scalars['ID']['output'];
   excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
@@ -908,7 +907,6 @@ export type DashboardScheduleResolvers<ContextType = any, ParentType extends Res
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdById?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  cronExpression?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   cronJobId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;

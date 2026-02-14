@@ -1,7 +1,6 @@
 import { typedQuery, withTransaction } from '../../db/connection';
 import type { DashboardScheduleRow, DashboardSchedule } from './types';
 import { dashboardScheduleToCamelCase } from './mapper';
-import { generateCronExpression } from '../../services/schedules';
 import type { DashboardScheduleInput } from '../../generated/graphql';
 
 const SELECT_SCHEDULE_SQL = `
@@ -27,7 +26,6 @@ const SELECT_SCHEDULE_SQL = `
         ds.attachment_type,
         ds.recipients,
         ds.is_active,
-        ds.cron_expression,
         ds.created_at,
         ds.updated_at
     FROM dashboard_schedules ds
@@ -82,29 +80,15 @@ export const createDashboardSchedule = async (
         const cronJobResult = await client.query<{ id: string }>(cronJobSql, [cronJobName]);
         const cronJobId = cronJobResult.rows[0].id;
 
-        // 2. Generate cron expression
-        const cronExpression = generateCronExpression({
-            frequency_interval: input.frequencyInterval,
-            minute_interval: input.minuteInterval ?? null,
-            hour_interval: input.hourInterval ?? null,
-            schedule_hour: input.scheduleHour ?? null,
-            schedule_minute: input.scheduleMinute ?? null,
-            selected_days: (input.selectedDays ?? []).filter((d): d is string => d !== null),
-            exclude_weekends: input.excludeWeekends ?? false,
-            month_dates: (input.monthDates ?? []).filter((d): d is number => d !== null),
-            time_zone: input.timeZone ?? 'UTC',
-            last_executed_at: null,
-        });
-
-        // 3. Insert into dashboard_schedules
+        // 2. Insert into dashboard_schedules
         const scheduleSql = `
             INSERT INTO dashboard_schedules (
                 cron_job_id, organization_id, dashboard_id, created_by_id,
                 schedule_name, comment, frequency_interval, minute_interval,
                 hour_interval, schedule_hour, schedule_minute, selected_days,
                 exclude_weekends, month_dates, time_zone, has_gating_condition,
-                gating_condition, attachment_type, recipients, is_active, cron_expression
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+                gating_condition, attachment_type, recipients, is_active
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
             RETURNING id
         `;
         const scheduleParams = [
@@ -128,7 +112,6 @@ export const createDashboardSchedule = async (
             input.attachmentType ?? null,
             (input.recipients ?? []).filter((r): r is string => r !== null),
             input.isActive ?? true,
-            cronExpression,
         ];
         const scheduleResult = await client.query<{ id: string }>(scheduleSql, scheduleParams);
         return scheduleResult.rows[0].id;
@@ -144,20 +127,6 @@ export const updateDashboardSchedule = async (
     id: string,
     input: DashboardScheduleInput
 ): Promise<DashboardSchedule | null> => {
-    // Regenerate cron expression
-    const cronExpression = generateCronExpression({
-        frequency_interval: input.frequencyInterval,
-        minute_interval: input.minuteInterval ?? null,
-        hour_interval: input.hourInterval ?? null,
-        schedule_hour: input.scheduleHour ?? null,
-        schedule_minute: input.scheduleMinute ?? null,
-        selected_days: (input.selectedDays ?? []).filter((d): d is string => d !== null),
-        exclude_weekends: input.excludeWeekends ?? false,
-        month_dates: (input.monthDates ?? []).filter((d): d is number => d !== null),
-        time_zone: input.timeZone ?? 'UTC',
-        last_executed_at: null,
-    });
-
     const sql = `
         UPDATE dashboard_schedules SET
             dashboard_id = $2,
@@ -177,8 +146,7 @@ export const updateDashboardSchedule = async (
             gating_condition = $16,
             attachment_type = $17,
             recipients = $18,
-            is_active = $19,
-            cron_expression = $20
+            is_active = $19
         WHERE id = $1
         RETURNING id
     `;
@@ -202,7 +170,6 @@ export const updateDashboardSchedule = async (
         input.attachmentType ?? null,
         (input.recipients ?? []).filter((r): r is string => r !== null),
         input.isActive ?? true,
-        cronExpression,
     ];
 
     const updateResult = await typedQuery<{ id: string }>(sql, params);

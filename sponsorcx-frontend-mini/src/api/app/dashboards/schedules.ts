@@ -10,61 +10,9 @@
  */
 
 import { executeBackendGraphQL } from '../../core/client';
-import { FrequencyInterval, AttachmentType } from '../../../types/backend-graphql';
+import { FrequencyInterval } from '../../../types/backend-graphql';
+import type { DashboardSchedule, DashboardScheduleInput } from '../../../types/backend-graphql';
 import type { DashboardScheduleFormData } from '../../../types/dashboard-schedules';
-
-/**
- * Dashboard Schedule type returned from the API
- */
-export interface DashboardSchedule {
-  id: string;
-  cronJobId: string;
-  organizationId: string;
-  dashboardId: string;
-  createdById: string;
-  scheduleName: string;
-  comment?: string;
-  frequencyInterval: FrequencyInterval;
-  minuteInterval?: number;
-  hourInterval?: number;
-  scheduleHour?: number;
-  scheduleMinute?: number;
-  selectedDays?: string[];
-  excludeWeekends?: boolean;
-  monthDates?: number[];
-  timeZone?: string;
-  hasGatingCondition?: boolean;
-  gatingCondition?: Record<string, unknown>;
-  attachmentType?: AttachmentType;
-  recipients?: string[];
-  isActive?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-/**
- * Input type for creating/updating a dashboard schedule
- */
-export interface DashboardScheduleInput {
-  dashboardId: string;
-  createdById: string;
-  scheduleName: string;
-  comment?: string;
-  frequencyInterval: FrequencyInterval;
-  minuteInterval?: number;
-  hourInterval?: number;
-  scheduleHour?: number;
-  scheduleMinute?: number;
-  selectedDays?: string[];
-  excludeWeekends?: boolean;
-  monthDates?: number[];
-  timeZone?: string;
-  hasGatingCondition?: boolean;
-  gatingCondition?: Record<string, unknown>;
-  attachmentType?: AttachmentType;
-  recipients?: string[];
-  isActive?: boolean;
-}
 
 // GraphQL fragments for reusability
 const DASHBOARD_SCHEDULE_FIELDS = `
@@ -123,7 +71,6 @@ const toDashboardScheduleInput = (
     excludeWeekends: formData.excludeWeekends,
     monthDates,
     timeZone: formData.timeZone,
-    hasGatingCondition: formData.addGatingCondition,
     attachmentType: formData.attachmentType,
     recipients: formData.recipients,
     isActive: true,

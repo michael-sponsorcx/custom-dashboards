@@ -42,8 +42,6 @@ export interface DashboardScheduleFormData {
   monthDates?: string;
   /** IANA timezone identifier (e.g., 'America/New_York') */
   timeZone?: string;
-  /** Whether to add a gating condition */
-  addGatingCondition?: boolean;
   /** Attachment file format */
   attachmentType?: AttachmentType;
   /** List of recipient email addresses */

@@ -157,13 +157,6 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
     }
   };
 
-  const handleAddGatingConditionChange = (checked: boolean) => {
-    setScheduleFormData((prev) => ({
-      ...prev,
-      addGatingCondition: checked,
-    }));
-  };
-
   const handleAttachmentTypeChange = (value: string | null) => {
     if (value) {
       setScheduleFormData((prev) => ({
@@ -474,13 +467,6 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
               />
             </Stack>
           )}
-
-          {/* Add Gating Condition */}
-          <Checkbox
-            label="Add Gating Condition"
-            checked={scheduleFormData.addGatingCondition || false}
-            onChange={(event) => handleAddGatingConditionChange(event.currentTarget.checked)}
-          />
 
           {/* Attachment Type */}
           <Stack gap="xs">

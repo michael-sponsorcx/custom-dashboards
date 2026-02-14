@@ -35,7 +35,6 @@ export const DashboardScheduleType = new GraphQLObjectType({
         attachmentType: { type: AttachmentTypeEnum },
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
-        cronExpression: { type: GraphQLString },
         createdAt: { type: new GraphQLNonNull(GraphQLString) },
         updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),

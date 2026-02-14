@@ -23,7 +23,6 @@ export const dashboardScheduleToCamelCase = (row: DashboardScheduleRow): Dashboa
     attachmentType: row.attachment_type,
     recipients: row.recipients,
     isActive: row.is_active,
-    cronExpression: row.cron_expression,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
 });

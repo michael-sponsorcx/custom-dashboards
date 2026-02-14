@@ -37,4 +37,4 @@ export {
   deleteDashboardSchedule,
   toggleDashboardScheduleActive,
 } from './schedules';
-export type { DashboardSchedule, DashboardScheduleInput } from './schedules';
+export type { DashboardSchedule, DashboardScheduleInput } from '../../../types/backend-graphql';

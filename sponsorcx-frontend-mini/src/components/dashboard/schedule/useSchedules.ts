@@ -8,7 +8,7 @@ const toScheduleRow = (schedule: DashboardSchedule): ScheduleRow => ({
   name: schedule.scheduleName,
   status: schedule.isActive ? 'active' : 'paused',
   createdBy: schedule.createdById,
-  recipients: schedule.recipients ?? [],
+  recipients: (schedule.recipients ?? []).filter((r): r is string => r != null),
   frequency: schedule.frequencyInterval,
   format: schedule.attachmentType ?? '—',
 });

@@ -23,7 +23,6 @@ export interface DashboardScheduleRow {
     attachment_type: AttachmentType | null;
     recipients: string[];
     is_active: boolean;
-    cron_expression: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -51,7 +50,6 @@ export interface DashboardSchedule {
     attachmentType: AttachmentType | null;
     recipients: string[];
     isActive: boolean;
-    cronExpression: string | null;
     createdAt: string;
     updatedAt: string;
 }
