@@ -5,7 +5,7 @@
  */
 
 import { executeBackendGraphQL } from '../core/client';
-import { CubeMetadata } from '../core/types';
+import type { CubeMetadata } from '../../types/backend-graphql';
 
 /**
  * Fetch Cube metadata via backend proxy

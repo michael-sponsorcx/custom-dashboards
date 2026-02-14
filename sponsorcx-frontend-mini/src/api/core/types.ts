@@ -2,8 +2,6 @@
  * Shared types for Cube API services
  */
 
-import type { CubeMeasureMeta, CubeDimensionMeta } from '../../types/cube';
-
 /**
  * Configuration for Cube API client
  */
@@ -86,18 +84,6 @@ export interface CubeQueryResult {
   errors?: Array<{
     message: string;
     locations?: Array<{ line: number; column: number }>;
-  }>;
-}
-
-/**
- * Metadata response structure
- */
-export interface CubeMetadata {
-  cubes: Array<{
-    name: string;
-    title?: string;
-    measures: CubeMeasureMeta[];
-    dimensions: CubeDimensionMeta[];
   }>;
 }
 

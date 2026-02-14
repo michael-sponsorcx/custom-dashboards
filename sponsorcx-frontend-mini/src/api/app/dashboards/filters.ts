@@ -5,6 +5,7 @@
  */
 
 import { executeBackendGraphQL } from '../../core/client';
+import type { DashboardFilter } from '../../../types/backend-graphql';
 import type { FilterRule } from '../../../types/filters';
 
 export interface DashboardFilterField {
@@ -17,16 +18,6 @@ export interface DashboardFilterState {
   selectedViews: string[];
   availableFields: DashboardFilterField[];
   activeFilters: FilterRule[];
-}
-
-interface DashboardFilterResponse {
-  id: string;
-  dashboardId: string;
-  selectedViews: string[];
-  availableFields: Record<string, unknown>[];
-  activeFilters: Record<string, unknown>[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 const DASHBOARD_FILTER_FIELDS = `
@@ -42,9 +33,9 @@ const DASHBOARD_FILTER_FIELDS = `
 /**
  * Fetch dashboard filters
  */
-export async function fetchDashboardFilter(
+export const fetchDashboardFilter = async (
   dashboardId: string
-): Promise<DashboardFilterState | null> {
+): Promise<DashboardFilterState | null> => {
   const query = `
     query FetchDashboardFilter($dashboardId: ID!) {
       dashboardFilter(dashboardId: $dashboardId) {
@@ -54,26 +45,26 @@ export async function fetchDashboardFilter(
   `;
 
   const response = await executeBackendGraphQL<{
-    dashboardFilter: DashboardFilterResponse | null;
+    dashboardFilter: DashboardFilter | null;
   }>(query, { dashboardId });
 
   const filter = response.data?.dashboardFilter;
   if (!filter) return null;
 
   return {
-    selectedViews: filter.selectedViews || [],
+    selectedViews: (filter.selectedViews ?? []).filter((v): v is string => v != null),
     availableFields: (filter.availableFields as unknown as DashboardFilterField[]) || [],
     activeFilters: (filter.activeFilters as unknown as FilterRule[]) || [],
   };
-}
+};
 
 /**
  * Save dashboard filters
  */
-export async function saveDashboardFilter(
+export const saveDashboardFilter = async (
   dashboardId: string,
   state: DashboardFilterState
-): Promise<DashboardFilterState> {
+): Promise<DashboardFilterState> => {
   const query = `
     mutation SaveDashboardFilter($dashboardId: ID!, $input: DashboardFilterInput!) {
       saveDashboardFilter(dashboardId: $dashboardId, input: $input) {
@@ -89,7 +80,7 @@ export async function saveDashboardFilter(
   };
 
   const response = await executeBackendGraphQL<{
-    saveDashboardFilter: DashboardFilterResponse;
+    saveDashboardFilter: DashboardFilter;
   }>(query, {
     dashboardId,
     input,
@@ -101,16 +92,16 @@ export async function saveDashboardFilter(
   }
 
   return {
-    selectedViews: filter.selectedViews || [],
+    selectedViews: (filter.selectedViews ?? []).filter((v): v is string => v != null),
     availableFields: (filter.availableFields as unknown as DashboardFilterField[]) || [],
     activeFilters: (filter.activeFilters as unknown as FilterRule[]) || [],
   };
-}
+};
 
 /**
  * Clear dashboard filters
  */
-export async function clearDashboardFilter(dashboardId: string): Promise<boolean> {
+export const clearDashboardFilter = async (dashboardId: string): Promise<boolean> => {
   const query = `
     mutation ClearDashboardFilter($dashboardId: ID!) {
       clearDashboardFilter(dashboardId: $dashboardId) {
@@ -124,4 +115,4 @@ export async function clearDashboardFilter(dashboardId: string): Promise<boolean
   }>(query, { dashboardId });
 
   return !!response.data?.clearDashboardFilter;
-}
+};

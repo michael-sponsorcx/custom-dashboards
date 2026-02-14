@@ -9,6 +9,6 @@ export type {
   RequestOptions,
   ApiResponse,
   CubeQueryResult,
-  CubeMetadata,
   CacheEntry,
 } from './types';
+export type { CubeMetadata } from '../../types/backend-graphql';
