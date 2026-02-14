@@ -282,7 +282,6 @@ export const KpiScheduleType = new GraphQLObjectType({
         monthDates: { type: new GraphQLList(GraphQLInt) },
         timeZone: { type: GraphQLString },
         attachmentType: { type: AttachmentTypeEnum },
-        cronExpression: { type: GraphQLString },
         alert: { type: new GraphQLNonNull(KpiAlertType) },
     }),
 });
@@ -514,7 +513,6 @@ export const DashboardScheduleType = new GraphQLObjectType({
         attachmentType: { type: AttachmentTypeEnum },
         recipients: { type: new GraphQLList(GraphQLString) },
         isActive: { type: GraphQLBoolean },
-        cronExpression: { type: GraphQLString },
         createdAt: { type: new GraphQLNonNull(GraphQLString) },
         updatedAt: { type: new GraphQLNonNull(GraphQLString) },
     }),

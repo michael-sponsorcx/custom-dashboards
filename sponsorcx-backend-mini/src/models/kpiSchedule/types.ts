@@ -15,7 +15,6 @@ export interface KpiScheduleRow extends AlertRowColumns {
     month_dates: number[];
     time_zone: string;
     attachment_type: AttachmentType | null;
-    cron_expression: string | null;
 }
 
 /** Resolved KpiSchedule type (camelCase for GraphQL) */
@@ -33,7 +32,6 @@ export interface KpiSchedule {
     monthDates: number[];
     timeZone: string;
     attachmentType: AttachmentType | null;
-    cronExpression: string | null;
 }
 
 /** Schedule + alert row from kpi_schedules/kpi_alerts join queries */

@@ -15,6 +15,5 @@ export const kpiScheduleToCamelCase = (row: KpiScheduleRow): KpiSchedule => ({
     monthDates: row.month_dates,
     timeZone: row.time_zone,
     attachmentType: row.attachment_type,
-    cronExpression: row.cron_expression,
     alert: rowToKpiAlert(row),
 });

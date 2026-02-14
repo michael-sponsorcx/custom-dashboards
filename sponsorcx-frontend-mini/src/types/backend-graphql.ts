@@ -324,7 +324,6 @@ export type KpiSchedule = {
   __typename?: 'KpiSchedule';
   alert: KpiAlert;
   attachmentType?: Maybe<AttachmentType>;
-  cronExpression?: Maybe<Scalars['String']['output']>;
   excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
   frequencyInterval: FrequencyInterval;
   hourInterval?: Maybe<Scalars['Int']['output']>;
@@ -874,7 +873,6 @@ export type KpiAlertResolvers<ContextType = any, ParentType extends ResolversPar
 export type KpiScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['KpiSchedule'] = ResolversParentTypes['KpiSchedule']> = ResolversObject<{
   alert?: Resolver<ResolversTypes['KpiAlert'], ParentType, ContextType>;
   attachmentType?: Resolver<Maybe<ResolversTypes['AttachmentType']>, ParentType, ContextType>;
-  cronExpression?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   frequencyInterval?: Resolver<ResolversTypes['FrequencyInterval'], ParentType, ContextType>;
   hourInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

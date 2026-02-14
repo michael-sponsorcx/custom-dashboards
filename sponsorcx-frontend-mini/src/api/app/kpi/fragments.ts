@@ -33,7 +33,6 @@ export const KPI_SCHEDULE_FIELDS = `
     monthDates
     timeZone
     attachmentType
-    cronExpression
     alert {
         ${KPI_ALERT_FIELDS}
     }

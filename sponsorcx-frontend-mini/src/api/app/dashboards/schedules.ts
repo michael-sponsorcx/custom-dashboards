@@ -38,7 +38,6 @@ export interface DashboardSchedule {
   attachmentType?: AttachmentType;
   recipients?: string[];
   isActive?: boolean;
-  cronExpression?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -90,7 +89,6 @@ const DASHBOARD_SCHEDULE_FIELDS = `
   attachmentType
   recipients
   isActive
-  cronExpression
   createdAt
   updatedAt
 `;

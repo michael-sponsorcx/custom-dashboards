@@ -4,10 +4,6 @@ import { kpiScheduleToCamelCase } from './mapper';
 import { normalizeAlertInput } from '../kpiAlert';
 import { AlertType } from '../../generated/graphql';
 import type { CreateKpiScheduleInput } from '../../generated/graphql';
-import {
-    generateCronExpression,
-    KpiScheduleRecord,
-} from '../../services/schedules/calculateNextExecution';
 
 const SELECT_SCHEDULE_SQL = `
     SELECT
@@ -23,7 +19,6 @@ const SELECT_SCHEDULE_SQL = `
         s.month_dates,
         s.time_zone,
         s.attachment_type,
-        s.cron_expression,
         a.id as alert_id,
         a.cron_job_id,
         a.organization_id,
@@ -42,20 +37,6 @@ const SELECT_SCHEDULE_SQL = `
     WHERE a.alert_type = '${AlertType.Schedule}'
 `;
 
-/** Create a KpiScheduleRecord for next execution calculation */
-const toScheduleRecord = (input: CreateKpiScheduleInput): KpiScheduleRecord => ({
-    frequency_interval: input.frequencyInterval as unknown as KpiScheduleRecord['frequency_interval'],
-    minute_interval: input.minuteInterval ?? null,
-    hour_interval: input.hourInterval ?? null,
-    schedule_hour: input.scheduleHour ?? null,
-    schedule_minute: input.scheduleMinute ?? null,
-    selected_days: (input.selectedDays ?? []).filter((d): d is string => d !== null),
-    exclude_weekends: input.excludeWeekends ?? false,
-    month_dates: (input.monthDates ?? []).filter((d): d is number => d !== null),
-    time_zone: input.timeZone ?? 'UTC',
-    last_executed_at: null,
-});
-
 export const findSchedulesByGraph = async (graphId: string): Promise<KpiSchedule[]> => {
     const sql = `${SELECT_SCHEDULE_SQL} AND a.graph_id = $1 ORDER BY a.created_at DESC`;
     const result = await typedQuery<KpiScheduleRow>(sql, [graphId]);
@@ -66,9 +47,6 @@ export const createKpiSchedule = async (
     organizationId: string,
     input: CreateKpiScheduleInput
 ): Promise<KpiSchedule> => {
-    const scheduleRecord = toScheduleRecord(input);
-    const cronExpression = generateCronExpression(scheduleRecord);
-
     const alertId = await withTransaction(async (client) => {
         // 1. Insert into cron_jobs
         const cronJobName = `kpi_schedule_${organizationId}_${input.alertName}`;
@@ -108,8 +86,8 @@ export const createKpiSchedule = async (
             INSERT INTO kpi_schedules (
                 kpi_alert_id, frequency_interval, minute_interval, hour_interval,
                 schedule_hour, schedule_minute, selected_days, exclude_weekends,
-                month_dates, time_zone, attachment_type, cron_expression
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                month_dates, time_zone, attachment_type
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         `;
         const scheduleParams = [
             id,
@@ -123,7 +101,6 @@ export const createKpiSchedule = async (
             (input.monthDates ?? []).filter((d): d is number => d !== null),
             input.timeZone ?? 'UTC',
             input.attachmentType ?? null,
-            cronExpression,
         ];
         await client.query(scheduleSql, scheduleParams);
 
