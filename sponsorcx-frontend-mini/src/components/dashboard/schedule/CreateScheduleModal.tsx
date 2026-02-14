@@ -1,4 +1,4 @@
-import { Modal, Title, Button, Divider, Group, ScrollArea, Stack, Text, TextInput, Checkbox, Select, Flex, Badge, CloseButton } from '@mantine/core';
+import { Modal, Button, Divider, Group, ScrollArea, Stack, Text, TextInput, Checkbox, Select, Flex, Badge, CloseButton } from '@mantine/core';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { DaySelector } from './DaySelector';
@@ -248,7 +248,7 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
       size="lg"
       centered
       withCloseButton={true}
-      title={<Title order={2}>Create Schedule</Title>}
+      title={<Text fw={700} size="xl">Create Schedule</Text>}
     >
       <Divider mb="lg" />
 

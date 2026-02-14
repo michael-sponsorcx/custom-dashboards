@@ -8,7 +8,9 @@
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { setupAxiosCache } from './axiosCacheInterceptor';
 
-const showCacheLogs = import.meta.env.VITE_SHOW_CACHE_LOGS === 'true';
+const isDev = import.meta.env.DEV;
+const showCacheLogs = isDev && import.meta.env.VITE_SHOW_CACHE_LOGS === 'true';
+const showGraphQLLogs = isDev && import.meta.env.VITE_SHOW_GRAPHQL_LOGS === 'true';
 
 /**
  * Cube operations that should be cached.
@@ -89,14 +91,14 @@ function createBackendGraphQLClient(): AxiosInstance {
     defaultTTL: 30000, // 30 second default cache
     enabled: true,
     methods: ['post'], // Cache POST requests (GraphQL uses POST)
-    debug: import.meta.env.DEV, // Enable debug logs in development (built-in Vite variable)
+    debug: showCacheLogs,
     shouldCacheRequest: isCacheableCubeOperation, // Only cache Cube operations
   });
 
   // Request interceptor - log requests in development
   client.interceptors.request.use(
     (config) => {
-      if (import.meta.env.DEV) {
+      if (showGraphQLLogs) {
         console.log(`📡 Backend GraphQL Request: ${config.method?.toUpperCase()} ${config.url}`);
       }
       return config;
@@ -109,7 +111,7 @@ function createBackendGraphQLClient(): AxiosInstance {
   // Response interceptor - handle errors globally
   client.interceptors.response.use(
     (response) => {
-      if (import.meta.env.DEV) {
+      if (showGraphQLLogs) {
         console.log(`✅ Backend GraphQL Response: ${response.config.method?.toUpperCase()} ${response.config.url}`);
       }
       return response;

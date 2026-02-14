@@ -91,6 +91,17 @@ export type CreateKpiThresholdInput = {
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CronJobResult = {
+  __typename?: 'CronJobResult';
+  completed: Scalars['Boolean']['output'];
+  cronJobId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  jobStartTimestamp: Scalars['String']['output'];
+  notes?: Maybe<Scalars['JSON']['output']>;
+  organizationId: Scalars['ID']['output'];
+  trigger: Scalars['String']['output'];
+};
+
 export type CubeDimension = {
   __typename?: 'CubeDimension';
   description?: Maybe<Scalars['String']['output']>;
@@ -554,6 +565,7 @@ export enum NumberFormat {
 
 export type Query = {
   __typename?: 'Query';
+  cronJobResultsByCronJobId?: Maybe<Array<Maybe<CronJobResult>>>;
   cubeDimensionValues?: Maybe<CubeDimensionValues>;
   cubeMetadata?: Maybe<CubeMetadata>;
   cubeQuery?: Maybe<Scalars['JSON']['output']>;
@@ -571,6 +583,11 @@ export type Query = {
   kpiSchedulesByGraph?: Maybe<Array<Maybe<KpiSchedule>>>;
   kpiThresholdsByGraph?: Maybe<Array<Maybe<KpiThreshold>>>;
   status?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryCronJobResultsByCronJobIdArgs = {
+  cronJobId: Scalars['ID']['input'];
 };
 
 
@@ -735,6 +752,7 @@ export type ResolversTypes = ResolversObject<{
   ColorPalette: ColorPalette;
   CreateKpiScheduleInput: CreateKpiScheduleInput;
   CreateKpiThresholdInput: CreateKpiThresholdInput;
+  CronJobResult: ResolverTypeWrapper<CronJobResult>;
   CubeDimension: ResolverTypeWrapper<CubeDimension>;
   CubeDimensionValues: ResolverTypeWrapper<CubeDimensionValues>;
   CubeDrillMembersGrouped: ResolverTypeWrapper<CubeDrillMembersGrouped>;
@@ -776,6 +794,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output'];
   CreateKpiScheduleInput: CreateKpiScheduleInput;
   CreateKpiThresholdInput: CreateKpiThresholdInput;
+  CronJobResult: CronJobResult;
   CubeDimension: CubeDimension;
   CubeDimensionValues: CubeDimensionValues;
   CubeDrillMembersGrouped: CubeDrillMembersGrouped;
@@ -804,6 +823,16 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   String: Scalars['String']['output'];
+}>;
+
+export type CronJobResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CronJobResult'] = ResolversParentTypes['CronJobResult']> = ResolversObject<{
+  completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  cronJobId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  jobStartTimestamp?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  organizationId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  trigger?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type CubeDimensionResolvers<ContextType = any, ParentType extends ResolversParentTypes['CubeDimension'] = ResolversParentTypes['CubeDimension']> = ResolversObject<{
@@ -1040,6 +1069,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  cronJobResultsByCronJobId?: Resolver<Maybe<Array<Maybe<ResolversTypes['CronJobResult']>>>, ParentType, ContextType, RequireFields<QueryCronJobResultsByCronJobIdArgs, 'cronJobId'>>;
   cubeDimensionValues?: Resolver<Maybe<ResolversTypes['CubeDimensionValues']>, ParentType, ContextType, RequireFields<QueryCubeDimensionValuesArgs, 'dimension' | 'view'>>;
   cubeMetadata?: Resolver<Maybe<ResolversTypes['CubeMetadata']>, ParentType, ContextType>;
   cubeQuery?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType, RequireFields<QueryCubeQueryArgs, 'query'>>;
@@ -1060,6 +1090,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  CronJobResult?: CronJobResultResolvers<ContextType>;
   CubeDimension?: CubeDimensionResolvers<ContextType>;
   CubeDimensionValues?: CubeDimensionValuesResolvers<ContextType>;
   CubeDrillMembersGrouped?: CubeDrillMembersGroupedResolvers<ContextType>;

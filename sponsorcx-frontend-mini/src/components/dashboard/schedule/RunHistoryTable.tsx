@@ -5,7 +5,6 @@ export interface RunHistoryRow {
   cronJobId: string;
   completed: boolean;
   startedAt: string;
-  endedAt: string;
 }
 
 interface RunHistoryTableProps {
@@ -50,7 +49,6 @@ export const RunHistoryTable = ({ runs, loading = false }: RunHistoryTableProps)
       <Table.Thead>
         <Table.Tr>
           <Table.Th>Started At</Table.Th>
-          <Table.Th>Ended At</Table.Th>
           <Table.Th>Status</Table.Th>
         </Table.Tr>
       </Table.Thead>
@@ -61,12 +59,6 @@ export const RunHistoryTable = ({ runs, loading = false }: RunHistoryTableProps)
               <Stack gap={2}>
                 <Text size="sm">{formatDateTime(run.startedAt)}</Text>
                 <Text size="xs" c="dimmed">{formatTimeSince(run.startedAt)}</Text>
-              </Stack>
-            </Table.Td>
-            <Table.Td>
-              <Stack gap={2}>
-                <Text size="sm">{formatDateTime(run.endedAt)}</Text>
-                <Text size="xs" c="dimmed">{formatTimeSince(run.endedAt)}</Text>
               </Stack>
             </Table.Td>
             <Table.Td>

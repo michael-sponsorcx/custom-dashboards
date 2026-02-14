@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
-import { fetchDashboardSchedule } from '../../../api';
+import { fetchDashboardSchedule, fetchCronJobResults } from '../../../api';
+import type { CronJobResult } from '../../../types/backend-graphql';
 import type { RunHistoryRow } from './RunHistoryTable';
+
+const toCronJobResultRow = (result: CronJobResult): RunHistoryRow => ({
+  id: result.id,
+  cronJobId: result.cronJobId,
+  completed: result.completed,
+  startedAt: result.jobStartTimestamp,
+});
 
 export const useRunHistory = (scheduleId: string | null) => {
   const [scheduleName, setScheduleName] = useState('');
@@ -28,10 +36,8 @@ export const useRunHistory = (scheduleId: string | null) => {
 
         setScheduleName(schedule.scheduleName);
 
-        // TODO: Fetch cron_job_results by cronJobId once GraphQL endpoint exists
-        // const results = await fetchCronJobResults(schedule.cronJobId);
-        // setRuns(results.map(toCronJobResultRow));
-        setRuns([]);
+        const results = await fetchCronJobResults(schedule.cronJobId);
+        setRuns(results.map(toCronJobResultRow));
       } catch (err) {
         console.error('Failed to load run history:', err);
         setError(err instanceof Error ? err.message : 'Failed to load run history');

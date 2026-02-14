@@ -11,7 +11,7 @@
 
 import { executeBackendGraphQL } from '../../core/client';
 import { FrequencyInterval } from '../../../types/backend-graphql';
-import type { DashboardSchedule, DashboardScheduleInput } from '../../../types/backend-graphql';
+import type { DashboardSchedule, DashboardScheduleInput, CronJobResult } from '../../../types/backend-graphql';
 import type { DashboardScheduleFormData } from '../../../types/dashboard-schedules';
 
 // GraphQL fragments for reusability
@@ -239,4 +239,34 @@ export const toggleDashboardScheduleActive = async (
   );
 
   return response.data?.toggleDashboardScheduleActive || null;
+};
+
+// GraphQL fields for cron job results
+const CRON_JOB_RESULT_FIELDS = `
+  id
+  cronJobId
+  notes
+  completed
+  jobStartTimestamp
+  trigger
+  organizationId
+`;
+
+/**
+ * Fetch cron job results by cron job ID
+ */
+export const fetchCronJobResults = async (cronJobId: string): Promise<CronJobResult[]> => {
+  const query = `
+    query FetchCronJobResults($cronJobId: ID!) {
+      cronJobResultsByCronJobId(cronJobId: $cronJobId) {
+        ${CRON_JOB_RESULT_FIELDS}
+      }
+    }
+  `;
+
+  const response = await executeBackendGraphQL<{ cronJobResultsByCronJobId: CronJobResult[] }>(query, {
+    cronJobId,
+  });
+
+  return response.data?.cronJobResultsByCronJobId || [];
 };
