@@ -225,7 +225,9 @@ export type DashboardSchedule = {
   attachmentType?: Maybe<AttachmentType>;
   comment?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
+  createdByEmail: Scalars['String']['output'];
   createdById: Scalars['ID']['output'];
+  createdByName: Scalars['String']['output'];
   cronJobId: Scalars['ID']['output'];
   dashboardId: Scalars['ID']['output'];
   excludeWeekends?: Maybe<Scalars['Boolean']['output']>;
@@ -906,7 +908,9 @@ export type DashboardScheduleResolvers<ContextType = any, ParentType extends Res
   attachmentType?: Resolver<Maybe<ResolversTypes['AttachmentType']>, ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdByEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdById?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdByName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   cronJobId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   excludeWeekends?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;

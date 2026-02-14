@@ -7,6 +7,8 @@ export interface DashboardScheduleRow {
     organization_id: string;
     dashboard_id: string;
     created_by_id: string;
+    created_by_name: string;
+    created_by_email: string;
     schedule_name: string;
     comment: string | null;
     frequency_interval: FrequencyInterval;
@@ -34,6 +36,8 @@ export interface DashboardSchedule {
     organizationId: string;
     dashboardId: string;
     createdById: string;
+    createdByName: string;
+    createdByEmail: string;
     scheduleName: string;
     comment: string | null;
     frequencyInterval: FrequencyInterval;

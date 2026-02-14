@@ -21,6 +21,8 @@ const DASHBOARD_SCHEDULE_FIELDS = `
   organizationId
   dashboardId
   createdById
+  createdByName
+  createdByEmail
   scheduleName
   comment
   frequencyInterval

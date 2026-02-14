@@ -7,6 +7,8 @@ export const dashboardScheduleToCamelCase = (row: DashboardScheduleRow): Dashboa
     organizationId: row.organization_id,
     dashboardId: row.dashboard_id,
     createdById: row.created_by_id,
+    createdByName: row.created_by_name,
+    createdByEmail: row.created_by_email,
     scheduleName: row.schedule_name,
     comment: row.comment,
     frequencyInterval: row.frequency_interval,

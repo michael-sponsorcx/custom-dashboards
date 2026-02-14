@@ -19,6 +19,8 @@ export const DashboardScheduleType = new GraphQLObjectType({
         organizationId: { type: new GraphQLNonNull(GraphQLID) },
         dashboardId: { type: new GraphQLNonNull(GraphQLID) },
         createdById: { type: new GraphQLNonNull(GraphQLID) },
+        createdByName: { type: new GraphQLNonNull(GraphQLString) },
+        createdByEmail: { type: new GraphQLNonNull(GraphQLString) },
         scheduleName: { type: new GraphQLNonNull(GraphQLString) },
         comment: { type: GraphQLString },
         frequencyInterval: { type: new GraphQLNonNull(FrequencyIntervalEnum) },

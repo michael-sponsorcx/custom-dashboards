@@ -10,6 +10,8 @@ const SELECT_SCHEDULE_SQL = `
         ds.organization_id,
         ds.dashboard_id,
         ds.created_by_id,
+        u.first_name || ' ' || u.last_name AS created_by_name,
+        u.email AS created_by_email,
         ds.schedule_name,
         ds.comment,
         ds.frequency_interval,
@@ -29,6 +31,7 @@ const SELECT_SCHEDULE_SQL = `
         ds.created_at,
         ds.updated_at
     FROM dashboard_schedules ds
+    JOIN users u ON u.id = ds.created_by_id
 `;
 
 export const findAllDashboardSchedules = async (
