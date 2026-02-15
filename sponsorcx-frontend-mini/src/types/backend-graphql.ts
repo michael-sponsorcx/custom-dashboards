@@ -451,6 +451,7 @@ export type Mutation = {
   deleteKpiThreshold?: Maybe<Scalars['Boolean']['output']>;
   removeDashboardGridItem?: Maybe<DashboardGridItem>;
   saveDashboardFilter?: Maybe<DashboardFilter>;
+  toggleDashboardScheduleActive?: Maybe<DashboardSchedule>;
   toggleKpiScheduleActive?: Maybe<KpiSchedule>;
   toggleKpiThresholdActive?: Maybe<KpiThreshold>;
   updateDashboard?: Maybe<Dashboard>;
@@ -534,6 +535,12 @@ export type MutationRemoveDashboardGridItemArgs = {
 export type MutationSaveDashboardFilterArgs = {
   dashboardId: Scalars['ID']['input'];
   input: DashboardFilterInput;
+};
+
+
+export type MutationToggleDashboardScheduleActiveArgs = {
+  id: Scalars['ID']['input'];
+  isActive: Scalars['Boolean']['input'];
 };
 
 
@@ -1099,6 +1106,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteKpiThreshold?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteKpiThresholdArgs, 'id'>>;
   removeDashboardGridItem?: Resolver<Maybe<ResolversTypes['DashboardGridItem']>, ParentType, ContextType, RequireFields<MutationRemoveDashboardGridItemArgs, 'id'>>;
   saveDashboardFilter?: Resolver<Maybe<ResolversTypes['DashboardFilter']>, ParentType, ContextType, RequireFields<MutationSaveDashboardFilterArgs, 'dashboardId' | 'input'>>;
+  toggleDashboardScheduleActive?: Resolver<Maybe<ResolversTypes['DashboardSchedule']>, ParentType, ContextType, RequireFields<MutationToggleDashboardScheduleActiveArgs, 'id' | 'isActive'>>;
   toggleKpiScheduleActive?: Resolver<Maybe<ResolversTypes['KpiSchedule']>, ParentType, ContextType, RequireFields<MutationToggleKpiScheduleActiveArgs, 'id' | 'isActive'>>;
   toggleKpiThresholdActive?: Resolver<Maybe<ResolversTypes['KpiThreshold']>, ParentType, ContextType, RequireFields<MutationToggleKpiThresholdActiveArgs, 'id' | 'isActive'>>;
   updateDashboard?: Resolver<Maybe<ResolversTypes['Dashboard']>, ParentType, ContextType, RequireFields<MutationUpdateDashboardArgs, 'id' | 'input'>>;

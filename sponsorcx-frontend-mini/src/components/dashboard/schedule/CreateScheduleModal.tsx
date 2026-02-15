@@ -1,10 +1,11 @@
 import { Modal, Button, Divider, Group, ScrollArea, Stack, Text, TextInput, Checkbox, Select, Flex, Badge, CloseButton } from '@mantine/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
 import { DaySelector } from './DaySelector';
 import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../../constants/timeOptions';
 import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type FrequencyInterval } from '../../../types/dashboard-schedules';
-import { createDashboardSchedule } from '../../../api';
+import { createDashboardSchedule, updateDashboardSchedule } from '../../../api';
+import type { DashboardSchedule } from '../../../types/backend-graphql';
 
 interface CreateScheduleModalProps {
   opened: boolean;
@@ -12,6 +13,7 @@ interface CreateScheduleModalProps {
   organizationId: string;
   dashboardId: string;
   userId: string;
+  schedule?: DashboardSchedule | null;
 }
 
 // Frequency interval options
@@ -53,10 +55,33 @@ const ATTACHMENT_TYPE_OPTIONS: Array<{ value: AttachmentType; label: string }> =
  * - Body: Scrollable content area with all form fields
  * - Footer: Cancel and Create Schedule buttons
  */
-export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId }: CreateScheduleModalProps) => {
+const toFormData = (schedule: DashboardSchedule): DashboardScheduleFormData => ({
+  scheduleName: schedule.scheduleName,
+  comment: schedule.comment ?? undefined,
+  frequencyInterval: schedule.frequencyInterval as FrequencyInterval,
+  minuteInterval: schedule.minuteInterval?.toString(),
+  hourInterval: schedule.hourInterval?.toString(),
+  hour: schedule.scheduleHour?.toString().padStart(2, '0'),
+  minute: schedule.scheduleMinute?.toString().padStart(2, '0'),
+  selectedDays: (schedule.selectedDays ?? []).filter((d): d is DayOfWeek => d != null),
+  excludeWeekends: schedule.excludeWeekends ?? false,
+  monthDates: (schedule.monthDates ?? []).filter((d): d is number => d != null).join(','),
+  timeZone: schedule.timeZone ?? undefined,
+  attachmentType: (schedule.attachmentType as AttachmentType) ?? undefined,
+  recipients: (schedule.recipients ?? []).filter((r): r is string => r != null),
+});
+
+export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId, schedule }: CreateScheduleModalProps) => {
+  const isEditMode = !!schedule;
   const [scheduleFormData, setScheduleFormData] = useState<DashboardScheduleFormData>({});
   const [emailInput, setEmailInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (opened && schedule) {
+      setScheduleFormData(toFormData(schedule));
+    }
+  }, [opened, schedule]);
 
   const resetModalState = () => {
     setScheduleFormData({});
@@ -186,7 +211,7 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
     }));
   };
 
-  const handleCreateSchedule = async () => {
+  const handleSubmit = async () => {
     // Validate required fields
     if (!scheduleFormData.scheduleName?.trim()) {
       notifications.show({
@@ -211,12 +236,15 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
     setIsSubmitting(true);
 
     try {
-      
-      await createDashboardSchedule(scheduleFormData, organizationId, dashboardId, userId);
+      if (isEditMode) {
+        await updateDashboardSchedule(schedule.id, scheduleFormData, dashboardId, userId);
+      } else {
+        await createDashboardSchedule(scheduleFormData, organizationId, dashboardId, userId);
+      }
 
       notifications.show({
-        title: 'Schedule Created',
-        message: 'Your schedule has been created successfully',
+        title: isEditMode ? 'Schedule Updated' : 'Schedule Created',
+        message: isEditMode ? 'Your schedule has been updated successfully' : 'Your schedule has been created successfully',
         color: 'green',
         autoClose: 3000,
       });
@@ -226,11 +254,11 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
     } catch (error) {
       notifications.show({
         title: 'Error',
-        message: 'Failed to create schedule. Please try again.',
+        message: `Failed to ${isEditMode ? 'update' : 'create'} schedule. Please try again.`,
         color: 'red',
         autoClose: 5000,
       });
-      console.error('Error creating schedule:', error);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} schedule:`, error);
     } finally {
       setIsSubmitting(false);
     }
@@ -248,7 +276,7 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
       size="lg"
       centered
       withCloseButton={true}
-      title={<Text fw={700} size="xl">Create Schedule</Text>}
+      title={<Text fw={700} size="xl">{isEditMode ? 'Edit Schedule' : 'Create Schedule'}</Text>}
     >
       <Divider mb="lg" />
 
@@ -524,8 +552,8 @@ export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboard
         <Button variant="default" onClick={handleCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button onClick={handleCreateSchedule} loading={isSubmitting} disabled={isSubmitting}>
-          Create Schedule
+        <Button onClick={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>
+          {isEditMode ? 'Update Schedule' : 'Create Schedule'}
         </Button>
       </Group>
     </Modal>

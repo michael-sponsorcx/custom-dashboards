@@ -185,6 +185,21 @@ export const updateDashboardSchedule = async (
     return result.rows[0] ? dashboardScheduleToCamelCase(result.rows[0]) : null;
 };
 
+export const toggleDashboardScheduleActive = async (id: string, isActive: boolean): Promise<DashboardSchedule | null> => {
+    const updateResult = await typedQuery<{ id: string }>(
+        'UPDATE dashboard_schedules SET is_active = $2 WHERE id = $1 RETURNING id',
+        [id, isActive]
+    );
+
+    if (updateResult.rows.length === 0) {
+        return null;
+    }
+
+    const sql = `${SELECT_SCHEDULE_SQL} WHERE ds.id = $1`;
+    const result = await typedQuery<DashboardScheduleRow>(sql, [id]);
+    return result.rows[0] ? dashboardScheduleToCamelCase(result.rows[0]) : null;
+};
+
 export const deleteDashboardSchedule = async (id: string): Promise<boolean> => {
     return withTransaction(async (client) => {
         // Look up the cron_job_id first

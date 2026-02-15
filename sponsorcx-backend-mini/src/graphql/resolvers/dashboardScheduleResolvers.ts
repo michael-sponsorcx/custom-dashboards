@@ -12,6 +12,7 @@ import {
     createDashboardSchedule,
     updateDashboardSchedule,
     deleteDashboardSchedule,
+    toggleDashboardScheduleActive,
 } from '../../models/dashboardSchedule';
 import type {
     QueryDashboardSchedulesArgs,
@@ -91,6 +92,18 @@ export const dashboardScheduleMutations = {
         },
         resolve: async (_: unknown, args: MutationUpdateDashboardScheduleArgs) =>
             updateDashboardSchedule(args.id, args.input),
+    },
+    /**
+     * Toggle a dashboard schedule's active status
+     */
+    toggleDashboardScheduleActive: {
+        type: DashboardScheduleType,
+        args: {
+            id: { type: new GraphQLNonNull(GraphQLID) },
+            isActive: { type: new GraphQLNonNull(GraphQLBoolean) },
+        },
+        resolve: async (_: unknown, args: { id: string; isActive: boolean }) =>
+            toggleDashboardScheduleActive(args.id, args.isActive),
     },
     /**
      * Delete a dashboard schedule by ID

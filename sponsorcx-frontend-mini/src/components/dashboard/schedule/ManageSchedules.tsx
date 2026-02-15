@@ -6,15 +6,36 @@ import { ScheduleTable, type ScheduleRow } from './ScheduleTable';
 import { RunHistoryModal } from './RunHistoryModal';
 import { useSchedules } from './useSchedules';
 import { useOrganizationStore } from '../../../store';
-import { getOrCreateDefaultDashboard } from '../../../api';
+import { getOrCreateDefaultDashboard, toggleDashboardScheduleActive, fetchDashboardSchedule } from '../../../api';
+import type { DashboardSchedule } from '../../../types/backend-graphql';
 
 export const ManageSchedules = () => {
   const { organizationId, dashboardId, setDashboardId, userId } = useOrganizationStore();
   const [search, setSearch] = useState('');
   const [dashboardName, setDashboardName] = useState('');
-  const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<DashboardSchedule | null>(null);
   const [runHistorySchedule, setRunHistorySchedule] = useState<ScheduleRow | null>(null);
-  const { schedules, loading } = useSchedules(dashboardId ?? '', search);
+  const { schedules, loading, refresh } = useSchedules(dashboardId ?? '', search);
+
+  const handleToggleStatus = async (id: string, status: 'active' | 'paused') => {
+    await toggleDashboardScheduleActive(id, status === 'active');
+    refresh();
+  };
+
+  const handleEdit = async (id: string) => {
+    const schedule = await fetchDashboardSchedule(id);
+    if (schedule) {
+      setEditingSchedule(schedule);
+      setScheduleModalOpen(true);
+    }
+  };
+
+  const handleScheduleModalClose = () => {
+    setScheduleModalOpen(false);
+    setEditingSchedule(null);
+    refresh();
+  };
 
   // Resolve dashboardId on mount if not already set (e.g. direct page refresh)
   useEffect(() => {
@@ -41,7 +62,7 @@ export const ManageSchedules = () => {
             onChange={(e) => setSearch(e.currentTarget.value)}
             style={{ flex: 1 }}
           />
-          <Button leftSection={<IconPlus size={16} />} onClick={() => setCreateScheduleModalOpen(true)}>
+          <Button leftSection={<IconPlus size={16} />} onClick={() => setScheduleModalOpen(true)}>
             Create Schedule
           </Button>
         </Group>
@@ -50,17 +71,20 @@ export const ManageSchedules = () => {
         <ScheduleTable
           schedules={schedules}
           loading={loading}
+          onToggleStatus={handleToggleStatus}
+          onEdit={handleEdit}
           onRunHistory={setRunHistorySchedule}
         />
       </Stack>
 
       {organizationId && dashboardId && userId && (
         <CreateScheduleModal
-          opened={createScheduleModalOpen}
-          onClose={() => setCreateScheduleModalOpen(false)}
+          opened={scheduleModalOpen}
+          onClose={handleScheduleModalClose}
           organizationId={organizationId}
           dashboardId={dashboardId}
           userId={userId}
+          schedule={editingSchedule}
         />
       )}
 

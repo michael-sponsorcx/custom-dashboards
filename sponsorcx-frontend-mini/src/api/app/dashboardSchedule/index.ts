@@ -18,5 +18,3 @@ export {
 } from './mutations';
 
 export { toDashboardScheduleInput } from './mappers';
-
-export type { DashboardSchedule, DashboardScheduleInput } from '../../../types/backend-graphql';

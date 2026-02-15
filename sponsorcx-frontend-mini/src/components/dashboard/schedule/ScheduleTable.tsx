@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table, Checkbox, Menu, ActionIcon, Badge, Text, Center, Loader } from '@mantine/core';
-import { IconDots, IconPlayerPlay, IconEdit, IconEye, IconHistory, IconTrash } from '@tabler/icons-react';
+import { IconDots, IconPlayerPlay, IconPlayerPause, IconEdit, IconHistory, IconTrash } from '@tabler/icons-react';
 
 export interface ScheduleRow {
   id: string;
@@ -17,9 +17,8 @@ export interface ScheduleRow {
 interface ScheduleTableProps {
   schedules: ScheduleRow[];
   loading?: boolean;
-  onResume?: (id: string) => void;
+  onToggleStatus?: (id: string, status: 'active' | 'paused') => void;
   onEdit?: (id: string) => void;
-  onView?: (id: string) => void;
   onRunHistory?: (schedule: ScheduleRow) => void;
   onDelete?: (id: string) => void;
 }
@@ -27,9 +26,8 @@ interface ScheduleTableProps {
 export const ScheduleTable = ({
   schedules,
   loading = false,
-  onResume,
+  onToggleStatus,
   onEdit,
-  onView,
   onRunHistory,
   onDelete,
 }: ScheduleTableProps) => {
@@ -100,7 +98,7 @@ export const ScheduleTable = ({
             </Table.Td>
             <Table.Td>
               <Badge
-                color={schedule.status === 'active' ? 'green' : 'gray'}
+                color={schedule.status === 'active' ? 'green' : 'yellow'}
                 variant="light"
               >
                 {schedule.status === 'active' ? 'Active' : 'Paused'}
@@ -123,22 +121,16 @@ export const ScheduleTable = ({
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Item
-                    leftSection={<IconPlayerPlay size={14} />}
-                    onClick={() => onResume?.(schedule.id)}
+                    leftSection={schedule.status === 'active' ? <IconPlayerPause size={14} /> : <IconPlayerPlay size={14} />}
+                    onClick={() => onToggleStatus?.(schedule.id, schedule.status === 'active' ? 'paused' : 'active')}
                   >
-                    Resume
+                    {schedule.status === 'active' ? 'Pause' : 'Resume'}
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<IconEdit size={14} />}
                     onClick={() => onEdit?.(schedule.id)}
                   >
                     Edit
-                  </Menu.Item>
-                  <Menu.Item
-                    leftSection={<IconEye size={14} />}
-                    onClick={() => onView?.(schedule.id)}
-                  >
-                    View
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<IconHistory size={14} />}

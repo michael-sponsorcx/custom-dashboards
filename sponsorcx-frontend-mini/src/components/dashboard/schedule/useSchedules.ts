@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { fetchDashboardSchedulesByDashboard } from '../../../api';
-import type { DashboardSchedule } from '../../../api';
+import type { DashboardSchedule } from '../../../types/backend-graphql';
 import type { ScheduleRow } from './ScheduleTable';
 
 const toScheduleRow = (schedule: DashboardSchedule): ScheduleRow => ({

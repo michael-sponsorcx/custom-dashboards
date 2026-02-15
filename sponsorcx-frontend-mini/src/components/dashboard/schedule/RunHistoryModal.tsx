@@ -33,6 +33,8 @@ const formatRunDetails = (
   lines.push(`Job Started at: ${formatDateTimeForDetail(run.startedAt)}`);
   lines.push('');
   lines.push(`Created by: ${schedule.createdBy} (${schedule.createdByEmail})`);
+  lines.push('');
+  lines.push(`File Type: ${schedule.format}`);
 
   if (dashboardName) {
     lines.push('');
