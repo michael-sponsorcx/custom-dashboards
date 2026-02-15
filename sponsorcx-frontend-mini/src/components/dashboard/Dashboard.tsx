@@ -7,7 +7,7 @@ import { MaintenanceMode } from './MaintenanceMode';
 import { DashboardGrid } from './grid';
 // import { GraphFilterModal } from './GraphFilterModal';
 import { KPIAlertModal } from './KPIAlertModal';
-import { CreateScheduleModal } from './schedule/CreateScheduleModal';
+import { ScheduleModal } from './schedule/ScheduleModal';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
@@ -285,7 +285,7 @@ export function Dashboard() {
       />
 
       {/* Create Schedule Modal */}
-      <CreateScheduleModal
+      <ScheduleModal
         opened={createScheduleModalOpen}
         onClose={handleCloseCreateSchedule}
         organizationId={organizationId}

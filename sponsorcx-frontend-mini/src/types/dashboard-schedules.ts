@@ -17,7 +17,7 @@ export type { DayOfWeek, FrequencyInterval };
 
 /**
  * Dashboard Schedule Form Data structure
- * Used by CreateScheduleModal to create schedules for entire dashboards
+ * Used by ScheduleModal to create or edit schedules for entire dashboards
  */
 export interface DashboardScheduleFormData {
   /** User-defined name for the schedule */

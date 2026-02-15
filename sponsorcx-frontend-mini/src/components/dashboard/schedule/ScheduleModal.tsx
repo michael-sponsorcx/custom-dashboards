@@ -7,7 +7,7 @@ import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type Fr
 import { createDashboardSchedule, updateDashboardSchedule } from '../../../api';
 import type { DashboardSchedule } from '../../../types/backend-graphql';
 
-interface CreateScheduleModalProps {
+interface ScheduleModalProps {
   opened: boolean;
   onClose: () => void;
   organizationId: string;
@@ -45,15 +45,15 @@ const ATTACHMENT_TYPE_OPTIONS: Array<{ value: AttachmentType; label: string }> =
 ];
 
 /**
- * CreateScheduleModal Component
+ * ScheduleModal Component
  *
- * Modal for creating a new schedule for dashboard reports.
+ * Modal for creating or editing a dashboard report schedule.
  * Follows the same pattern as KPIAlertModal with form state management.
  *
  * Structure:
- * - Header: "Create Schedule" title with close button
+ * - Header: "Create Schedule" or "Edit Schedule" title with close button
  * - Body: Scrollable content area with all form fields
- * - Footer: Cancel and Create Schedule buttons
+ * - Footer: Cancel and Create/Update Schedule buttons
  */
 const toFormData = (schedule: DashboardSchedule): DashboardScheduleFormData => ({
   scheduleName: schedule.scheduleName,
@@ -71,7 +71,7 @@ const toFormData = (schedule: DashboardSchedule): DashboardScheduleFormData => (
   recipients: (schedule.recipients ?? []).filter((r): r is string => r != null),
 });
 
-export const CreateScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId, schedule }: CreateScheduleModalProps) => {
+export const ScheduleModal = ({ opened, onClose, organizationId, dashboardId, userId, schedule }: ScheduleModalProps) => {
   const isEditMode = !!schedule;
   const [scheduleFormData, setScheduleFormData] = useState<DashboardScheduleFormData>({});
   const [emailInput, setEmailInput] = useState('');

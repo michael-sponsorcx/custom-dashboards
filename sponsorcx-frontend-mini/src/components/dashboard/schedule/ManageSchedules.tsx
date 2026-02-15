@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Title, Button, Group, Stack, TextInput } from '@mantine/core';
 import { IconSearch, IconPlus } from '@tabler/icons-react';
-import { CreateScheduleModal } from './CreateScheduleModal';
+import { ScheduleModal } from './ScheduleModal';
 import { ScheduleTable, type ScheduleRow } from './ScheduleTable';
 import { RunHistoryModal } from './RunHistoryModal';
 import { useSchedules } from './useSchedules';
@@ -78,7 +78,7 @@ export const ManageSchedules = () => {
       </Stack>
 
       {organizationId && dashboardId && userId && (
-        <CreateScheduleModal
+        <ScheduleModal
           opened={scheduleModalOpen}
           onClose={handleScheduleModalClose}
           organizationId={organizationId}
