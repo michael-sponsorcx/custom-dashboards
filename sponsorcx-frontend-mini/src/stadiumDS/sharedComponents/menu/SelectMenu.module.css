@@ -1,0 +1,36 @@
+@keyframes pulse {
+    0%,
+    100% {
+        color: var(--mantine-color-Gray-5);
+    }
+    50% {
+        color: var(--mantine-color-Gray-4);
+    }
+}
+
+.loadingText {
+    font-style: italic;
+    animation: pulse 1s ease-in-out infinite;
+    will-change: color;
+}
+
+.item {
+    font-weight: 600;
+    color: var(--mantine-color-gray-8);
+}
+
+.itemLabel {
+    display: block;
+    min-width: 80px;
+    max-width: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown {
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    border-radius: 8px;
+}

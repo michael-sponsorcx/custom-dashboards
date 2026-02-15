@@ -1,0 +1,20 @@
+import { CXIconProps } from '@/assets/icons/IconProps';
+
+const Receipt = ({ color, size = '16' }: CXIconProps) => (
+    <svg
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        fill="none"
+    >
+        <path
+            stroke={color}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M4 7.8c0-1.68 0-2.52.327-3.162a3 3 0 0 1 1.311-1.311C6.28 3 7.12 3 8.8 3h6.4c1.68 0 2.52 0 3.162.327a3 3 0 0 1 1.311 1.311C20 5.28 20 6.12 20 7.8V21l-2.75-2-2.5 2L12 19l-2.75 2-2.5-2L4 21z"
+        />
+    </svg>
+);
+export default Receipt;

@@ -1,0 +1,18 @@
+.root {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--mantine-color-Gray-3);
+    margin: 0;
+}
+
+.root:hover {
+    border: 2px solid var(--mantine-color-Brand-5);
+    margin: -1px;
+    background: white;
+}

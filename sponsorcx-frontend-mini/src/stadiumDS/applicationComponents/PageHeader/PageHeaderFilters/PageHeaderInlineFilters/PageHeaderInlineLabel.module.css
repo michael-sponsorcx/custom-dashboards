@@ -1,0 +1,13 @@
+.root {
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.root:hover {
+    background-color: var(--mantine-color-Gray-1);
+}
+
+.root[data-active='true'] {
+    background-color: var(--mantine-color-Brand-1);
+}

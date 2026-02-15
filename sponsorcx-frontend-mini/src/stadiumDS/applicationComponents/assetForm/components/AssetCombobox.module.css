@@ -1,0 +1,33 @@
+.inputRoot button {
+    border-radius: 8px;
+}
+
+.input {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+
+    /* Text sm/Regular */
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+
+    min-height: 20px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+
+    transition: all 0.25s ease;
+
+    &:hover {
+        background-color: var(--mantine-color-Gray-2) !important;
+    }
+
+    &:disabled {
+        background-color: var(--mantine-color-white);
+    }
+}

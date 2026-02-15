@@ -1,0 +1,20 @@
+import { CXIconProps } from '@/assets/icons/IconProps';
+
+const CloudRaining02 = ({ color, size = '16' }: CXIconProps) => (
+    <svg
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        fill="none"
+    >
+        <path
+            stroke={color}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M16 12v8m-8-8v8m4-6v8m8-6.758a4.5 4.5 0 0 0-2.08-8.223 6.002 6.002 0 0 0-11.84 0A4.5 4.5 0 0 0 4 15.242"
+        />
+    </svg>
+);
+export default CloudRaining02;

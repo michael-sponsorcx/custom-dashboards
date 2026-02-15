@@ -1,0 +1,6 @@
+.input {
+    transition: background-color 0.25s ease !important;
+    &:hover {
+        background-color: var(--mantine-color-Gray-2) !important;
+    }
+}

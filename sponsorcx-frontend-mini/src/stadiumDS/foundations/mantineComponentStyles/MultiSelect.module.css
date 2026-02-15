@@ -1,0 +1,16 @@
+@import './Select.module.css';
+
+.pill {
+    font-size: 14px;
+    max-width: 164px;
+    width: 100%;
+}
+
+.pillsList {
+    width: 100%;
+}
+
+.input {
+    color: var(--mantine-color-Gray-6);
+    transition: all 0.25s ease;
+}

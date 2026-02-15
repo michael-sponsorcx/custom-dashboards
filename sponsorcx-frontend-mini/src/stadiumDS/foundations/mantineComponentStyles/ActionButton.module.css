@@ -1,0 +1,37 @@
+.root {
+    &[data-variant='filled'] {
+        background-color: var(--mantine-color-Brand-5);
+        border-color: var(--mantine-color-Brand-7);
+        &:hover {
+            background-color: var(--mantine-color-Brand-6);
+        }
+        &:disabled {
+            border-color: var(--mantine-color-Gray-4);
+            background-color: var(--mantine-color-Gray-3);
+            color: var(--mantine-color-Gray-6);
+        }
+    }
+    &[data-variant='outline'] {
+        border-color: var(--mantine-color-Gray-4);
+        background-color: var(--mantine-color-white);
+        color: var(--mantine-color-Gray-8);
+        &:hover {
+            background-color: var(--mantine-color-Gray-1);
+        }
+    }
+    &[data-variant='subtle'] {
+        background-color: transparent;
+        color: var(--mantine-color-Gray-6);
+        &:hover {
+            color: var(--mantine-color-Gray-7);
+            background-color: var(--mantine-color-Gray-1);
+        }
+    }
+    &[data-variant='danger'] {
+        background-color: var(--mantine-color-Error-7);
+        border-color: var(--mantine-color-Error-9);
+        &:hover {
+            background-color: var(--mantine-color-Error-8);
+        }
+    }
+}

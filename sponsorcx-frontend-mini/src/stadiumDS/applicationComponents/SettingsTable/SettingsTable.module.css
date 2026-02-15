@@ -1,0 +1,25 @@
+.thead {
+    background-color: var(--mantine-color-Gray-3);
+}
+
+.th {
+    padding: 7px 24px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    color: var(--mantine-color-Gray-6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.td {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--mantine-color-Gray-10);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,0 +1,15 @@
+.content {
+    border-radius: 12px;
+    overflow: visible;
+    border: 1px solid var(--mantine-color-Gray-3);
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.root {
+    z-index: 1000;
+    position: relative;
+}

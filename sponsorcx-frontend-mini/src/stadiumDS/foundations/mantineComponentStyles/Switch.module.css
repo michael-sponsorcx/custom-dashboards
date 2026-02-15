@@ -1,0 +1,7 @@
+.label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mantine-color-Gray-6);
+    font-family: Inter;
+    line-height: 20px;
+}

@@ -1,0 +1,25 @@
+.header {
+    color: var(--mantine-color-Gray-6);
+    font-weight: 600;
+
+    svg {
+        stroke: var(--mantine-color-Gray-6);
+    }
+}
+
+.headerLink {
+    color: var(--mantine-color-Brand-5);
+    cursor: pointer;
+
+    svg {
+        stroke: var(--mantine-color-Brand-5);
+    }
+
+    &:hover {
+        color: var(--mantine-color-Brand-6);
+
+        svg {
+            stroke: var(--mantine-color-Brand-6);
+        }
+    }
+}

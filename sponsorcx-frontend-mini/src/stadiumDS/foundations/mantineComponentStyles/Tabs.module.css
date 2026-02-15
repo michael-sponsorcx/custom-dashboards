@@ -1,0 +1,37 @@
+.tabLabel {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--mantine-color-Gray-6);
+}
+
+.list {
+    gap: 12px;
+}
+
+.list:before {
+    border-bottom-width: 1px;
+    border-color: var(--mantine-color-Gray-3);
+}
+
+.tab {
+    padding: 12px 4px;
+    border-bottom-width: 1px;
+}
+
+.tab[data-active='true'] {
+    border-color: var(--mantine-color-Brand-5);
+    padding-bottom: 11px;
+    border-bottom-width: 2px;
+}
+
+.tab:hover:where(:not([data-active])) {
+    border-color: var(--mantine-color-Gray-3);
+}
+
+.tab[data-active='true'] .tabLabel {
+    color: var(--mantine-color-Brand-5);
+}
+
+.panel {
+    height: 100%;
+}

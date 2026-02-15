@@ -1,0 +1,5 @@
+@import '../../foundations/mantineComponentStyles/Select.module.css';
+
+.options {
+    padding: initial !important;
+}

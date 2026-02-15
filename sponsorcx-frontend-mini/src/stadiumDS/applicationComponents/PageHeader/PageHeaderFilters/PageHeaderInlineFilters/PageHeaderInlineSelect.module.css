@@ -1,0 +1,20 @@
+.wrapper {
+    &:has(.input[data-filter-key='fiscal_year_id']) {
+        width: min-content;
+    }
+}
+
+.input {
+    cursor: pointer;
+    color: var(--mantine-color-gray-7) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    &[data-filter-key='fiscal_year_id'] {
+        min-width: 160px;
+    }
+}
+
+.option {
+    font-size: 14px !important;
+}

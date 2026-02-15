@@ -1,0 +1,25 @@
+.root[data-active='true'] {
+    background-color: var(--mantine-color-Gray-3);
+    & svg {
+        path {
+            stroke: var(--mantine-color-Gray-10);
+        }
+    }
+}
+
+.root[data-active='true']:hover {
+    background-color: var(--mantine-color-Gray-2);
+}
+
+.root[data-active='false'] {
+    & svg {
+        path {
+            stroke: var(--mantine-color-Gray-5);
+        }
+    }
+}
+
+.root:first-of-type {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}

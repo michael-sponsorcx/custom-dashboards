@@ -1,0 +1,30 @@
+.root {
+    background-color: var(--mantine-color-Gray-1);
+    border: 1px solid var(--mantine-color-Gray-3);
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.indicator {
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0px 1px 3px 0px rgba(10, 13, 18, 0.1),
+        0px 1px 2px -1px rgba(10, 13, 18, 0.1);
+}
+
+.label {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--mantine-color-Gray-5);
+    padding: 8px 12px;
+}
+
+.label[data-active] {
+    color: var(--mantine-color-Gray-7);
+}
+
+.control {
+    border-radius: 6px;
+}

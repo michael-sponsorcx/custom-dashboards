@@ -1,0 +1,4 @@
+.input:disabled {
+    background-color: var(--White);
+    opacity: 1;
+}

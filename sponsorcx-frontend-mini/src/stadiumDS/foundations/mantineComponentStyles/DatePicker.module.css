@@ -1,0 +1,11 @@
+.day {
+    border-radius: 50% !important;
+}
+
+.day[data-weekend='true'] {
+    color: #000;
+}
+
+.day[data-selected='true'] {
+    color: #fff;
+}

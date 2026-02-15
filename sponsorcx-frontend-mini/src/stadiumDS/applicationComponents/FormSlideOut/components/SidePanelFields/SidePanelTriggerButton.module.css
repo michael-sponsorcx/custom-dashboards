@@ -1,0 +1,9 @@
+.triggerButton {
+    padding: 2px 8px;
+    margin: -2px -8px;
+    border-radius: 4px;
+
+    &:hover {
+        background-color: var(--mantine-color-Gray-1);
+    }
+}
