@@ -8,9 +8,11 @@ const toScheduleRow = (schedule: DashboardSchedule): ScheduleRow => ({
   name: schedule.scheduleName,
   status: schedule.isActive ? 'active' : 'paused',
   createdBy: schedule.createdByName,
+  createdByEmail: schedule.createdByEmail,
   recipients: (schedule.recipients ?? []).filter((r): r is string => r != null),
   frequency: schedule.frequencyInterval,
   format: schedule.attachmentType ?? '-',
+  cronJobId: schedule.cronJobId,
 });
 
 export const useSchedules = (dashboardId: string, search: string) => {

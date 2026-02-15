@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Container, Title, Button, Group, Stack, TextInput } from '@mantine/core';
 import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { CreateScheduleModal } from './CreateScheduleModal';
-import { ScheduleTable } from './ScheduleTable';
+import { ScheduleTable, type ScheduleRow } from './ScheduleTable';
 import { RunHistoryModal } from './RunHistoryModal';
 import { useSchedules } from './useSchedules';
 import { useOrganizationStore } from '../../../store';
@@ -11,8 +11,9 @@ import { getOrCreateDefaultDashboard } from '../../../api';
 export const ManageSchedules = () => {
   const { organizationId, dashboardId, setDashboardId, userId } = useOrganizationStore();
   const [search, setSearch] = useState('');
+  const [dashboardName, setDashboardName] = useState('');
   const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
-  const [runHistoryScheduleId, setRunHistoryScheduleId] = useState<string | null>(null);
+  const [runHistorySchedule, setRunHistorySchedule] = useState<ScheduleRow | null>(null);
   const { schedules, loading } = useSchedules(dashboardId ?? '', search);
 
   // Resolve dashboardId on mount if not already set (e.g. direct page refresh)
@@ -20,6 +21,7 @@ export const ManageSchedules = () => {
     if (!dashboardId && organizationId) {
       getOrCreateDefaultDashboard(organizationId).then((dashboard) => {
         setDashboardId(dashboard.id);
+        setDashboardName(dashboard.name);
       });
     }
   }, [dashboardId, organizationId, setDashboardId]);
@@ -48,7 +50,7 @@ export const ManageSchedules = () => {
         <ScheduleTable
           schedules={schedules}
           loading={loading}
-          onRunHistory={(id) => setRunHistoryScheduleId(id)}
+          onRunHistory={setRunHistorySchedule}
         />
       </Stack>
 
@@ -63,9 +65,10 @@ export const ManageSchedules = () => {
       )}
 
       <RunHistoryModal
-        opened={runHistoryScheduleId !== null}
-        onClose={() => setRunHistoryScheduleId(null)}
-        scheduleId={runHistoryScheduleId}
+        opened={runHistorySchedule !== null}
+        onClose={() => setRunHistorySchedule(null)}
+        schedule={runHistorySchedule}
+        dashboardName={dashboardName}
       />
     </Container>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchDashboardSchedule, fetchCronJobResults } from '../../../api';
+import { fetchCronJobResults } from '../../../api';
 import type { CronJobResult } from '../../../types/backend-graphql';
 import type { RunHistoryRow } from './RunHistoryTable';
 
@@ -8,17 +8,16 @@ const toCronJobResultRow = (result: CronJobResult): RunHistoryRow => ({
   cronJobId: result.cronJobId,
   completed: result.completed,
   startedAt: result.jobStartTimestamp,
+  notes: result.notes ?? null,
 });
 
-export const useRunHistory = (scheduleId: string | null) => {
-  const [scheduleName, setScheduleName] = useState('');
+export const useRunHistory = (cronJobId: string | null) => {
   const [runs, setRuns] = useState<RunHistoryRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!scheduleId) {
-      setScheduleName('');
+    if (!cronJobId) {
       setRuns([]);
       setError(null);
       return;
@@ -28,15 +27,7 @@ export const useRunHistory = (scheduleId: string | null) => {
       setLoading(true);
       setError(null);
       try {
-        const schedule = await fetchDashboardSchedule(scheduleId);
-        if (!schedule) {
-          setError('Schedule not found');
-          return;
-        }
-
-        setScheduleName(schedule.scheduleName);
-
-        const results = await fetchCronJobResults(schedule.cronJobId);
+        const results = await fetchCronJobResults(cronJobId);
         setRuns(results.map(toCronJobResultRow));
       } catch (err) {
         console.error('Failed to load run history:', err);
@@ -48,7 +39,7 @@ export const useRunHistory = (scheduleId: string | null) => {
     };
 
     load();
-  }, [scheduleId]);
+  }, [cronJobId]);
 
-  return { scheduleName, runs, loading, error };
+  return { runs, loading, error };
 };

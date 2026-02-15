@@ -1,15 +1,18 @@
-import { Table, Badge, Text, Center, Loader, Stack } from '@mantine/core';
+import { Table, Badge, Text, Center, Loader } from '@mantine/core';
 
 export interface RunHistoryRow {
   id: string;
   cronJobId: string;
   completed: boolean;
   startedAt: string;
+  notes: Record<string, unknown> | null;
 }
 
 interface RunHistoryTableProps {
   runs: RunHistoryRow[];
   loading?: boolean;
+  selectedRunId?: string | null;
+  onSelectRun?: (run: RunHistoryRow) => void;
 }
 
 const formatTimeSince = (timestamp: string): string => {
@@ -24,10 +27,7 @@ const formatTimeSince = (timestamp: string): string => {
   return 'just now';
 };
 
-const formatDateTime = (timestamp: string): string =>
-  new Date(timestamp).toLocaleString();
-
-export const RunHistoryTable = ({ runs, loading = false }: RunHistoryTableProps) => {
+export const RunHistoryTable = ({ runs, loading = false, selectedRunId, onSelectRun }: RunHistoryTableProps) => {
   if (loading) {
     return (
       <Center py="xl">
@@ -54,12 +54,16 @@ export const RunHistoryTable = ({ runs, loading = false }: RunHistoryTableProps)
       </Table.Thead>
       <Table.Tbody>
         {runs.map((run) => (
-          <Table.Tr key={run.id}>
+          <Table.Tr
+            key={run.id}
+            onClick={() => onSelectRun?.(run)}
+            style={{
+              cursor: onSelectRun ? 'pointer' : undefined,
+              backgroundColor: selectedRunId === run.id ? 'var(--mantine-color-blue-light)' : undefined,
+            }}
+          >
             <Table.Td>
-              <Stack gap={2}>
-                <Text size="sm">{formatDateTime(run.startedAt)}</Text>
-                <Text size="xs" c="dimmed">{formatTimeSince(run.startedAt)}</Text>
-              </Stack>
+              <Text size="sm">{formatTimeSince(run.startedAt)}</Text>
             </Table.Td>
             <Table.Td>
               <Badge

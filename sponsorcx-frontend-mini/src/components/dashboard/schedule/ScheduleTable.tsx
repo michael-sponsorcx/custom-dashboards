@@ -7,9 +7,11 @@ export interface ScheduleRow {
   name: string;
   status: 'active' | 'paused';
   createdBy: string;
+  createdByEmail: string;
   recipients: string[];
   frequency: string;
   format: string;
+  cronJobId: string;
 }
 
 interface ScheduleTableProps {
@@ -18,7 +20,7 @@ interface ScheduleTableProps {
   onResume?: (id: string) => void;
   onEdit?: (id: string) => void;
   onView?: (id: string) => void;
-  onRunHistory?: (id: string) => void;
+  onRunHistory?: (schedule: ScheduleRow) => void;
   onDelete?: (id: string) => void;
 }
 
@@ -140,7 +142,7 @@ export const ScheduleTable = ({
                   </Menu.Item>
                   <Menu.Item
                     leftSection={<IconHistory size={14} />}
-                    onClick={() => onRunHistory?.(schedule.id)}
+                    onClick={() => onRunHistory?.(schedule)}
                   >
                     Run History
                   </Menu.Item>
