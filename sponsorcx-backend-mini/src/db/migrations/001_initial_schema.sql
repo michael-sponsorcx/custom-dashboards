@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS graphs (
     -- Chart configuration options
     number_format VARCHAR(20) NOT NULL DEFAULT 'number' CHECK (number_format IN ('currency', 'percentage', 'number', 'abbreviated')),
     number_precision INTEGER NOT NULL DEFAULT 2,
-    color_palette VARCHAR(100) NOT NULL DEFAULT 'hubspotOrange',
+    color_palette VARCHAR(100) NOT NULL DEFAULT 'sponsorcx',
     primary_color VARCHAR(50) NOT NULL DEFAULT '#3b82f6',
     sort_order VARCHAR(4) NOT NULL DEFAULT 'desc' CHECK (sort_order IN ('asc', 'desc')),
     legend_position VARCHAR(10) NOT NULL DEFAULT 'bottom' CHECK (legend_position IN ('top', 'bottom', 'none')),

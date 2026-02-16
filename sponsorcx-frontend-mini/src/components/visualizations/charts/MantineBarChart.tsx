@@ -50,7 +50,7 @@ interface MantineBarChartProps {
 export const MantineBarChart = memo(function MantineBarChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = ColorPalette.HubspotOrange,
+  colorPalette = ColorPalette.Sponsorcx,
   orientation = 'vertical',
   type = 'default',
   sortOrder = SortOrder.Desc,

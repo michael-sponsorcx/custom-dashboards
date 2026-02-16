@@ -65,10 +65,10 @@ export const useGraphState = (options: UseGraphStateOptions = {}) => {
     initialTemplate?.numberPrecision || 2
   );
   const [colorPalette, setColorPalette] = useState<ColorPalette>(
-    initialTemplate?.colorPalette || ColorPalette.HubspotOrange
+    initialTemplate?.colorPalette || ColorPalette.Sponsorcx
   );
   const [primaryColor, setPrimaryColor] = useState(
-    initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || ColorPalette.HubspotOrange)
+    initialTemplate?.primaryColor || getPalettePrimaryColor(initialTemplate?.colorPalette || ColorPalette.Sponsorcx)
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     initialTemplate?.sortOrder || SortOrder.Asc

@@ -43,7 +43,7 @@ interface MantineLineChartProps {
 export const MantineLineChart = memo(function MantineLineChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = ColorPalette.HubspotOrange,
+  colorPalette = ColorPalette.Sponsorcx,
   sortOrder = SortOrder.Desc,
   primaryDimension,
   selectedMeasure,

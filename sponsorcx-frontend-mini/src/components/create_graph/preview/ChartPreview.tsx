@@ -53,7 +53,7 @@ export function ChartPreview({
   numberFormat = NumberFormat.Number,
   numberPrecision = 2,
   primaryColor = '#3b82f6',
-  colorPalette = ColorPalette.HubspotOrange,
+  colorPalette = ColorPalette.Sponsorcx,
   sortOrder = SortOrder.Desc,
   primaryDimension,
   secondaryDimension,

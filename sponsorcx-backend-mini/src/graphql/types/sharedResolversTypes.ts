@@ -58,6 +58,7 @@ export const LayoutTypeEnum = new GraphQLEnumType({
 export const ColorPaletteEnum = new GraphQLEnumType({
     name: 'ColorPalette',
     values: {
+        sponsorcx: {},
         hubspotOrange: {},
         professional: {},
         vibrant: {},

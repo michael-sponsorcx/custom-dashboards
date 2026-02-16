@@ -27,5 +27,21 @@
             "@/*": ["src/*"]
         }
     },
-    "include": ["src", "vite.config.ts"]
+    "include": ["src", "vite.config.ts"],
+    "exclude": [
+        "src/stadiumDS/applicationComponents/**/*",
+        "src/stadiumDS/foundations/icons/**/*",
+        "src/stadiumDS/foundations/text/Text.stories.tsx",
+        "src/stadiumDS/sharedComponents/**/*.stories.tsx",
+        "src/stadiumDS/sharedComponents/dropdowns/select.tsx",
+        "src/stadiumDS/sharedComponents/dropdowns/multiSelect.tsx",
+        "src/stadiumDS/sharedComponents/dropzone",
+        "src/stadiumDS/sharedComponents/SlideOut",
+        "src/stadiumDS/sharedComponents/inputs/EditInPlaceSelect.tsx",
+        "src/stadiumDS/sharedComponents/inputs/editInPlaceInput.tsx",
+        "src/stadiumDS/sharedComponents/inputs/editInPlaceNumberInput.tsx",
+        "src/stadiumDS/sharedComponents/buttons/StadiumButton.tsx",
+        "src/stadiumDS/sharedComponents/inputs/dateInput.tsx",
+        "src/stadiumDS/sharedComponents/inputs/datePicker.tsx"
+    ]
 }

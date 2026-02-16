@@ -54,7 +54,7 @@ export function ChartRenderer({
   numberFormat,
   numberPrecision,
   primaryColor,
-  colorPalette = ColorPalette.HubspotOrange,
+  colorPalette = ColorPalette.Sponsorcx,
   sortOrder = SortOrder.Desc,
   primaryDimension,
   secondaryDimension,

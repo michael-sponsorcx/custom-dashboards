@@ -53,6 +53,7 @@ export enum ColorPalette {
   Professional = 'professional',
   ProfessionalMinimalist = 'professionalMinimalist',
   Purple = 'purple',
+  Sponsorcx = 'sponsorcx',
   Vibrant = 'vibrant',
   VibrantDynamic = 'vibrantDynamic',
   Warm = 'warm'

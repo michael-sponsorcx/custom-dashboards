@@ -30,7 +30,7 @@ interface MantinePieChartProps {
 export const MantinePieChart = memo(function MantinePieChart({
   queryResult,
   primaryColor = '#3b82f6',
-  colorPalette = ColorPalette.HubspotOrange,
+  colorPalette = ColorPalette.Sponsorcx,
   primaryDimension,
   selectedMeasure,
   numberFormat = 'number',

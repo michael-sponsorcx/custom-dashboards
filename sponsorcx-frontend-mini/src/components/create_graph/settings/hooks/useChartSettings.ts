@@ -35,8 +35,8 @@ export function useChartSettings(options: UseChartSettingsOptions = {}) {
     chartTitle: initialSettings.chartTitle ?? '',
     numberFormat: initialSettings.numberFormat ?? NumberFormat.Number,
     numberPrecision: initialSettings.numberPrecision ?? 2,
-    colorPalette: initialSettings.colorPalette ?? ColorPalette.HubspotOrange,
-    primaryColor: initialSettings.primaryColor ?? '#FF7A59', // HubSpot orange
+    colorPalette: initialSettings.colorPalette ?? ColorPalette.Sponsorcx,
+    primaryColor: initialSettings.primaryColor ?? '#2E90FA', // SponsorCX Brand 500
     sortOrder: initialSettings.sortOrder ?? SortOrder.Desc,
     primaryDimension: initialSettings.primaryDimension,
     secondaryDimension: initialSettings.secondaryDimension,

@@ -15,6 +15,22 @@ export interface PaletteDefinition {
 }
 
 export const COLOR_PALETTES: Record<Exclude<ColorPalette, 'custom'>, PaletteDefinition> = {
+  sponsorcx: {
+    name: 'SponsorCX',
+    colors: [
+      '#2E90FA', // Brand 500
+      '#53B1FD', // Brand 400
+      '#1570EF', // Brand 600
+      '#84CAFF', // Brand 300
+      '#1849A9', // Brand 800
+      '#194185', // Brand 900
+      '#15B79E', // Teal 500
+      '#06AED4', // Cyan 500
+      '#6172F3', // Indigo 500
+      '#717680', // Gray 500
+    ],
+    preview: ['#2E90FA', '#53B1FD', '#1570EF', '#84CAFF', '#1849A9'],
+  },
   hubspotOrange: {
     name: 'HubSpot Orange',
     colors: [
