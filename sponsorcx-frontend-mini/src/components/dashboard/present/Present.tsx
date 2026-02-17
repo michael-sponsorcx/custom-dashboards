@@ -1,6 +1,7 @@
 import { Box } from '@mantine/core';
 import { GridItem } from '@/types/dashboard';
 import { useDashboardFilterStore } from '@/store';
+import colors from '@/stadiumDS/foundations/colors';
 import { useFullscreenMode, useSlideNavigation } from './hooks';
 import { PresentationControls } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
@@ -34,7 +35,7 @@ export function Present({ gridItems, dashboardName, onClose }: PresentProps) {
         style={{
           width: '100vw',
           height: '100vh',
-          backgroundColor: 'white',
+          backgroundColor: colors.Base.White,
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
@@ -60,14 +61,14 @@ export function Present({ gridItems, dashboardName, onClose }: PresentProps) {
   return (
     <Box
       ref={containerRef}
+      p="lg"
       style={{
         width: '100vw',
         height: '100vh',
-        backgroundColor: 'white',
+        backgroundColor: colors.Base.White,
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        padding: '24px',
       }}
     >
       <PresentationControls
@@ -79,11 +80,11 @@ export function Present({ gridItems, dashboardName, onClose }: PresentProps) {
       />
 
       <Box
+        pt={60}
         style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          paddingTop: '60px',
         }}
       >
         <GraphSlide

@@ -200,8 +200,8 @@ export function DimensionFilterContent({
               overflowY: 'auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
-              padding: '4px',
+              gap: 'var(--mantine-spacing-xs)',
+              padding: 4,
             }}
           >
             {dimensionValuesList}
@@ -248,8 +248,8 @@ export function DimensionFilterContent({
               overflowY: 'auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
-              padding: '4px',
+              gap: 'var(--mantine-spacing-xs)',
+              padding: 4,
             }}
           >
             {dimensionValuesList}

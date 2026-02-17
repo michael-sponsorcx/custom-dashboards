@@ -1,3 +1,5 @@
+import { Stack, Text, Button } from '@mantine/core';
+
 /**
  * DrillDownDimensionSelection - Displays a list of dimensions available for drill-down
  *
@@ -23,49 +25,30 @@ interface DrillDownDimensionSelectionProps {
   onBack: () => void;
 }
 
-export function DrillDownDimensionSelection({
+export const DrillDownDimensionSelection = ({
   dimensions,
   onDimensionSelect,
   onBack,
-}: DrillDownDimensionSelectionProps) {
+}: DrillDownDimensionSelectionProps) => {
   return (
-    <div>
-      <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-        Select Dimension to Drill Down:
-      </div>
+    <Stack gap="xs">
+      <Text fw={700}>Select Dimension to Drill Down:</Text>
       {dimensions.map((dimension) => (
-        <button
+        <Button
           key={dimension}
+          variant="outline"
+          color="gray"
+          fullWidth
+          justify="flex-start"
+          size="xs"
           onClick={() => onDimensionSelect(dimension)}
-          style={{
-            display: 'block',
-            width: '100%',
-            padding: '8px',
-            marginBottom: '4px',
-            backgroundColor: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
         >
           {dimension}
-        </button>
+        </Button>
       ))}
-      <button
-        onClick={onBack}
-        style={{
-          marginTop: '8px',
-          padding: '8px 16px',
-          backgroundColor: '#adb5bd',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
+      <Button size="xs" variant="outline" color="gray" onClick={onBack}>
         Back
-      </button>
-    </div>
+      </Button>
+    </Stack>
   );
-}
+};

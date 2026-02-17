@@ -1,6 +1,7 @@
 import { TextInput, Paper, Stack, Text, ActionIcon } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { useRef, useEffect } from 'react';
+import colors from '@/stadiumDS/foundations/colors';
 import { CubeView } from '../../types/cube';
 
 interface ModelSelectionSearchBarProps {
@@ -75,7 +76,7 @@ export function ModelSelectionSearchBar({
             left: 0,
             right: 0,
             zIndex: 1000,
-            marginTop: '4px',
+            marginTop: 4,
           }}
         >
           <Stack gap="xs">
@@ -86,13 +87,13 @@ export function ModelSelectionSearchBar({
                 style={{
                   padding: '8px 12px',
                   cursor: 'pointer',
-                  borderRadius: '4px',
-                  backgroundColor: selectedView === view.name ? '#f0f0f0' : 'transparent',
+                  borderRadius: 'var(--mantine-radius-md)',
+                  backgroundColor: selectedView === view.name ? colors.Gray[100] : 'transparent',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8f9fa')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.Gray[50])}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor =
-                    selectedView === view.name ? '#f0f0f0' : 'transparent';
+                    selectedView === view.name ? colors.Gray[100] : 'transparent';
                 }}
               >
                 <Text size="sm">{view.name}</Text>

@@ -1,3 +1,5 @@
+import { Group, Text, Button } from '@mantine/core';
+
 /**
  * BarSelectionView - Displays information about a selected bar and drill-down options
  *
@@ -28,48 +30,31 @@ interface BarSelectionViewProps {
   onClose: () => void;
 }
 
-export function BarSelectionView({
+export const BarSelectionView = ({
   selectedLabel,
   canDrillDown,
   onDrillDownClick,
   onClose,
-}: BarSelectionViewProps) {
+}: BarSelectionViewProps) => {
   return (
     <div>
-      <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+      <Text fw={700} mb="xs">
         Bar Selected: {selectedLabel}
-      </div>
-      {canDrillDown ? (
-        <button
-          onClick={onDrillDownClick}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#228be6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Drill Down
-        </button>
-      ) : (
-        <div style={{ color: '#888' }}>No dimensions available for drill down</div>
-      )}
-      <button
-        onClick={onClose}
-        style={{
-          marginLeft: '8px',
-          padding: '8px 16px',
-          backgroundColor: '#adb5bd',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Close
-      </button>
+      </Text>
+      <Group gap="xs">
+        {canDrillDown ? (
+          <Button size="xs" onClick={onDrillDownClick}>
+            Drill Down
+          </Button>
+        ) : (
+          <Text size="sm" c="dimmed">
+            No dimensions available for drill down
+          </Text>
+        )}
+        <Button size="xs" variant="outline" color="gray" onClick={onClose}>
+          Close
+        </Button>
+      </Group>
     </div>
   );
-}
+};

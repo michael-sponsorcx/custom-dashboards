@@ -3,6 +3,7 @@ import { Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { GridItem } from '@/types/dashboard';
 import { useDashboardFilterStore } from '@/store';
+import colors from '@/stadiumDS/foundations/colors';
 import { usePDFGeneration } from './hooks';
 import { DownloadPDFToast } from './components';
 import { TitleSlide, GraphSlide } from '../shared/slides';
@@ -81,7 +82,7 @@ export function DownloadPDF({ gridItems, dashboardName, onComplete }: DownloadPD
           top: 0,
           width: '1920px',
           height: '1080px',
-          backgroundColor: 'white',
+          backgroundColor: colors.Base.White,
         }}
       >
         {/* Title Slide */}
@@ -90,7 +91,7 @@ export function DownloadPDF({ gridItems, dashboardName, onComplete }: DownloadPD
           style={{
             width: '1920px',
             height: '1080px',
-            backgroundColor: 'white',
+            backgroundColor: colors.Base.White,
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
@@ -107,11 +108,11 @@ export function DownloadPDF({ gridItems, dashboardName, onComplete }: DownloadPD
             style={{
               width: '1920px',
               height: '1080px',
-              backgroundColor: 'white',
+              backgroundColor: colors.Base.White,
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
-              padding: '48px',
+              padding: 48,
             }}
           >
             <Box
@@ -119,7 +120,7 @@ export function DownloadPDF({ gridItems, dashboardName, onComplete }: DownloadPD
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                paddingTop: '60px',
+                paddingTop: 60,
               }}
             >
               <GraphSlide

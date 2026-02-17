@@ -185,7 +185,7 @@ export function ChartTypeSelector({
                   cursor: disabled ? 'not-allowed' : 'pointer',
                   userSelect: 'none',
                   height: 64,
-                  borderRadius: 8,
+                  borderRadius: 'var(--mantine-radius-md)',
                   border: tileBorder(selected),
                   backgroundColor: tileBg(selected),
                   opacity: disabled ? 0.5 : 1,

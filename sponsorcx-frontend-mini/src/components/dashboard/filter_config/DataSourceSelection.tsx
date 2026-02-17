@@ -1,4 +1,5 @@
 import { Stack, Text, Group, ScrollArea, Alert } from '@mantine/core';
+import colors from '@/stadiumDS/foundations/colors';
 import { ModelSelector } from '../../shared/ModelSelector';
 import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 
@@ -64,9 +65,9 @@ export function DataSourceSelection({ selectedViews, onViewsChange }: DataSource
                   justify="space-between"
                   p="sm"
                   style={{
-                    border: '1px solid #dee2e6',
-                    borderRadius: '4px',
-                    backgroundColor: '#f8f9fa',
+                    border: `1px solid ${colors.Gray[200]}`,
+                    borderRadius: 'var(--mantine-radius-md)',
+                    backgroundColor: colors.Gray[50],
                   }}
                 >
                   <Text size="sm">{viewName}</Text>

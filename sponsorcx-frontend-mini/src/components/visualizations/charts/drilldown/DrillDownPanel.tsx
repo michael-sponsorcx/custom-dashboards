@@ -1,3 +1,5 @@
+import { Box, ScrollArea } from '@mantine/core';
+import colors from '@/stadiumDS/foundations/colors';
 import { BarSelectionView } from './BarSelectionView';
 import { DrillDownDimensionSelection } from './DrillDownDimensionSelection';
 import type { ClickedBarState } from './useDrillDown';
@@ -59,29 +61,29 @@ export function DrillDownPanel({
   onClose,
 }: DrillDownPanelProps) {
   return (
-    <div
+    <Box
+      p="xs"
       style={{
-        padding: '10px',
-        borderTop: '1px solid #e0e0e0',
-        backgroundColor: '#f9f9f9',
-        maxHeight: '200px',
-        overflowY: 'auto',
+        borderTop: `1px solid ${colors.Gray[200]}`,
+        backgroundColor: colors.Gray[50],
       }}
     >
-      {!showDrillDown ? (
-        <BarSelectionView
-          selectedLabel={String(clickedBar.data[dimensionField])}
-          canDrillDown={canDrillDown}
-          onDrillDownClick={onDrillDownClick}
-          onClose={onClose}
-        />
-      ) : (
-        <DrillDownDimensionSelection
-          dimensions={drillDownDimensions}
-          onDimensionSelect={onDimensionSelect}
-          onBack={onBack}
-        />
-      )}
-    </div>
+      <ScrollArea.Autosize mah={200}>
+        {!showDrillDown ? (
+          <BarSelectionView
+            selectedLabel={String(clickedBar.data[dimensionField])}
+            canDrillDown={canDrillDown}
+            onDrillDownClick={onDrillDownClick}
+            onClose={onClose}
+          />
+        ) : (
+          <DrillDownDimensionSelection
+            dimensions={drillDownDimensions}
+            onDimensionSelect={onDimensionSelect}
+            onBack={onBack}
+          />
+        )}
+      </ScrollArea.Autosize>
+    </Box>
   );
 }

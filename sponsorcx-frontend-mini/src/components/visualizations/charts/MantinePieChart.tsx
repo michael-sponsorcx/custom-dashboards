@@ -4,6 +4,7 @@ import { transformChartData } from '../../../utils/chartDataTransformations';
 import { NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/backend-graphql';
 import { ChartType, ColorPalette } from '../../../types/backend-graphql';
+import colors from '@/stadiumDS/foundations/colors';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';
 import { EmptyState } from '../utils/EmptyState';
@@ -120,8 +121,8 @@ export const MantinePieChart = memo(function MantinePieChart({
         },
         contentStyle: {
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid #e0e0e0',
-          borderRadius: '4px',
+          border: `1px solid ${colors.Gray[200]}`,
+          borderRadius: 'var(--mantine-radius-md)',
           padding: '8px 12px',
         },
         // Allow tooltip to be positioned outside the chart bounds

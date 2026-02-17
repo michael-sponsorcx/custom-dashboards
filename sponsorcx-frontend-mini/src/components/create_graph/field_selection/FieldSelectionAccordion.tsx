@@ -1,5 +1,6 @@
 import { Accordion, Stack, Group, Checkbox, Text, Title, ActionIcon } from '@mantine/core';
 import { IconFilter } from '@tabler/icons-react';
+import colors from '@/stadiumDS/foundations/colors';
 import { CubeMeasureMeta, CubeDimensionMeta } from '../../../types/cube';
 import { FieldType } from '../../../types/filters';
 
@@ -38,9 +39,9 @@ export function FieldSelectionAccordion({
         <Accordion.Item
           value="measures"
           style={{
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            borderRadius: '8px',
-            marginBottom: '8px',
+            backgroundColor: colors.Brand[25],
+            borderRadius: 'var(--mantine-radius-md)',
+            marginBottom: 'var(--mantine-spacing-xs)',
           }}
         >
           <Accordion.Control>
@@ -79,9 +80,9 @@ export function FieldSelectionAccordion({
         <Accordion.Item
           value="dimensions"
           style={{
-            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            borderRadius: '8px',
-            marginBottom: '8px',
+            backgroundColor: colors.Success[25],
+            borderRadius: 'var(--mantine-radius-md)',
+            marginBottom: 'var(--mantine-spacing-xs)',
           }}
         >
           <Accordion.Control>
@@ -119,7 +120,7 @@ export function FieldSelectionAccordion({
       {dates.length > 0 && (
         <Accordion.Item
           value="dates"
-          style={{ backgroundColor: 'rgba(168, 85, 247, 0.1)', borderRadius: '8px' }}
+          style={{ backgroundColor: colors.Purple[25], borderRadius: 'var(--mantine-radius-md)' }}
         >
           <Accordion.Control>
             <Title order={4}>Dates</Title>

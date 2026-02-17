@@ -1,0 +1,27 @@
+/* Override react-grid-layout placeholder color to match SponsorCX Brand[500] */
+.react-grid-item.react-grid-placeholder {
+  background: var(--mantine-color-Brand-6);
+}
+
+/* Add shadow and border to Menu dropdowns for visual depth */
+.mantine-Menu-dropdown {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+/* Fix Menu.Sub dropdown overlapping parent menu items.
+   The sub-dropdown renders inside the parent dropdown (withinPortal: false).
+   Force it to open to the left of the parent instead of the right,
+   so it never overlaps the parent or overflows the viewport.
+   Uses !important to override Mantine's inline styles. */
+.mantine-Menu-dropdown .mantine-Popover-dropdown {
+  z-index: 301 !important;
+  left: auto !important;
+  right: 100%;
+  margin-right: 4px;
+  margin-left: 0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  background: var(--mantine-color-white);
+}

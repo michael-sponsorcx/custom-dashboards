@@ -1,5 +1,6 @@
 import { Box, Text, Stack, Group } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
+import colors from '@/stadiumDS/foundations/colors';
 import {
   ColorPalette,
   getAllPalettes,
@@ -41,7 +42,7 @@ export function PaletteSelector({
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(115px, 1fr))',
-          gap: '8px',
+          gap: 'var(--mantine-spacing-xs)',
         }}
       >
         {palettes.map((palette) => (
@@ -73,15 +74,17 @@ function PaletteCard({ palette, selected, onClick }: PaletteCardProps) {
       onClick={onClick}
       style={(theme) => ({
         padding: '12px 16px',
-        borderRadius: '8px',
-        border: selected ? `2px solid ${theme.colors.blue[6]}` : '1px solid #e1e4e8',
-        backgroundColor: selected ? '#f6f8fa' : '#ffffff',
+        borderRadius: 'var(--mantine-radius-md)',
+        border: selected ? `2px solid ${theme.colors.Brand[5]}` : `1px solid ${colors.Gray[200]}`,
+        backgroundColor: selected ? colors.Gray[50] : colors.Base.White,
         cursor: 'pointer',
         transition: 'all 0.2s ease',
         position: 'relative',
         ':hover': {
-          borderColor: selected ? theme.colors.blue[6] : '#cbd2d9',
-          boxShadow: selected ? '0 2px 8px rgba(0,0,0,0.08)' : '0 1px 3px rgba(0,0,0,0.04)',
+          borderColor: selected ? theme.colors.Brand[5] : colors.Gray[300],
+          boxShadow: selected
+            ? theme.shadows.sm
+            : theme.shadows.xs,
         },
       })}
     >
@@ -100,7 +103,7 @@ function PaletteCard({ palette, selected, onClick }: PaletteCardProps) {
           >
             {paletteName}
           </Text>
-          {selected && <IconCheck size={16} color="#0969da" />}
+          {selected && <IconCheck size={16} color={colors.Brand[600]} />}
         </Group>
 
         {!isCustom && previewColors.length > 0 && (
@@ -109,8 +112,8 @@ function PaletteCard({ palette, selected, onClick }: PaletteCardProps) {
               <Box
                 key={index}
                 style={{
-                  width: '14px',
-                  height: '14px',
+                  width: 14,
+                  height: 14,
                   borderRadius: '50%',
                   backgroundColor: color,
                   border: '1px solid rgba(0,0,0,0.1)',
