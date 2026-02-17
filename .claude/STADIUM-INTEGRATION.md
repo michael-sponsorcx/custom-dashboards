@@ -163,3 +163,35 @@ If you pull in a new Stadium component and Vite crashes:
 2. If the component needs a real import (not just a stub), create a minimal stub file at the expected path
 3. Follow the pattern of `src/state.ts` and `src/context/index.ts` — provide the minimum interface the Stadium component expects
 4. Never modify Stadium source files
+
+---
+
+## Parent App Style Tokens
+
+Style values extracted from the parent application for consistency when Stadium DS does not define them.
+
+### Card Styles
+
+Applies to: Graph cards, and any future card-like containers that must match the parent app.
+
+| Property        | Value                                  |
+| --------------- | -------------------------------------- |
+| border-radius   | `4px` (Mantine `radius="sm"`)          |
+| box-shadow      | `rgba(0, 0, 0, 0.07) 0px 0px 5px 1px` |
+| border          | `1px solid rgb(230, 230, 230)`         |
+
+```tsx
+<Paper
+  radius="sm"
+  style={{
+    border: '1px solid rgb(230, 230, 230)',
+    boxShadow: 'rgba(0, 0, 0, 0.07) 0px 0px 5px 1px',
+  }}
+>
+```
+
+Note: Stadium's shadow tokens are all directional/downward. The parent app uses a uniform ambient glow, so the `boxShadow` must be set inline.
+
+### Buttons
+
+> **TODO:** Enforce parent-app button styles using these same border-radius / shadow tokens once button audit is complete.

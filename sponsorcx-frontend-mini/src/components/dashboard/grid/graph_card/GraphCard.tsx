@@ -57,7 +57,7 @@ interface GraphCardProps {
  *   refreshKey={refreshCounter}
  * />
  */
-export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, onOpenKPIAlertModal, refreshKey }: GraphCardProps) {
+export const GraphCard = ({ template, onDelete, onEdit, onOpenGraphFilterModal, onOpenKPIAlertModal, refreshKey }: GraphCardProps) => {
   const { activeFilters: dashboardFilters } = useDashboardFilterStore();
 
   // Drill-down state management
@@ -97,16 +97,16 @@ export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, 
 
   return (
     <Paper
-      shadow="sm"
       p="md"
-      radius="md"
-      withBorder
+      radius="sm"
       style={{
         height: '100%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
+        border: '1px solid rgb(230, 230, 230)',
+        boxShadow: 'rgba(0, 0, 0, 0.07) 0px 0px 5px 1px',
       }}
     >
       {/* Header section - fixed height */}
@@ -183,4 +183,4 @@ export function GraphCard({ template, onDelete, onEdit, onOpenGraphFilterModal, 
       </div>
     </Paper>
   );
-}
+};
