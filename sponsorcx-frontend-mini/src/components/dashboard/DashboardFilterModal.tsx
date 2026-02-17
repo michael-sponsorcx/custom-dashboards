@@ -10,11 +10,8 @@ interface DashboardFilterModalProps {
 }
 
 /**
- * DashboardFilterModal Component
- *
- * Multi-step modal for configuring dashboard-wide filters:
- * Step 1: Select data sources (views) to filter
- * Step 2: Select common fields across those views
+ * @deprecated Use DashboardFilterSlideOut instead. This modal-based filter component
+ * is no longer actively maintained and will be removed in a future release.
  */
 export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalProps) {
   const [activeStep, setActiveStep] = useState(0);

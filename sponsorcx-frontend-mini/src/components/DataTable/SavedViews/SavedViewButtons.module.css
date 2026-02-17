@@ -1,0 +1,55 @@
+.flexRoot {
+    width: 100%;
+}
+
+.root {
+    flex-shrink: 0;
+}
+
+.root[data-active='true'] {
+    background-color: var(--mantine-color-Gray-3);
+    font-weight: 700;
+}
+
+.root[data-active='true']:hover {
+    background-color: var(--mantine-color-Gray-2);
+}
+
+.savedViewMenuTargetButton {
+    flex-shrink: 0;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+
+.saveSavedViewButton {
+    flex-shrink: 0;
+    margin-left: 4px;
+}
+
+.savedViewButtonSection {
+    margin: 0;
+}
+
+.savedViewButtonLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    min-width: 18px;
+    font-size: 12px;
+    color: var(--mantine-color-Gray-8);
+    font-weight: 400;
+    line-height: 18px;
+}
+
+.root[data-active='true'] .savedViewButtonLabel {
+    color: var(--mantine-color-Gray-8);
+    font-weight: 600;
+}
+
+.scrollbar {
+    &[data-orientation='horizontal'] .thumb {
+        background-color: var(--mantine-color-Gray-4);
+    }
+}

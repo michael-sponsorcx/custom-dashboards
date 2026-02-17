@@ -13,7 +13,7 @@ import {
   type DashboardFilterField,
   type DashboardFilterState,
 } from '../api';
-import type { FilterRule } from '../types/filters';
+import type { FilterRule, DimensionFilterRule } from '../types/filters';
 
 // Re-export types for convenience
 export type { DashboardFilterField, DashboardFilterState };
@@ -33,6 +33,8 @@ interface DashboardFilterStore {
   updateFilter: (index: number, filter: FilterRule) => void;
   removeFilter: (index: number) => void;
   clearAllFilters: () => void;
+  /** Replace dimension filters without triggering saveFilters. Used for URL → Zustand sync. */
+  _syncDimensionFiltersFromUrl: (dimensionFilters: DimensionFilterRule[]) => void;
   reset: () => void;
 
   // Persistence
@@ -93,6 +95,16 @@ export const useDashboardFilterStore = create<DashboardFilterStore>()(
     clearAllFilters: () => {
       set({ activeFilters: [] });
       get().saveFilters();
+    },
+
+    _syncDimensionFiltersFromUrl: (dimensionFilters) => {
+      set((state) => {
+        const nonDimensionFilters = state.activeFilters.filter(
+          (f) => f.fieldType !== 'dimension'
+        );
+        return { activeFilters: [...nonDimensionFilters, ...dimensionFilters] };
+      });
+      // Intentionally does NOT call saveFilters — URL is the source of truth
     },
 
     reset: () => {
