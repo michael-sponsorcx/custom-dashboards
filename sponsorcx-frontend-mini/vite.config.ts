@@ -1,3 +1,10 @@
+/**
+ * DEPRECATION NOTICE:
+ * The custom plugins below (stadiumOverridePlugin, stadiumStubPlugin) and related
+ * workarounds will be deprecated once we move to the new system. They exist solely
+ * to integrate the read-only stadiumDS package into this mini codebase.
+ */
+
 /// <reference types="vitest" />
 import path from 'path';
 import react from '@vitejs/plugin-react';
@@ -7,6 +14,42 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import babelMacros from 'vite-plugin-babel-macros';
 import { configDefaults } from 'vitest/config';
 import fs from 'fs';
+
+/**
+ * Vite plugin that redirects specific stadiumDS modules to app-level overrides.
+ * Allows extending Stadium components (e.g. adding tabs to a slideout)
+ * without modifying the read-only stadiumDS directory.
+ */
+const stadiumOverridePlugin = (): Plugin => {
+    const overrides: Record<string, string> = {
+        // Redirect PageHeaderFilterSlideOut to our version that adds a "Configure" tab
+        [path.resolve(__dirname, './src/stadiumDS/applicationComponents/PageHeader/PageHeaderFilters/PageHeaderFilterSlideOut')]:
+            path.resolve(__dirname, './src/overrides/PageHeaderFilterSlideOut.tsx'),
+    };
+
+    return {
+        name: 'stadium-override',
+        enforce: 'pre',
+        resolveId(source, importer) {
+            if (!importer) return null;
+
+            // Resolve relative imports to absolute paths
+            let resolved = source;
+            if (source.startsWith('.')) {
+                resolved = path.resolve(path.dirname(importer), source);
+            }
+
+            // Strip extensions for matching
+            const withoutExt = resolved.replace(/\.(ts|tsx|js|jsx)$/, '');
+
+            if (overrides[withoutExt]) {
+                return overrides[withoutExt];
+            }
+
+            return null;
+        },
+    };
+};
 
 /**
  * Vite plugin that stubs unresolvable imports originating from stadiumDS.
@@ -52,6 +95,7 @@ const stadiumStubPlugin = (): Plugin => {
 
 export default defineConfig(({ mode }) => ({
     plugins: [
+        stadiumOverridePlugin(),
         stadiumStubPlugin(),
         react(),
         tsconfigPaths(),
