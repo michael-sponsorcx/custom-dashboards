@@ -1,4 +1,4 @@
-import { Modal, Button, Stack, Title } from '@mantine/core';
+import { Modal, Button, Stack } from '@mantine/core';
 import { FieldType, ComparisonOperator } from '../../../types/filters';
 import { DimensionFilterContent } from './DimensionFilterContent';
 import { MeasureFilterContent } from './MeasureFilterContent';
@@ -84,7 +84,7 @@ export function SharedFilterModalUI({
     <Modal
       opened={opened}
       onClose={onClose}
-      title={<Title order={4}>{title}</Title>}
+      title={title}
       size="lg"
       centered
     >

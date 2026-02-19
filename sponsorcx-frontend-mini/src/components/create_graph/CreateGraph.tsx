@@ -277,21 +277,22 @@ export function CreateGraph() {
               </Grid.Col>
             </Grid>
 
-            {/* Filter Modal */}
-            <CreateGraphFilterModal
-              opened={filterManagement.filterModalOpened}
-              onClose={filterManagement.closeFilterModal}
-              fieldName={filterManagement.currentFilterField?.fieldName || null}
-              fieldTitle={filterManagement.currentFilterField?.fieldTitle || null}
-              fieldType={filterManagement.currentFilterField?.fieldType || null}
-              viewName={graphState.selectedView}
-              existingFilter={filterManagement.currentExistingFilter}
-              onApplyFilter={filterManagement.applyFilter}
-              dimensionValuesCache={filterManagement.dimensionValuesCache}
-              onUpdateCache={filterManagement.updateDimensionCache}
-            />
           </Tabs.Panel>
         </Tabs>
+
+        {/* Filter Modal — outside Tabs so it's always mounted */}
+        <CreateGraphFilterModal
+          opened={filterManagement.filterModalOpened}
+          onClose={filterManagement.closeFilterModal}
+          fieldName={filterManagement.currentFilterField?.fieldName || null}
+          fieldTitle={filterManagement.currentFilterField?.fieldTitle || null}
+          fieldType={filterManagement.currentFilterField?.fieldType || null}
+          viewName={graphState.selectedView}
+          existingFilter={filterManagement.currentExistingFilter}
+          onApplyFilter={filterManagement.applyFilter}
+          dimensionValuesCache={filterManagement.dimensionValuesCache}
+          onUpdateCache={filterManagement.updateDimensionCache}
+        />
 
         <Group justify="space-between">
           <Button onClick={() => navigate('/')} variant="outline">
