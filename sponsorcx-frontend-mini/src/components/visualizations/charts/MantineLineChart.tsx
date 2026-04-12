@@ -1,6 +1,6 @@
 import { useMemo, memo } from 'react';
 import { LineChart } from '@mantine/charts';
-import { transformChartData } from '../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations/transformChartData';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { NumberFormatType } from '../../../utils/numberFormatter';

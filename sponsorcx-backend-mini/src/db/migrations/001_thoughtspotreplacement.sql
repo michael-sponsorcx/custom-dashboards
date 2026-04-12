@@ -111,9 +111,6 @@ CREATE TABLE IF NOT EXISTS dashboard_grid_items (
     grid_width INTEGER DEFAULT 3 CHECK (grid_width >= 1 AND grid_width <= 6),
     grid_height INTEGER DEFAULT 3 CHECK (grid_height >= 1),
 
-    -- Order in the dashboard
-    display_order INTEGER DEFAULT 0,
-
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 

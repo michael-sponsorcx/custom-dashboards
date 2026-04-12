@@ -208,7 +208,6 @@ export type DashboardFilterInput = {
 export type DashboardGridItem = {
   __typename?: 'DashboardGridItem';
   dashboardId: Scalars['ID']['output'];
-  displayOrder?: Maybe<Scalars['Int']['output']>;
   graph?: Maybe<Graph>;
   graphId: Scalars['ID']['output'];
   gridColumn?: Maybe<Scalars['Int']['output']>;
@@ -219,7 +218,6 @@ export type DashboardGridItem = {
 };
 
 export type DashboardGridItemInput = {
-  displayOrder?: InputMaybe<Scalars['Int']['input']>;
   graphId: Scalars['ID']['input'];
   gridColumn?: InputMaybe<Scalars['Int']['input']>;
   gridHeight?: InputMaybe<Scalars['Int']['input']>;
@@ -955,7 +953,6 @@ export type DashboardFilterResolvers<ContextType = any, ParentType extends Resol
 
 export type DashboardGridItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['DashboardGridItem'] = ResolversParentTypes['DashboardGridItem']> = ResolversObject<{
   dashboardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  displayOrder?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   graph?: Resolver<Maybe<ResolversTypes['Graph']>, ParentType, ContextType>;
   graphId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   gridColumn?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;

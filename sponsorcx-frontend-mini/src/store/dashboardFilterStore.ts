@@ -9,11 +9,13 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import {
   fetchDashboardFilter,
-  saveDashboardFilter,
-  clearDashboardFilter,
   type DashboardFilterField,
   type DashboardFilterState,
-} from '../api';
+} from '../api/app/dashboard/queries';
+import {
+  saveDashboardFilter,
+  clearDashboardFilter,
+} from '../api/app/dashboard/mutations';
 import type { FilterRule, DimensionFilterRule } from '../types/filters';
 
 // Re-export types for convenience

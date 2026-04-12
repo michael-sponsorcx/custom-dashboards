@@ -4,8 +4,8 @@
  */
 
 import { GraphQLNonNull, GraphQLID, GraphQLList } from 'graphql';
-import { GraphType, GraphInput } from '../types';
-import { findAllGraphs, findGraphById, createGraph, updateGraph, deleteGraph } from '../../models/graph';
+import { GraphType, GraphInput } from '../types/graphResolversTypes';
+import { findAllGraphs, findGraphById, createGraph, updateGraph, deleteGraph } from '../../models/graph/queries';
 import type {
     QueryGraphsArgs,
     QueryGraphArgs,

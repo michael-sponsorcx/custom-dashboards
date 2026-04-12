@@ -8,8 +8,8 @@
 import type { KPIFormData } from '../../../types/kpi-alerts';
 import { AlertType } from '../../../types/backend-graphql';
 import type { KpiSchedule, KpiThreshold } from '../../../types/backend-graphql';
-import { createKpiSchedule } from '../kpiSchedule';
-import { createKpiThreshold } from '../kpiThreshold';
+import { createKpiSchedule } from '../kpiSchedule/mutations';
+import { createKpiThreshold } from '../kpiThreshold/mutations';
 
 /**
  * Create a new KPI alert (schedule or threshold based on alertType)

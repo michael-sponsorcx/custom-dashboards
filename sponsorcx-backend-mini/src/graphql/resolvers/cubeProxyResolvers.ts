@@ -16,7 +16,7 @@ import {
     CubeSchemaType,
     CubeDimensionValuesType,
     CubeMetadataType,
-} from '../types';
+} from '../types/cubeProxyResolversTypes';
 import type {
     QueryCubeQueryArgs,
     QueryCubeDimensionValuesArgs,

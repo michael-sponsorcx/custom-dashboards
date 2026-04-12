@@ -1,5 +1,5 @@
 import type { FrequencyInterval, AttachmentType } from '../../generated/graphql';
-import type { AlertRowColumns, KpiAlert, KpiAlertRow } from '../kpiAlert';
+import type { AlertRowColumns, KpiAlert, KpiAlertRow } from '../kpiAlert/types';
 
 /** Database row type for kpi_schedules joined query (snake_case) */
 export interface KpiScheduleRow extends AlertRowColumns {

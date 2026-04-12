@@ -4,8 +4,8 @@
  */
 
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
-import { KpiScheduleType, CreateKpiScheduleInput as CreateKpiScheduleInputType } from '../types';
-import { findSchedulesByGraph, createKpiSchedule, deleteKpiSchedule, toggleKpiScheduleActive } from '../../models/kpiSchedule';
+import { KpiScheduleType, CreateKpiScheduleInput as CreateKpiScheduleInputType } from '../types/kpiScheduleResolversTypes';
+import { findSchedulesByGraph, createKpiSchedule, deleteKpiSchedule, toggleKpiScheduleActive } from '../../models/kpiSchedule/queries';
 import type {
     QueryKpiSchedulesByGraphArgs,
     MutationCreateKpiScheduleArgs,

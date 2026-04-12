@@ -15,7 +15,7 @@ import { validateCubeRules } from './validators/cubeRulesValidator';
  * @param query - GraphQL query string to validate
  * @returns Validation result with errors and warnings
  */
-export async function validateCubeGraphQLQuery(query: string): Promise<ValidationResult> {
+export const validateCubeGraphQLQuery = async (query: string): Promise<ValidationResult> => {
   // Step 1: Validate GraphQL syntax
   const syntaxResult = validateGraphQLSyntax(query);
 
@@ -38,7 +38,7 @@ export async function validateCubeGraphQLQuery(query: string): Promise<Validatio
     errors: allErrors,
     warnings: allWarnings,
   };
-}
+};
 
 // Re-export validators for direct use if needed
 export { validateGraphQLSyntax } from './validators/syntaxValidator';

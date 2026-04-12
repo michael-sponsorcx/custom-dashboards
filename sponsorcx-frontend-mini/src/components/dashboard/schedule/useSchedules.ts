@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchDashboardSchedulesByDashboard } from '../../../api';
+import { fetchDashboardSchedulesByDashboard } from '../../../api/app/dashboardSchedule/queries';
 import type { DashboardSchedule } from '../../../types/backend-graphql';
 import type { ScheduleRow } from './ScheduleTable';
 

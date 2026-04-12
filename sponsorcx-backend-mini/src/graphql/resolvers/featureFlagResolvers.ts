@@ -4,8 +4,8 @@
  */
 
 import { GraphQLNonNull, GraphQLString } from 'graphql';
-import { FeatureFlagType } from '../types';
-import { findFeatureFlagByKey } from '../../models/featureFlag';
+import { FeatureFlagType } from '../types/featureFlagResolversTypes';
+import { findFeatureFlagByKey } from '../../models/featureFlag/queries';
 
 // ============================================================================
 // Queries

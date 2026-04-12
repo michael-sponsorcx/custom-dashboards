@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { notifications } from '@mantine/notifications';
-import { executeCubeGraphQL } from '../../../../../api';
+import { executeCubeGraphQL } from '../../../../../api/cube/query';
 
 /**
  * State returned by useGraphData hook

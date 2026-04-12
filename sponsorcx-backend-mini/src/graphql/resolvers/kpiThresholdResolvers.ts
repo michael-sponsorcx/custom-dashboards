@@ -4,8 +4,8 @@
  */
 
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
-import { KpiThresholdType, CreateKpiThresholdInput as CreateKpiThresholdInputType } from '../types';
-import { findThresholdsByGraph, createKpiThreshold, deleteKpiThreshold, toggleKpiThresholdActive } from '../../models/kpiThreshold';
+import { KpiThresholdType, CreateKpiThresholdInput as CreateKpiThresholdInputType } from '../types/kpiThresholdResolversTypes';
+import { findThresholdsByGraph, createKpiThreshold, deleteKpiThreshold, toggleKpiThresholdActive } from '../../models/kpiThreshold/queries';
 import type {
     QueryKpiThresholdsByGraphArgs,
     MutationCreateKpiThresholdArgs,

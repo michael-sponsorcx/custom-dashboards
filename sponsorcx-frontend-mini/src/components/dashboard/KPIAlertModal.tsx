@@ -5,7 +5,7 @@ import { KPIAlertTile } from './KPIAlertTile';
 import { KPIAlertModalConfigureTab } from './KPIAlertModalConfigureTab';
 import type { KPIAlertModalProps, AlertTypeDefinition, KPIFormData } from '../../types/kpi-alerts';
 import { AlertType } from '../../types/backend-graphql';
-import { createKpiAlert } from '../../api/app/kpiAlert';
+import { createKpiAlert } from '../../api/app/kpiAlert/mutations';
 
 /**
  * Fixed list of KPI alert types available to users

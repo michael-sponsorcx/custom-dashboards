@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { DaySelector } from './DaySelector';
 import { HOUR_OPTIONS, MINUTE_OPTIONS, TIME_ZONE_OPTIONS } from '../../../constants/timeOptions';
 import { type DashboardScheduleFormData, type DayOfWeek, AttachmentType, type FrequencyInterval } from '../../../types/dashboard-schedules';
-import { createDashboardSchedule, updateDashboardSchedule } from '../../../api';
+import { createDashboardSchedule, updateDashboardSchedule } from '../../../api/app/dashboardSchedule/mutations';
 import type { DashboardSchedule } from '../../../types/backend-graphql';
 
 interface ScheduleModalProps {

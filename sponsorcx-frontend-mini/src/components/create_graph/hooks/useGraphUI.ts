@@ -16,9 +16,11 @@ import { GraphUI } from '../../../types/graph';
 import {
   createGraph,
   updateGraph,
+} from '../../../api/app/graph/mutations';
+import {
   addGraphToDashboard,
-} from '../../../api';
-import { useOrganizationStore } from '../../../store';
+} from '../../../api/app/dashboard/mutations';
+import { useOrganizationStore } from '../../../store/organizationStore';
 import { ChartConfig } from '../types';
 import { FilterRule } from '../../../types/filters';
 import { ChartType, SortOrder, LegendPosition } from '../../../types/backend-graphql';

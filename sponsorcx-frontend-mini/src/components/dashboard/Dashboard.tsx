@@ -2,9 +2,11 @@ import { Container, Button, Title, Stack, Text, Group, Loader, Center } from '@m
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
-import { useDashboardState, useDashboardActions, useMaintenanceMode } from './hooks';
+import { useDashboardState } from './hooks/useDashboardState';
+import { useDashboardActions } from './hooks/useDashboardActions';
+import { useMaintenanceMode } from './hooks/useMaintenanceMode';
 import { MaintenanceMode } from './MaintenanceMode';
-import { DashboardGrid } from './grid';
+import { DashboardGrid } from './grid/DashboardGrid';
 // import { GraphFilterModal } from './GraphFilterModal';
 import { KPIAlertModal } from './KPIAlertModal';
 import { ScheduleModal } from './schedule/ScheduleModal';
@@ -12,10 +14,11 @@ import { DashboardFilters } from './DashboardFilters';
 import { DashboardFilterModal } from './DashboardFilterModal';
 import { DashboardAvailableFilters } from './DashboardAvailableFilters';
 import { DashboardAvailableFiltersModal } from './DashboardAvailableFiltersModal';
-import { Present } from './present';
-import { DownloadPDF } from './download_pdf';
+import { Present } from './present/Present';
+import { DownloadPDF } from './download_pdf/DownloadPDF';
 import { DashboardActionsMenu } from './DashboardActionsMenu';
-import { useOrganizationStore, useDashboardFilterStore } from '../../store';
+import { useOrganizationStore } from '../../store/organizationStore';
+import { useDashboardFilterStore } from '../../store/dashboardFilterStore';
 
 /**
  * Dashboard Component - Refactored

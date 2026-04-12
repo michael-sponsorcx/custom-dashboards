@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { GridItem } from '../../../types/dashboard';
 import {
   getOrCreateDefaultDashboard,
+} from '../../../api/app/dashboard/mutations';
+import {
   fetchGridItems,
-} from '../../../api';
-import { useOrganizationStore } from '../../../store';
+} from '../../../api/app/dashboard/queries';
+import { useOrganizationStore } from '../../../store/organizationStore';
 
 /**
  * Hook to manage dashboard state

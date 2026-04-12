@@ -21,7 +21,10 @@ import { ChartPreview } from './preview/ChartPreview';
 import { ChartSettingsPanel } from './settings/ChartSettingsPanel';
 import { CreateGraphFilterModal } from './CreateGraphFilterModal';
 import { QueryResultsTable } from '../visualizations/tables/QueryResultsTable';
-import { useGraphState, useFilterManagement, useQueryExecution, useGraphUI } from './hooks';
+import { useGraphState } from './hooks/useGraphState';
+import { useFilterManagement } from './hooks/useFilterManagement';
+import { useQueryExecution } from './hooks/useQueryExecution';
+import { useGraphUI } from './hooks/useGraphUI';
 
 /**
  * CreateGraph Component - Refactored

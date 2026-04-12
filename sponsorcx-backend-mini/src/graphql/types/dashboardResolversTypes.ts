@@ -33,7 +33,6 @@ export const DashboardGridItemType = new GraphQLObjectType({
         gridRow: { type: GraphQLInt },
         gridWidth: { type: GraphQLInt },
         gridHeight: { type: GraphQLInt },
-        displayOrder: { type: GraphQLInt },
         graph: {
             type: GraphType,
         },
@@ -69,7 +68,6 @@ export const DashboardGridItemInput = new GraphQLInputObjectType({
         gridRow: { type: GraphQLInt },
         gridWidth: { type: GraphQLInt },
         gridHeight: { type: GraphQLInt },
-        displayOrder: { type: GraphQLInt },
     },
 });
 

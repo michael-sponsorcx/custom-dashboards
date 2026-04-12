@@ -1,5 +1,5 @@
 import type { KpiScheduleRow, KpiSchedule } from './types';
-import { rowToKpiAlert } from '../kpiAlert';
+import { rowToKpiAlert } from '../kpiAlert/mapper';
 
 /** Convert a kpi_schedule joined row to camelCase for GraphQL */
 export const kpiScheduleToCamelCase = (row: KpiScheduleRow): KpiSchedule => ({

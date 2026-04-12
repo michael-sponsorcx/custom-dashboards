@@ -1,7 +1,10 @@
 import { CronJob } from 'cron';
 import { pool } from '../db/connection';
 import { logger } from './cronService';
-import type { CronJobRow, KpiAlertRow, KpiScheduleAlertRow, KpiThresholdTableRow } from '../models';
+import type { CronJobRow } from '../models/cronJob/types';
+import type { KpiAlertRow } from '../models/kpiAlert/types';
+import type { KpiScheduleAlertRow } from '../models/kpiSchedule/types';
+import type { KpiThresholdTableRow } from '../models/kpiThreshold/types';
 import { ThresholdCondition, FrequencyInterval, AlertType } from '../generated/graphql';
 import { fetchKpiValue } from './kpiValueFetcher';
 

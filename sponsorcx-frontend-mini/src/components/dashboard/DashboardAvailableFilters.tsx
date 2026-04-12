@@ -1,5 +1,5 @@
 import { Group, Badge, Text, Stack, Paper } from '@mantine/core';
-import { useDashboardFilterStore } from '../../store';
+import { useDashboardFilterStore } from '../../store/dashboardFilterStore';
 
 interface DashboardAvailableFiltersProps {
   onFilterClick: (fieldName: string) => void;

@@ -1,5 +1,5 @@
 import type { KpiThresholdRow, KpiThreshold } from './types';
-import { rowToKpiAlert } from '../kpiAlert';
+import { rowToKpiAlert } from '../kpiAlert/mapper';
 
 /** Convert a kpi_threshold joined row to camelCase for GraphQL */
 export const kpiThresholdToCamelCase = (row: KpiThresholdRow): KpiThreshold => ({

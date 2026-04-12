@@ -1,6 +1,6 @@
 import { Modal, Stack, Text, Button, Group, Stepper } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { useDashboardFilterStore } from '../../store';
+import { useDashboardFilterStore } from '../../store/dashboardFilterStore';
 import { DataSourceSelection } from './filter_config/DataSourceSelection';
 import { CommonFieldsSelection } from './filter_config/CommonFieldsSelection';
 

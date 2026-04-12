@@ -1,13 +1,13 @@
 import { useMemo, memo } from 'react';
 import { BarChart, BarChartType } from '@mantine/charts';
-import { transformChartData } from '../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations/transformChartData';
 import { SeriesLimitWrapper } from './SeriesLimitWrapper';
 import { useSortedChartData, SortOrder } from '../../create_graph/settings/OrderByControl';
 import { NumberFormatType } from '../../../utils/numberFormatter';
 import { ChartType, LegendPosition, ColorPalette } from '../../../types/backend-graphql';
 import { getLegendProps, shouldShowLegend } from './utils/legendHelpers';
 import type { ChartDataPoint } from '../../../utils/chartDataTransformations/types';
-import type { CubeQueryResult } from '../../../api';
+import type { CubeQueryResult } from '../../../api/core/types';
 import { createChartColorFunction } from './utils/colorPaletteHelpers';
 import { getGridAxisValue, getGridProps } from './utils/gridAxisHelpers';
 import { createChartFormatters } from './utils/chartFormatterHelpers';

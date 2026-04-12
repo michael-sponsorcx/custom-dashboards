@@ -9,5 +9,4 @@ export const dashboardGridItemToCamelCase = (row: DashboardGridItemRow): Dashboa
     gridRow: row.grid_row,
     gridWidth: row.grid_width,
     gridHeight: row.grid_height,
-    displayOrder: row.display_order,
 });

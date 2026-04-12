@@ -132,7 +132,6 @@ export const addGraphToDashboard = async (
     gridRow: gridLayout?.gridRow || null,
     gridWidth: gridLayout?.gridWidth || null,
     gridHeight: gridLayout?.gridHeight || null,
-    displayOrder: 0,
   };
 
   const response = await executeBackendGraphQL<{

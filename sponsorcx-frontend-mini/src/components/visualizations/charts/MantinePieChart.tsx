@@ -1,6 +1,6 @@
 import { useMemo, memo } from 'react';
 import { PieChart } from '@mantine/charts';
-import { transformChartData } from '../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations/transformChartData';
 import { NumberFormatType } from '../../../utils/numberFormatter';
 import type { LegendPosition } from '../../../types/backend-graphql';
 import { ChartType, ColorPalette } from '../../../types/backend-graphql';

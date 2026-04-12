@@ -19,7 +19,6 @@ export const DASHBOARD_GRID_ITEM_FIELDS = `
   gridRow
   gridWidth
   gridHeight
-  displayOrder
 `;
 
 export const DASHBOARD_GRAPH_FIELDS = `

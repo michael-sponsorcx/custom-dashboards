@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Box, Title, Text } from '@mantine/core';
 import { GridItem } from '@/types/dashboard';
 import { ChartRenderer } from '../../../visualizations/ChartRenderer';
-import { executeCubeGraphQL } from '../../../../api';
+import { executeCubeGraphQL } from '../../../../api/cube/query';
 import { buildQueryFromTemplate } from '../../../../utils/graphql/builder/builders/buildQueryFromTemplate';
 import { combineFilters } from '../../../../utils/filters/combineFilters';
 

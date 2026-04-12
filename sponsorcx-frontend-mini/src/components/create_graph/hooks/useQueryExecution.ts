@@ -10,8 +10,9 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { executeCubeGraphQL } from '../../../api';
-import { buildSimpleCubeQuery, validateCubeGraphQLQuery } from '../../../utils/graphql';
+import { executeCubeGraphQL } from '../../../api/cube/query';
+import { buildSimpleCubeQuery } from '../../../utils/graphql/builder/builders/cubeQuery';
+import { validateCubeGraphQLQuery } from '../../../utils/graphql/validator/validateCubeGraphQLQuery';
 import { analyzeChartCompatibility } from '../../../utils/chartDataAnalyzer';
 import { ChartType } from '../../../types/backend-graphql';
 import type { SortOrder } from '../../../types/backend-graphql';

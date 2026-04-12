@@ -10,7 +10,7 @@
 
 import { useMemo, useEffect, useRef, useCallback } from 'react';
 import { ArrayParam, useQueryParams } from 'use-query-params';
-import { useDashboardFilterStore } from '@/store';
+import { useDashboardFilterStore } from '@/store/dashboardFilterStore';
 import type { DimensionFilterRule } from '@/types/filters';
 
 const FILTER_PREFIX = 'f_';

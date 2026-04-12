@@ -4,7 +4,7 @@
  */
 
 import { GraphQLNonNull, GraphQLID, GraphQLList, GraphQLBoolean } from 'graphql';
-import { DashboardScheduleType, DashboardScheduleInput as DashboardScheduleInputType } from '../types';
+import { DashboardScheduleType, DashboardScheduleInput as DashboardScheduleInputType } from '../types/dashboardScheduleResolversTypes';
 import {
     findAllDashboardSchedules,
     findDashboardScheduleById,
@@ -13,7 +13,7 @@ import {
     updateDashboardSchedule,
     deleteDashboardSchedule,
     toggleDashboardScheduleActive,
-} from '../../models/dashboardSchedule';
+} from '../../models/dashboardSchedule/queries';
 import type {
     QueryDashboardSchedulesArgs,
     QueryDashboardScheduleArgs,

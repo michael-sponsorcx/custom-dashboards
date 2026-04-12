@@ -1,13 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import {
   deleteGraph,
+} from '../../../api/app/graph/mutations';
+import {
   fetchGraph,
+} from '../../../api/app/graph/queries';
+import {
   updateDashboardGridItem,
   removeGraphFromDashboard,
+} from '../../../api/app/dashboard/mutations';
+import {
   fetchDashboardGridItems,
-} from '../../../api';
+} from '../../../api/app/dashboard/queries';
 import { GridItem } from '../../../types/dashboard';
-import { useOrganizationStore } from '../../../store';
+import { useOrganizationStore } from '../../../store/organizationStore';
 
 interface UseDashboardActionsOptions {
   onRefresh: () => void;

@@ -5,8 +5,10 @@ import { ScheduleModal } from './ScheduleModal';
 import { ScheduleTable, type ScheduleRow } from './ScheduleTable';
 import { RunHistoryModal } from './RunHistoryModal';
 import { useSchedules } from './useSchedules';
-import { useOrganizationStore } from '../../../store';
-import { getOrCreateDefaultDashboard, toggleDashboardScheduleActive, fetchDashboardSchedule } from '../../../api';
+import { useOrganizationStore } from '../../../store/organizationStore';
+import { getOrCreateDefaultDashboard } from '../../../api/app/dashboard/mutations';
+import { toggleDashboardScheduleActive } from '../../../api/app/dashboardSchedule/mutations';
+import { fetchDashboardSchedule } from '../../../api/app/dashboardSchedule/queries';
 import type { DashboardSchedule } from '../../../types/backend-graphql';
 
 export const ManageSchedules = () => {

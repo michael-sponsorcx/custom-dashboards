@@ -2,7 +2,7 @@ import { Paper, Group, Loader, Text, Center } from '@mantine/core';
 import { ChartRenderer } from '../../../visualizations/ChartRenderer';
 import { useDownloadCSV } from '../../../../hooks/useDownloadCSV';
 import type { GridItem } from '../../../../types/dashboard';
-import { useDashboardFilterStore } from '../../../../store';
+import { useDashboardFilterStore } from '../../../../store/dashboardFilterStore';
 import { useGraphData } from './hooks/useGraphData';
 import { useGraphDrillDown } from './hooks/useGraphDrillDown';
 import { useGraphQuery } from './hooks/useGraphQuery';

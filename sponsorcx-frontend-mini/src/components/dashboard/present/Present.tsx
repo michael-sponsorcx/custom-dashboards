@@ -1,10 +1,12 @@
 import { Box } from '@mantine/core';
 import { GridItem } from '@/types/dashboard';
-import { useDashboardFilterStore } from '@/store';
+import { useDashboardFilterStore } from '@/store/dashboardFilterStore';
 import colors from '@/stadiumDS/foundations/colors';
-import { useFullscreenMode, useSlideNavigation } from './hooks';
-import { PresentationControls } from './components';
-import { TitleSlide, GraphSlide } from '../shared/slides';
+import { useFullscreenMode } from './hooks/useFullscreenMode';
+import { useSlideNavigation } from './hooks/useSlideNavigation';
+import { PresentationControls } from './components/PresentationControls';
+import { TitleSlide } from '../shared/slides/TitleSlide';
+import { GraphSlide } from '../shared/slides/GraphSlide';
 
 interface PresentProps {
   gridItems: GridItem[];

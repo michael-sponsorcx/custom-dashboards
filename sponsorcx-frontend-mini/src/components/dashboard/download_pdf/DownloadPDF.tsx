@@ -2,11 +2,12 @@ import { useRef, useEffect } from 'react';
 import { Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { GridItem } from '@/types/dashboard';
-import { useDashboardFilterStore } from '@/store';
+import { useDashboardFilterStore } from '@/store/dashboardFilterStore';
 import colors from '@/stadiumDS/foundations/colors';
-import { usePDFGeneration } from './hooks';
-import { DownloadPDFToast } from './components';
-import { TitleSlide, GraphSlide } from '../shared/slides';
+import { usePDFGeneration } from './hooks/usePDFGeneration';
+import { DownloadPDFToast } from './components/DownloadPDFToast';
+import { TitleSlide } from '../shared/slides/TitleSlide';
+import { GraphSlide } from '../shared/slides/GraphSlide';
 
 interface DownloadPDFProps {
   gridItems: GridItem[];

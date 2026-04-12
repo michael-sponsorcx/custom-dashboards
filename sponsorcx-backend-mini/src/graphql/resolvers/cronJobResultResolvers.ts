@@ -4,8 +4,8 @@
  */
 
 import { GraphQLNonNull, GraphQLID, GraphQLList } from 'graphql';
-import { CronJobResultType } from '../types';
-import { findCronJobResultsByCronJobId } from '../../models/cronJobResult';
+import { CronJobResultType } from '../types/cronJobResultResolversTypes';
+import { findCronJobResultsByCronJobId } from '../../models/cronJobResult/queries';
 
 // ============================================================================
 // Queries

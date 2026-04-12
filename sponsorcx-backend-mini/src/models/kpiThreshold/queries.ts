@@ -1,7 +1,7 @@
 import { typedQuery, withTransaction } from '../../db/connection';
 import type { KpiThresholdRow, KpiThreshold } from './types';
 import { kpiThresholdToCamelCase } from './mapper';
-import { normalizeAlertInput } from '../kpiAlert';
+import { normalizeAlertInput } from '../kpiAlert/mapper';
 import { AlertType } from '../../generated/graphql';
 import type { CreateKpiThresholdInput } from '../../generated/graphql';
 

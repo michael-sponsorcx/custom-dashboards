@@ -1,7 +1,7 @@
 import { typedQuery, withTransaction } from '../../db/connection';
 import type { KpiScheduleRow, KpiSchedule } from './types';
 import { kpiScheduleToCamelCase } from './mapper';
-import { normalizeAlertInput } from '../kpiAlert';
+import { normalizeAlertInput } from '../kpiAlert/mapper';
 import { AlertType } from '../../generated/graphql';
 import type { CreateKpiScheduleInput } from '../../generated/graphql';
 

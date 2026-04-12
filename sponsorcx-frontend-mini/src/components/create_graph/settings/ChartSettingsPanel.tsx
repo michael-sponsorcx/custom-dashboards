@@ -15,13 +15,11 @@ import { LegendPosition, NumberFormat } from '../../../types/backend-graphql';
 import { ColorPalette } from '../../../types/backend-graphql';
 import { OrderByControl, SortOrder } from './OrderByControl';
 import { DataFieldSelector } from './DataFieldSelector';
-import {
-  ChartTypeSelector,
-  ChartBasicSettings,
-  NumberFormatSettings,
-  ColorSettings,
-  AxisSettings,
-} from './components';
+import { ChartTypeSelector } from './components/ChartTypeSelector';
+import { ChartBasicSettings } from './components/ChartBasicSettings';
+import { NumberFormatSettings } from './components/NumberFormatSettings';
+import { ColorSettings } from './components/ColorSettings';
+import { AxisSettings } from './components/AxisSettings';
 
 interface ChartSettingsPanelProps {
   selectedChartType: ChartType | null;

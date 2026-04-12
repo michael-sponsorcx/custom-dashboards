@@ -1,6 +1,6 @@
 import { BaseTable } from './BaseTable';
 import { useMemo } from 'react';
-import { transformChartData } from '../../../utils/chartDataTransformations';
+import { transformChartData } from '../../../utils/chartDataTransformations/transformChartData';
 import { ChartType } from '../../../types/backend-graphql';
 
 interface QueryResultsTableProps {

@@ -4,7 +4,7 @@
  * Manages caching of valid filter operators from Cube schema.
  */
 
-import { getValidFilterOperators } from '../../../../api/cube';
+import { getValidFilterOperators } from '../../../../api/cube/schema';
 
 // Cache for valid operators fetched from schema
 let cachedValidOperators: string[] | null = null;

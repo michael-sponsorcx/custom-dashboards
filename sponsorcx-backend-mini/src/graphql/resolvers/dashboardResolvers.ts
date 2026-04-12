@@ -11,12 +11,12 @@ import {
     DashboardGridItemInput,
     DashboardFilterType,
     DashboardFilterInput,
-} from '../types';
-import { findAllDashboards, findDashboardById, createDashboard, updateDashboard, deleteDashboard } from '../../models/dashboard';
-import { findGridItemsByDashboard, addGridItem, updateGridItem, removeGridItem } from '../../models/dashboardGridItem';
-import { findFilterByDashboard, saveFilter, clearFilter } from '../../models/dashboardFilter';
-import { findGraphById } from '../../models/graph';
-import type { DashboardGridItem } from '../../models';
+} from '../types/dashboardResolversTypes';
+import { findAllDashboards, findDashboardById, createDashboard, updateDashboard, deleteDashboard } from '../../models/dashboard/queries';
+import { findGridItemsByDashboard, addGridItem, updateGridItem, removeGridItem } from '../../models/dashboardGridItem/queries';
+import { findFilterByDashboard, saveFilter, clearFilter } from '../../models/dashboardFilter/queries';
+import { findGraphById } from '../../models/graph/queries';
+import type { DashboardGridItem } from '../../models/dashboardGridItem/types';
 import type {
     QueryDashboardsArgs,
     QueryDashboardArgs,

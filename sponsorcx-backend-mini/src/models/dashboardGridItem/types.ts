@@ -9,7 +9,6 @@ export interface DashboardGridItemRow {
     grid_row: number | null;
     grid_width: number | null;
     grid_height: number | null;
-    display_order: number | null;
 }
 
 /**

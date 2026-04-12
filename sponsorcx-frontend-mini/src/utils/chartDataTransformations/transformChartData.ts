@@ -35,7 +35,7 @@ import { kpiChartTransformation } from './transformations/kpi';
  * @param options - Configuration object containing chart type and raw Cube data
  * @returns Transformed data ready for rendering
  */
-export function transformChartData(options: TransformChartDataOptions): TransformationResult {
+export const transformChartData = (options: TransformChartDataOptions): TransformationResult => {
   const { chartType, cubeData } = options;
 
   // Step 1: Parse Cube GraphQL response to flat data format
@@ -99,4 +99,4 @@ export function transformChartData(options: TransformChartDataOptions): Transfor
         series: [],
       };
   }
-}
+};

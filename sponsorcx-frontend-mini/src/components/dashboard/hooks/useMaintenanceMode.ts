@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { isFeatureEnabled } from '../../../api';
+import { isFeatureEnabled } from '../../../api/app/featureFlags/featureFlags';
 
 export const useMaintenanceMode = () => {
   const [enabled, setEnabled] = useState(false);

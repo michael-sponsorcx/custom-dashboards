@@ -153,7 +153,6 @@ Relationships:
 - `dashboard_id` (BIGINT, Foreign Key → dashboards.id)
 - `graph_id` (BIGINT, Foreign Key → graphs.id)
 - `grid_column`, `grid_row`, `grid_width`, `grid_height` (INTEGER)
-- `display_order` (INTEGER)
 - `created_at`, `updated_at`
 - **UNIQUE constraint:** (dashboard_id, graph_id)
 - **Grid layout is stored here**, not on the graph itself, allowing the same graph to have different positions on different dashboards

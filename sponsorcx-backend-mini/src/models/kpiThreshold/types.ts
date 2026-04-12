@@ -1,5 +1,5 @@
 import type { ThresholdCondition } from '../../generated/graphql';
-import type { AlertRowColumns, KpiAlert } from '../kpiAlert';
+import type { AlertRowColumns, KpiAlert } from '../kpiAlert/types';
 
 /** Database row type for kpi_thresholds joined query (snake_case) */
 export interface KpiThresholdRow extends AlertRowColumns {

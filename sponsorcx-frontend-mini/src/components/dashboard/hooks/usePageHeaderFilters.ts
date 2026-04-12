@@ -10,8 +10,8 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { useDashboardFilterStore } from '@/store';
-import { fetchDistinctDimensionValues } from '@/api';
+import { useDashboardFilterStore } from '@/store/dashboardFilterStore';
+import { fetchDistinctDimensionValues } from '@/api/cube/dimensions';
 import useFilterHelpers from '@/hooks/useFilterHelpers';
 import type { PageHeaderFilter } from '@/stadiumDS/applicationComponents/PageHeader/PageHeaderFilters/PageHeaderFilters.type';
 import { useDashboardFilterQueryParams } from './useDashboardFilterQueryParams';

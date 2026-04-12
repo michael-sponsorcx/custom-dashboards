@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchCronJobResults } from '../../../api';
+import { fetchCronJobResults } from '../../../api/app/cronJobResult/queries';
 import type { CronJobResult } from '../../../types/backend-graphql';
 import type { RunHistoryRow } from './RunHistoryTable';
 

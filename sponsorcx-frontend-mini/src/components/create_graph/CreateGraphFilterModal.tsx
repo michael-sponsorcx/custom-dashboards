@@ -7,7 +7,7 @@ import {
   DimensionFilterRule,
   DateFilterRule,
 } from '../../types/filters';
-import { fetchDistinctDimensionValues } from '../../api';
+import { fetchDistinctDimensionValues } from '../../api/cube/dimensions';
 import { SharedFilterModalUI } from '../shared/filters/SharedFilterModalUI';
 
 interface CreateGraphFilterModalProps {
