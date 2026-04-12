@@ -40,7 +40,7 @@ export function Dashboard() {
   const { enabled: maintenanceEnabled, loading: maintenanceLoading } = useMaintenanceMode();
 
   // Use custom hooks to manage state and actions
-  const { gridItems, loading, refreshDashboard, updateGraphPosition, updateGraphSize } =
+  const { gridItems, loading, error: dashboardError, refreshDashboard, updateGraphPosition, updateGraphSize } =
     useDashboardState();
   const {
     handleDeleteGraph,
@@ -182,8 +182,21 @@ export function Dashboard() {
     return <Present gridItems={gridItems} dashboardName="Dashboard" onClose={handleClosePresentation} />;
   }
 
+  // Dashboard initialization failed (e.g., getOrCreateDefaultDashboard threw)
+  if (dashboardError) {
+    return (
+      <Container size="xl" py="xl">
+        <Stack align="center" gap="md">
+          <Title order={2} c="red">Something went wrong</Title>
+          <Text c="dimmed">{dashboardError}</Text>
+        </Stack>
+      </Container>
+    );
+  }
+
   // Show loader while dashboard data or maintenance status is being fetched
-  if (loading || maintenanceLoading) {
+  // Also show loader if dashboardId hasn't been resolved yet (getOrCreateDefaultDashboard in progress)
+  if (loading || maintenanceLoading || !dashboardId) {
     return (
       <Container size="xl" py="xl">
         <Center h="50vh">

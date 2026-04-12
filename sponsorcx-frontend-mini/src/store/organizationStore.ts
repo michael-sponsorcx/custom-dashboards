@@ -18,8 +18,8 @@ interface OrganizationStore {
 }
 
 // Default IDs for development/testing until auth is implemented
-const DEFAULT_ORG_ID = '1';
-const DEFAULT_USER_ID = '1196';
+const DEFAULT_ORG_ID = '3';
+const DEFAULT_USER_ID = '2380';
 
 export const useOrganizationStore = create<OrganizationStore>((set) => ({
   organizationId: DEFAULT_ORG_ID,

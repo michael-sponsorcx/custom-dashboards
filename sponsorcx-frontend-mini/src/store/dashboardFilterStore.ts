@@ -10,6 +10,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import {
   fetchDashboardFilter,
   saveDashboardFilter,
+  clearDashboardFilter,
   type DashboardFilterField,
   type DashboardFilterState,
 } from '../api';
@@ -92,9 +93,17 @@ export const useDashboardFilterStore = create<DashboardFilterStore>()(
       get().saveFilters();
     },
 
-    clearAllFilters: () => {
+    clearAllFilters: async () => {
+      const { currentDashboardId } = get();
       set({ activeFilters: [] });
-      get().saveFilters();
+
+      if (currentDashboardId) {
+        try {
+          await clearDashboardFilter(currentDashboardId);
+        } catch (error) {
+          console.error('Failed to clear dashboard filters:', error);
+        }
+      }
     },
 
     _syncDimensionFiltersFromUrl: (dimensionFilters) => {
@@ -107,7 +116,8 @@ export const useDashboardFilterStore = create<DashboardFilterStore>()(
       // Intentionally does NOT call saveFilters — URL is the source of truth
     },
 
-    reset: () => {
+    reset: async () => {
+      const { currentDashboardId } = get();
       set({
         selectedViews: [],
         availableFields: [],
@@ -115,6 +125,13 @@ export const useDashboardFilterStore = create<DashboardFilterStore>()(
         isLoaded: false,
         currentDashboardId: undefined,
       });
+      if (currentDashboardId) {
+        try {
+          await clearDashboardFilter(currentDashboardId);
+        } catch (error) {
+          console.error('Failed to clear dashboard filters:', error);
+        }
+      }
     },
 
     // Persistence
