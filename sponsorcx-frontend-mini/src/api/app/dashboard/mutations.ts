@@ -223,7 +223,17 @@ export const getOrCreateDefaultDashboard = async (
   }
 
   // Create a default dashboard
-  return await createDashboard('Main Dashboard', 'grid', organizationId);
+  try {
+    return await createDashboard('Main Dashboard', 'grid', organizationId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.includes('foreign key constraint') && message.includes('organization')) {
+      throw new Error(
+        `Organization ID "${organizationId}" does not exist. Check DEFAULT_ORG_ID in organizationStore.ts.`
+      );
+    }
+    throw err;
+  }
 };
 
 /**
