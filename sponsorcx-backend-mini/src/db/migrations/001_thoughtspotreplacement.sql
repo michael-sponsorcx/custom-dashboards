@@ -1,5 +1,5 @@
--- Migration 001: Full Schema for SponsorCX
--- Consolidated from migrations 001-012
+-- Migration 001: ThoughtSpot Replacement — Full Schema for SponsorCX Dashboard
+-- Combined from previous migrations 001 + 011
 
 -- ============================================================================
 -- Trigger function (used by all tables)
@@ -296,3 +296,16 @@ CREATE TRIGGER update_dashboard_schedules_updated_at
     BEFORE UPDATE ON dashboard_schedules
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- Seed: Dashboard maintenance feature flag
+-- ============================================================================
+
+INSERT INTO feature_flags (name, key, description, default_value, permanent)
+VALUES (
+    'Dashboard Maintenance Mode',
+    'dashboard_maintenance',
+    'When enabled, shows a maintenance page instead of the dashboard',
+    false,
+    true
+);

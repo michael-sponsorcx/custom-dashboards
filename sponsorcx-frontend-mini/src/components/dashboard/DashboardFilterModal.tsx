@@ -1,4 +1,4 @@
-import { Modal, Stack, Title, Button, Group, Stepper } from '@mantine/core';
+import { Modal, Stack, Text, Button, Group, Stepper } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useDashboardFilterStore } from '../../store';
 import { DataSourceSelection } from './filter_config/DataSourceSelection';
@@ -71,7 +71,7 @@ export function DashboardFilterModal({ opened, onClose }: DashboardFilterModalPr
     <Modal
       opened={opened}
       onClose={handleCancel}
-      title={<Title order={3}>Add Dashboard Filters</Title>}
+      title={<Text fw={600} fz="lg">Add Dashboard Filters</Text>}
       size="xl"
       centered
     >

@@ -1,5 +1,7 @@
--- Rollback Migration 001: Full Schema for SponsorCX
--- Drops all tables, triggers, indexes, and functions
+-- Rollback Migration 001: ThoughtSpot Replacement
+
+-- Remove feature flag
+DELETE FROM feature_flags WHERE key = 'dashboard_maintenance';
 
 -- Drop triggers
 DROP TRIGGER IF EXISTS update_dashboard_schedules_updated_at ON dashboard_schedules;
